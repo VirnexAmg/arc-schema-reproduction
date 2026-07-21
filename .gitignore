@@ -1,0 +1,12 @@
+# 环境变量与密钥文件（绝对不能传）
+.env
+
+# Python 运行缓存与虚拟环境
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# 日志与测试缓存
+*.log
+.pytest_cache/
