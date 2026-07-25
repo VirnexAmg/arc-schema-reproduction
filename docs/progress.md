@@ -133,3 +133,119 @@ Harness 31,013 token并记录 1 次预测 mismatch；两组仍为 0/7 level。�
   - 目标 `levels_completed >= 1`：**未达成**。
   - 因 harness `timeout`，pair 记为 `paired_invalid_reason=harness_timeout`，
     **不计入能力差值样本**（基础设施/超时，不是 0% 能力结论）。
+
+## Phase 1 harness 诊断与修复（2026-07-22）
+
+### 诊断摘要
+
+对 `harness-run-0.jsonl` 抽样后，18 次 backtest 失败 / 0 planned_actions 的主因是：
+
+1. **工程不一致**：prompt/catalog 只用 `history[-12:]`，但 `backtest` 扫全历史；
+   窗口外 early transitions 导致即便模型完美覆盖窗口也会 `before observation absent`。
+2. **模型常交迷你 WM**（2 states），忽略已知历史。
+3. **PASS 两次均无 goal** → BFS `no_plan`。
+4. **失败后立刻重建 WM** + JSON 截断重试，把 600s 超时吃光。
+
+### 已落地修复（A+B+C+D）
+
+- **A**：`backtest(..., limit=context_transitions)` 与 compact context 对齐。
+- **B**：`build_history_skeleton` 程序注入已知历史 FSM；模型只返回 extension，
+  经 `merge_world_model_extension` 合并后再物化/校验。
+- **C**：无 goal / 无当前出边 / 无法在 `max_plan_steps` 内达 goal → 明确 feedback 重试。
+- **D**：`explore_burst=3`（失败后连续探索再重建 WM）；
+  `wm_time_reserve_seconds=120`（剩余时间不足则只探索不调 WM）。
+
+### 验证
+
+- `pytest`：20 passed；`ruff`：通过；`mock-ab`：通过。
+- **尚未**再次花费真实 API；需用户确认后再跑 Phase 0（8 actions）/ 第二次 50-action。
+
+## 真实 API 续跑（2026-07-22）
+
+预算上限约 ¥20（按 $1≈¥7.2）。本日累计约 **$0.82 / ¥5.9**，剩余约 ¥14。
+
+### 工程修复（跑实验中追加）
+
+- `.env` CRLF 导致 API key 尾部 `\r` → `APIConnectionError`；已 strip，且
+  `load_dotenv(override=False)` 避免盖住 shell 实验参数。
+- **禁止假 goal**：`goal` 必须 `levels_completed > known` 或 `state=WIN`
+  （否则模型把中间帧标成 goal，计划“匹配”但永不加关）。
+
+### 实验结果（均为 offline ls20，deepseek-v4-pro，non-thinking）
+
+| 实验 ID | 配置 | Baseline | Harness | paired_valid | 费用 |
+|---------|------|----------|---------|--------------|------|
+| `pilot-runs/20260722T020706...` | 8 act | 8/0lv | 7ex+1pl / 0lv / mm=1 | yes | $0.004 |
+| `experiment-runs/20260722T020735...` | 50 act（假 goal 未禁） | 50/0lv | **34 planned** / 0lv / mm=3 / bt=2 | yes | $0.144 |
+| `pilot-runs/20260722T021551...` | 8 act + 真 goal | 8/0lv | 7ex+1pl / mm=1 | yes | $0.004 |
+| `experiment-runs/20260722T021617...` | 50 act + 真 goal | 50/0lv | 11pl / **0 match** / mm=11 | yes | $0.086 |
+| `experiment-runs/20260722T022150...` | 80 act（plan 仍=3） | 80/0lv | 19pl / mm=18 | yes | $0.139 |
+| `experiment-runs/20260722T023021...` | 80 act, explore=12, plan=8 | 80/0lv | 13pl / mm=13 | yes | $0.125 |
+| `experiment-runs/20260722T023642...` | **3 seeds**×50, explore=8, plan=5 | 全 0lv | 全 0lv；3/3 valid | yes | $0.189 |
+
+对比旧 Phase 1（timeout@17, planned=0, bt_fail=18）：
+基础设施已恢复可评测——双方常跑满动作预算，`paired_valid=true`，harness 能生成并提交计划。
+
+### 能力结论（当前）
+
+- 目标 `levels_completed >= 1`：**仍未达成**（baseline/harness 均为 0）。
+- 多 seed 能力差：`harness_minus_baseline.levels_completed.mean = 0`（3 个有效 pair）。
+- 真 goal 约束后：计划几乎全部 `prediction_mismatch`——模型会假设“一步过关”，
+  但预测帧与现实不符；不再出现假 goal 空转匹配。
+
+### 剩余瓶颈（非超时）
+
+1. 模型难以用 sparse patch 猜中真实过关帧；
+2. 短视野计划（即使 8 步）对 ls20 第一关可能仍不够；
+3. 仅靠 ACTION1/2 探索循环，未形成有效过关策略。
+
+后续若继续花钱，应换假设（例如中间路标 goal、更强的转移摘要、或更长探索课表），
+而不是重复同一 50-action 配置。
+
+## Schema 对齐 Harness v2（2026-07-22）
+
+对照 [Schema 官方说明](https://schema-harness.github.io/) 将默认 harness 升级为程序世界模型环：
+
+- 受限沙箱执行模型生成的 `step(state, action)` / `is_goal(state)`
+  （[`sandbox.py`](../src/arc_schema/sandbox.py)、[`program_world_model.py`](../src/arc_schema/program_world_model.py)）
+- Deliberation 工具：`write_code` / `run_backtest`（全 Timeline）/ `run_bfs` /
+  `commit_actions`（唯一环境通道）/ notes（[`deliberation.py`](../src/arc_schema/deliberation.py)）
+- 持久 Workspace：`world_model.py` + `notes.md`
+- 默认 `ARC_HARNESS_MODE=schema`；旧 FSM 路径保留为 `harness_mode=fsm` 消融
+- Baseline 仍禁止可执行 WM / BFS
+
+验证：`pytest` 27 passed；`ruff` 通过；`mock-ab`（schema）玩具环境可过关。
+
+### Schema v2 真实 pilot（DeepSeek v4-pro，non-thinking）
+
+- Phase 0（`pilot-runs/20260722T030849.156866Z`，8 act）：paired_valid；
+  harness 写出 `world_model.py`，有 planned commit 但预测 mismatch；
+  工具参数兼容性随后已加固（`source`/`code`、整型 action id）。
+- Phase 1（`experiment-runs/20260722T031809.365218Z`，50 act，timeout 1200s）：
+  - Baseline：50/0lv，~$0.028，66s
+  - Harness：50 explore / 0 planned / 0lv；`run_backtest` **2 次全绿**；
+    多次 `commit_actions(exploration)`；~$0.174，1115s；paired_valid
+  - 目标 `levels_completed>=1`：仍未达成（模型机制假设尚不足以 BFS 到真 goal）
+
+机制对齐进度：已出现「写代码 → 全历史 backtest 绿」轨迹；能力过关仍依赖更强
+`step()`/`is_goal` 质量与更少 JSON 截断。
+
+## Sol 接近 Schema（2026-07-22）
+
+已实现更接近 Schema 的工程层：
+
+- 通用 OpenAI 兼容客户端（DeepSeek / `gpt-5.6-sol`）
+- `apply_patch` 增量改 `world_model.py`（避免整文件塞进 JSON）
+- `last_mismatch` 结构化反馈进 deliberation
+- `ARC_MAX_SPEND_USD` 硬花费封顶；`ARC_MODEL_PROVIDER=openai` 一键切 Sol
+- 默认加长 deliberation / plan depth / planner nodes
+
+**预算判断（重要）**：`$10` **不够**复现 Schema 级效果（Sol 约 `$5/$30` per MTok；
+Schema 单局常需数百环境步 + xhigh）。详见 [`docs/sol-budget.md`](sol-budget.md)。
+
+合理预算建议：
+- ls20 认真冲 `levels_completed>=1`：`$30–80`
+- 单局接近人效：`$100–300`
+- Public 多游戏：`$1000+`
+
+在 `$10` 内只建议：medium effort + `ARC_MAX_SPEND_USD=8` + 短 pilot。

@@ -18,7 +18,12 @@ def test_mock_ab_runs_end_to_end_and_saves_machine_readable_results(tmp_path) ->
         max_environment_actions=2,
         seeds=(7, 11),
         output_dir=tmp_path,
-        explore_steps=2,
+        explore_steps=0,
+        harness_mode="schema",
+        deliberation_max_turns=8,
+        wm_time_reserve_seconds=0.0,
+        max_plan_steps=3,
+        planner_max_nodes=50,
     )
     result_path = run_experiment(
         config,

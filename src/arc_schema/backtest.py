@@ -17,8 +17,19 @@ class BacktestResult:
     actual: dict[str, Any] | None = None
 
 
-def backtest(model: DeclarativeWorldModel, history: list[Transition]) -> BacktestResult:
-    for index, transition in enumerate(history):
+def backtest(
+    model: DeclarativeWorldModel,
+    history: list[Transition],
+    *,
+    limit: int | None = None,
+) -> BacktestResult:
+    """Replay history through the world model.
+
+    When ``limit`` is set, only the trailing window is checked. This must match
+    the compact context / catalog window shown to the model.
+    """
+    window = history if limit is None else history[-limit:]
+    for index, transition in enumerate(window):
         source = model.state_for_observation(transition.before)
         if source is None:
             return BacktestResult(
@@ -47,4 +58,4 @@ def backtest(model: DeclarativeWorldModel, history: list[Transition]) -> Backtes
                 predicted=predicted.snapshot,
                 actual=actual,
             )
-    return BacktestResult(True, len(history))
+    return BacktestResult(True, len(window))

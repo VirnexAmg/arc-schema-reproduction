@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from arc_schema.agents import BaselineAgent, HarnessAgent
+from arc_schema.agents import BaselineAgent, make_harness_agent
 from arc_schema.config import ExperimentConfig
 from arc_schema.core import RunMetrics
 from arc_schema.deepseek_client import ModelClient
@@ -196,14 +196,20 @@ def run_experiment(
     config: ExperimentConfig,
     environment_factory: EnvironmentFactory,
     client_factory: ClientFactory,
+    *,
+    agents: tuple[str, ...] | None = None,
 ) -> Path:
     experiment_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S.%fZ")
     root = config.output_dir / experiment_id
     root.mkdir(parents=True, exist_ok=False)
+    selected = agents or ("baseline", "harness")
+    for name in selected:
+        if name not in {"baseline", "harness"}:
+            raise ValueError(f"unsupported agent {name}; expected baseline|harness")
     document: dict[str, Any] = {
         "experiment_id": experiment_id,
         "created_at": datetime.now(UTC).isoformat(),
-        "config": config.public_dict(),
+        "config": {**config.public_dict(), "agents": list(selected)},
         "results": [],
         "aggregate": {},
     }
@@ -214,15 +220,20 @@ def run_experiment(
         if not config.seeds:
             raise ValueError("at least one seed is required")
         seed = config.seeds[run_index % len(config.seeds)]
-        agent_order = (
-            (BaselineAgent, HarnessAgent) if run_index % 2 == 0 else (HarnessAgent, BaselineAgent)
-        )
-        for agent_type in agent_order:
-            journal_path = root / f"{agent_type.name}-run-{run_index}.jsonl"
+        if selected == ("baseline", "harness") or selected == ("harness", "baseline"):
+            agent_names = ("baseline", "harness") if run_index % 2 == 0 else ("harness", "baseline")
+            agent_names = tuple(name for name in agent_names if name in selected)
+        else:
+            agent_names = selected
+        for agent_name in agent_names:
+            journal_path = root / f"{agent_name}-run-{run_index}.jsonl"
             started = time.monotonic()
             try:
                 client = client_factory()
-                agent = agent_type(client, config)
+                if agent_name == "baseline":
+                    agent = BaselineAgent(client, config)
+                else:
+                    agent = make_harness_agent(client, config)
                 environment = environment_factory(seed)
                 metrics = run_agent(
                     agent,
@@ -234,7 +245,7 @@ def run_experiment(
                 )
             except Exception as exc:
                 metrics = RunMetrics(
-                    agent=agent_type.name,
+                    agent=agent_name,
                     game_id=config.game_id,
                     run_index=run_index,
                     seed=seed,
@@ -245,16 +256,16 @@ def run_experiment(
                 AppendOnlyJournal(journal_path).append(
                     "run_setup_failed",
                     {
-                        "agent": agent_type.name,
+                        "agent": agent_name,
                         "run_index": run_index,
                         "seed": seed,
                         "error": metrics.error,
                     },
                 )
             row = asdict(metrics)
-            pending_by_run.setdefault(run_index, {})[agent_type.name] = row
+            pending_by_run.setdefault(run_index, {})[agent_name] = row
             document["results"].append(row)
-            if len(pending_by_run[run_index]) == 2:
+            if {"baseline", "harness"} <= set(pending_by_run[run_index]):
                 baseline = pending_by_run[run_index]["baseline"]
                 harness = pending_by_run[run_index]["harness"]
                 valid, reason = pair_validity(
@@ -267,6 +278,12 @@ def run_experiment(
                         continue
                     item["paired_valid"] = valid
                     item["paired_invalid_reason"] = reason
+            elif len(selected) == 1:
+                for item in document["results"]:
+                    if int(item["run_index"]) != run_index:
+                        continue
+                    item["paired_valid"] = None
+                    item["paired_invalid_reason"] = "single_agent_run"
             document["aggregate"] = aggregate(document["results"])
             _atomic_json(result_path, document)
     return result_path

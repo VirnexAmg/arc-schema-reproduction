@@ -14,7 +14,12 @@ from arc_schema.core import Action, Observation, RunMetrics, Transition, canonic
 from arc_schema.deepseek_client import ModelClient, ModelResponse
 from arc_schema.history import AppendOnlyJournal
 from arc_schema.planner import PlannedStep, bfs_plan
-from arc_schema.world_model import DeclarativeWorldModel, WorldModelError
+from arc_schema.world_model import (
+    DeclarativeWorldModel,
+    WorldModelError,
+    build_history_skeleton,
+    merge_world_model_extension,
+)
 
 
 SYSTEM_COMMON = """You are controlling an ARC-AGI-3 environment.
@@ -175,7 +180,9 @@ class HarnessPlan:
     reason: str
 
 
-class HarnessAgent:
+class FsmHarnessAgent:
+    """Legacy declarative-FSM harness retained as an ablation (harness_mode=fsm)."""
+
     name = "harness"
 
     def __init__(self, client: ModelClient, config: ExperimentConfig) -> None:
@@ -198,43 +205,57 @@ class HarnessAgent:
     ) -> HarnessPlan:
         feedback: dict[str, Any] | None = None
         last_backtest: BacktestResult | None = None
+        context_limit = self.config.model.context_transitions
         known_levels = max(
             [current.levels_completed, *[item.after.levels_completed for item in history]],
             default=current.levels_completed,
         )
+        skeleton = build_history_skeleton(current, history, limit=context_limit)
         for _ in range(self.config.harness_model_attempts):
             payload, vision_parts = build_compact_context(
                 current,
                 history,
-                limit=self.config.model.context_transitions,
+                limit=context_limit,
                 vision_enabled=self.config.model.vision_enabled,
             )
             catalog = local_observation_catalog(
                 current,
                 history,
-                limit=self.config.model.context_transitions,
+                limit=context_limit,
             )
             payload["known_snapshot_refs"] = sorted(catalog)
+            payload["seeded_world_model"] = {
+                "states": skeleton["states"],
+                "transitions": skeleton["transitions"],
+                "current_state_id": skeleton["current_state_id"],
+            }
             payload["previous_failure"] = feedback
             payload["instruction"] = (
-                "Build a short deterministic finite-state world model. Known observations must "
-                "use snapshot_ref only (see known_snapshot_refs / history before_ref/after_ref). "
-                "Hypothesized future states must use base_ref + snapshot_patch with sparse "
-                "changed rows and metadata; never copy a full frame and never raise "
-                "levels_completed without evidence. Keep at most 24 states and 64 transitions. "
-                "Include at least one legal outgoing transition from the current state and a "
-                "reachable goal. Schema: "
-                '{"states":[{"id":"s0","snapshot_ref":"obs_...","goal":false},'
-                '{"id":"s1","base_ref":"obs_...","snapshot_patch":{"rows":[{"y":0,"rle":"..."}],'
-                '"metadata":{"state":"NOT_FINISHED"}},"goal":true}],'
-                '"transitions":[{"from":"s0","action":{"id":1,"data":{}},"to":"s1"}]}.'
+                "seeded_world_model already covers the observed history window with "
+                "snapshot_ref states and historical transitions. Do NOT restate that "
+                "history. Return extensions only: hypothesized future states must use "
+                "base_ref + sparse snapshot_patch (changed rows/metadata only); never "
+                "copy a full frame. Add new legal outgoing transitions from the current "
+                f"seeded state ({skeleton['current_state_id']}) toward a reachable goal "
+                f"within {self.config.max_plan_steps} steps. A goal MUST set "
+                f"levels_completed>={known_levels + 1} or state=WIN; never mark ordinary "
+                "intermediate frames as goals. Keep the merged model within 24 states "
+                "and 64 transitions. Schema: "
+                '{"states":[{"id":"g0","base_ref":"obs_...","snapshot_patch":'
+                '{"rows":[{"y":0,"rle":"..."}],"metadata":{"state":"NOT_FINISHED",'
+                f'"levels_completed":{known_levels + 1}'
+                "}},"
+                '"goal":true}],'
+                '"transitions":[{"from":"h0","action":{"id":1,"data":{}},"to":"g0"}],'
+                '"goal_state_ids":["g0"]}.'
             )
             messages = [
                 {
                     "role": "system",
                     "content": SYSTEM_COMMON
-                    + "\nYour output is interpreted only as a declarative finite-state model. "
-                    "It will be materialized and replayed before any planning is allowed.",
+                    + "\nYour output is interpreted only as a declarative finite-state model "
+                    "extension. It is merged onto the seeded history model, materialized, "
+                    "and replayed before any planning is allowed.",
                 },
                 {"role": "user", "content": _message_content(payload, vision_parts)},
             ]
@@ -247,8 +268,9 @@ class HarnessAgent:
                     metrics,
                     max_model_calls=self.config.max_model_calls_per_run,
                 ).value
+                merged = merge_world_model_extension(skeleton, value)
                 model = DeclarativeWorldModel.from_dict(
-                    value,
+                    merged,
                     catalog=catalog,
                     known_levels=known_levels,
                 )
@@ -257,7 +279,7 @@ class HarnessAgent:
                 feedback = {"reason": f"invalid world model: {exc}"}
                 journal.append("backtest_failed", feedback)
                 continue
-            result = backtest(model, history)
+            result = backtest(model, history, limit=context_limit)
             last_backtest = result
             journal.append("backtest", asdict(result))
             if not result.passed:
@@ -270,6 +292,33 @@ class HarnessAgent:
                 feedback = {"reason": "current observation is absent from world model"}
                 journal.append("backtest_failed", feedback)
                 continue
+            if not model.goal_state_ids():
+                metrics.backtest_failures += 1
+                feedback = {"reason": "world model has no goal state"}
+                journal.append("backtest_failed", feedback)
+                continue
+            invalid_goals = []
+            for goal_id in sorted(model.goal_state_ids()):
+                snap = model.states[goal_id].snapshot
+                advanced = int(snap.get("levels_completed", 0)) > known_levels
+                won = str(snap.get("state", "")) == "WIN"
+                if not (advanced or won):
+                    invalid_goals.append(goal_id)
+            if invalid_goals:
+                metrics.backtest_failures += 1
+                feedback = {
+                    "reason": (
+                        "goal states must increase levels_completed or be WIN; "
+                        f"invalid={invalid_goals}"
+                    )
+                }
+                journal.append("backtest_failed", feedback)
+                continue
+            if not list(model.outgoing(start.id)):
+                metrics.backtest_failures += 1
+                feedback = {"reason": "current state has no outgoing transitions"}
+                journal.append("backtest_failed", feedback)
+                continue
             steps = bfs_plan(
                 model,
                 start.id,
@@ -277,8 +326,35 @@ class HarnessAgent:
                 max_depth=self.config.max_plan_steps,
             )
             if steps is None:
-                return HarnessPlan(model, [], result, "no_plan")
+                metrics.backtest_failures += 1
+                feedback = {"reason": "no path from current state to a goal within max_plan_steps"}
+                journal.append("backtest_failed", feedback)
+                continue
             if not steps:
                 return HarnessPlan(model, [], result, "already_at_goal")
             return HarnessPlan(model, steps[: self.config.max_plan_steps], result, "planned")
         return HarnessPlan(None, [], last_backtest, "backtest_failed")
+
+
+class SchemaHarnessAgent:
+    """Schema-aligned harness: deliberation tools + program world model + commit_actions."""
+
+    name = "harness"
+
+    def __init__(self, client: ModelClient, config: ExperimentConfig) -> None:
+        self.client = client
+        self.config = config
+        self.workspace = None  # set by runner with run directory
+
+    def bind_workspace(self, workspace) -> None:
+        self.workspace = workspace
+
+
+def make_harness_agent(client: ModelClient, config: ExperimentConfig):
+    if config.harness_mode == "fsm":
+        return FsmHarnessAgent(client, config)
+    return SchemaHarnessAgent(client, config)
+
+
+# Backward-compatible name used by older tests that construct the FSM agent directly.
+HarnessAgent = FsmHarnessAgent

@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import struct
 import zlib
+from collections import Counter
 from typing import Any
 
 from arc_schema.core import Action, Observation, Transition, canonical_json
@@ -28,18 +29,29 @@ def next_explore_action(
     current: Observation,
     history: list[Transition],
 ) -> Action | None:
+    """Pick an explore action; prefer untried, else least-used at this fingerprint.
+
+    Avoids collapsing to available_actions[0] forever after the first full sweep
+    (which biased DeepSeek forced-explore toward action 1).
+    """
     candidates = untried_actions(current, history)
-    if not candidates:
-        for action_id in current.available_actions:
+    if candidates:
+        for action_id in candidates:
             if action_id != 6:
                 return Action(id=action_id)
-        if current.available_actions:
-            return Action(id=current.available_actions[0])
+        return Action(id=candidates[0])
+
+    pool = [action_id for action_id in current.available_actions if action_id != 6]
+    if not pool:
+        pool = list(current.available_actions)
+    if not pool:
         return None
-    for action_id in candidates:
-        if action_id != 6:
-            return Action(id=action_id)
-    return Action(id=candidates[0])
+
+    counts: Counter[int] = Counter()
+    for item in history:
+        if item.before.fingerprint == current.fingerprint and not item.action.data:
+            counts[item.action.id] += 1
+    return Action(id=min(pool, key=lambda action_id: (counts[action_id], action_id)))
 
 
 def _png_chunk(tag: bytes, data: bytes) -> bytes:

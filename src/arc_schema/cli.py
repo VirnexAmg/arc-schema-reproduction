@@ -135,11 +135,18 @@ def _vision_smoke(args: argparse.Namespace) -> int:
 
 
 def _estimate_call_bound(config: ExperimentConfig) -> tuple[int, int]:
-    # Baseline: up to one call per env action.
-    # Harness: explore has 0 calls; afterward up to harness_model_attempts per replan.
+    if config.harness_mode == "schema":
+        baseline_calls = config.runs * config.max_environment_actions
+        harness_calls = (
+            config.runs * config.deliberation_max_turns * max(config.max_environment_actions // 2, 1)
+        )
+        logical = baseline_calls + harness_calls
+        return logical, logical * (config.model.max_retries + 1)
     baseline_calls = config.runs * config.max_environment_actions
     harness_plan_slots = max(config.max_environment_actions - config.explore_steps, 0)
-    harness_calls = config.runs * harness_plan_slots * config.harness_model_attempts
+    burst = max(config.explore_burst, 1)
+    harness_replans = (harness_plan_slots + burst - 1) // burst
+    harness_calls = config.runs * harness_replans * config.harness_model_attempts
     logical = baseline_calls + harness_calls
     api_attempts = logical * (config.model.max_retries + 1)
     return logical, api_attempts
@@ -147,14 +154,31 @@ def _estimate_call_bound(config: ExperimentConfig) -> tuple[int, int]:
 
 def _real_ab(args: argparse.Namespace) -> int:
     config = _configured(args)
+    agents = tuple(
+        part.strip()
+        for part in str(getattr(args, "agents", "baseline,harness")).split(",")
+        if part.strip()
+    )
     logical_calls, api_attempts = _estimate_call_bound(config)
+    if agents == ("harness",):
+        logical_calls = config.runs * config.deliberation_max_turns * max(
+            config.max_environment_actions // 2, 1
+        )
+        api_attempts = logical_calls * (config.model.max_retries + 1)
+    elif agents == ("baseline",):
+        logical_calls = config.runs * config.max_environment_actions
+        api_attempts = logical_calls * (config.model.max_retries + 1)
     print(
         "成本风险上界：最多 "
         f"{logical_calls} 次逻辑模型调用、{api_attempts} 次含重试 API 尝试；"
         f"单局硬超时 {config.run_timeout_seconds}s；"
-        f"explore_steps={config.explore_steps}；"
-        f"thinking={config.model.thinking_mode}；"
-        "实际 token 与费用取决于视觉历史和供应商定价。"
+        f"harness_mode={config.harness_mode}；"
+        f"agents={','.join(agents)}；"
+        f"deliberation_max_turns={config.deliberation_max_turns}；"
+        f"max_spend_usd={config.max_spend_usd or 'unlimited'}；"
+        f"model={config.model.model}；"
+        f"reasoning_effort={config.model.reasoning_effort}；"
+        "实际 token 与费用取决于历史长度和供应商定价。"
     )
     if not args.confirm_api_cost_risk:
         raise SystemExit("未执行真实 API。确认范围后请显式添加 --confirm-api-cost-risk。")
@@ -164,6 +188,7 @@ def _real_ab(args: argparse.Namespace) -> int:
         config,
         environment_factory=factory.create,
         client_factory=lambda: DeepSeekClient(config.model),
+        agents=agents,
     )
     print(result)
     return 0
@@ -201,6 +226,11 @@ def main() -> int:
     real_parser = subparsers.add_parser("real-ab", help="run controlled ARC + DeepSeek A/B")
     _add_limits(real_parser)
     real_parser.add_argument("--confirm-api-cost-risk", action="store_true")
+    real_parser.add_argument(
+        "--agents",
+        default="baseline,harness",
+        help="comma-separated agents: baseline,harness (or either alone)",
+    )
     real_parser.set_defaults(handler=_real_ab)
 
     args = parser.parse_args()

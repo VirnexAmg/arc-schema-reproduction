@@ -48,8 +48,13 @@ class ArcEnvironmentAdapter:
     def step(self, action: Action) -> Observation:
         from arcengine import GameAction
 
-        if action.id not in self._current.available_actions:
-            raise ValueError(f"illegal action {action.id}; legal={self._current.available_actions}")
+        # RESET (id=0) is accepted by ARC even when omitted from available_actions,
+        # and is required after GAME_OVER / WIN / NOT_PLAYED.
+        legal = set(self._current.available_actions)
+        if action.id == 0 or self._current.state in {"GAME_OVER", "WIN", "NOT_PLAYED"}:
+            legal.add(0)
+        if action.id not in legal:
+            raise ValueError(f"illegal action {action.id}; legal={sorted(legal)}")
         raw = self._environment.step(GameAction.from_id(action.id), data=action.data)
         self._current = normalize_arc_observation(raw)
         return self._current

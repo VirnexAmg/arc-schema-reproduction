@@ -1,23 +1,47 @@
 from __future__ import annotations
 
+"""
+实验外环：驱动 agent 与真实环境交互，记录 journal / metrics。
+
+本模块是 harness 的「执行壳」，按 agent 类型分派三条路径：
+1. BaselineAgent：每步直接选动作并执行；
+2. FsmHarnessAgent：先探索，再声明式世界模型规划，预测不一致则短 burst 再探索；
+3. SchemaHarnessAgent：创建 Workspace，跑 DeliberationSession 内环，仅执行 commit 的动作，
+   并对 planned 步骤做 ensure_model_predictions 核对。
+
+公共约定：
+- _budget_ok 统一检查终局 / 环境动作上限 / 墙钟超时；
+- _apply_action 执行一步、记账、写 Timeline 与 journal；
+- run_agent 负责启动/收尾（scorecard、wall_clock、run_finished），异常记为 failed。
+"""
+
 import time
 from pathlib import Path
 
-from arc_schema.agents import BaselineAgent, HarnessAgent, choose_fallback_action
+from arc_schema.agents import (
+    BaselineAgent,
+    FsmHarnessAgent,
+    SchemaHarnessAgent,
+    choose_fallback_action,
+)
 from arc_schema.config import ExperimentConfig
+from arc_schema.context import next_explore_action
 from arc_schema.core import Action, RunMetrics, Transition, canonical_json
+from arc_schema.deliberation import DeliberationSession, ensure_model_predictions
 from arc_schema.environment import Environment
 from arc_schema.history import AppendOnlyJournal
+from arc_schema.workspace import Workspace
 
 
 def run_agent(
-    agent: BaselineAgent | HarnessAgent,
+    agent: BaselineAgent | FsmHarnessAgent | SchemaHarnessAgent,
     environment: Environment,
     config: ExperimentConfig,
     run_index: int,
     seed: int,
     journal_path: Path,
 ) -> RunMetrics:
+    """跑完一次实验：初始化 journal/metrics，分派 agent 循环，最后写 scorecard 与收尾。"""
     journal = AppendOnlyJournal(journal_path)
     metrics = RunMetrics(
         agent=agent.name,
@@ -40,8 +64,14 @@ def run_agent(
     try:
         if isinstance(agent, BaselineAgent):
             _run_baseline(agent, environment, config, history, journal, metrics, started)
+        elif isinstance(agent, SchemaHarnessAgent):
+            workspace = Workspace(journal_path.parent / f"workspace-harness-{run_index}")
+            agent.bind_workspace(workspace)
+            _run_schema_harness(
+                agent, environment, config, history, journal, metrics, started, workspace
+            )
         else:
-            _run_harness(agent, environment, config, history, journal, metrics, started)
+            _run_fsm_harness(agent, environment, config, history, journal, metrics, started)
         if metrics.status == "running":
             metrics.status = (
                 environment.current.state.lower()
@@ -78,8 +108,17 @@ def _budget_ok(
     config: ExperimentConfig,
     started: float,
 ) -> bool:
+    """是否还能继续与环境交互：未终局（或可自动 RESET）、未超动作上限、未超墙钟超时。"""
     if environment.current.terminal:
-        return False
+        # WIN ends the run; GAME_OVER may be cleared by auto-reset inside the loop.
+        if environment.current.state == "WIN":
+            return False
+        if environment.current.state == "GAME_OVER" and config.auto_reset_on_game_over:
+            if metrics.game_over_resets >= config.max_game_over_resets:
+                return False
+            # Still "ok" so the loop can issue RESET; action budget still applies after.
+        else:
+            return False
     if metrics.environment_actions >= config.max_environment_actions:
         return False
     if time.monotonic() - started >= config.run_timeout_seconds:
@@ -87,6 +126,68 @@ def _budget_ok(
         return False
     return True
 
+
+def _maybe_auto_reset(
+    environment: Environment,
+    config: ExperimentConfig,
+    history: list[Transition],
+    journal: AppendOnlyJournal,
+    metrics: RunMetrics,
+    workspace: Workspace | None = None,
+) -> bool:
+    """若处于 GAME_OVER 且允许自动续命，则执行 RESET(0)，保留 Timeline 与 workspace。
+
+    返回 True 表示刚完成一次 reset（调用方应 continue 外环）。
+    """
+    if not config.auto_reset_on_game_over:
+        return False
+    if environment.current.state != "GAME_OVER":
+        return False
+    if metrics.environment_actions >= config.max_environment_actions:
+        return False
+    if metrics.game_over_resets >= config.max_game_over_resets:
+        metrics.status = "game_over"
+        journal.append(
+            "reset_budget_exhausted",
+            {
+                "game_over_resets": metrics.game_over_resets,
+                "max_game_over_resets": config.max_game_over_resets,
+            },
+        )
+        return False
+
+    before = environment.current
+    action = Action(id=0)  # GameAction.RESET
+    after = environment.step(action)
+    metrics.environment_actions += 1
+    metrics.game_over_resets += 1
+    transition = Transition(before, action, after)
+    history.append(transition)
+    journal.append(
+        "life_reset",
+        {
+            "kind": "reset",
+            "reset_index": metrics.game_over_resets,
+            "levels_completed_before": before.levels_completed,
+            "state_after": after.state,
+            "levels_completed_after": after.levels_completed,
+            "note": "Timeline and workspace preserved; re-certify world model before planning",
+            **transition.to_dict(),
+        },
+    )
+    if workspace is not None:
+        workspace.certified = False
+        workspace.last_backtest = None
+        workspace.last_mismatch = {
+            "reason": "life_reset_after_game_over",
+            "reset_index": metrics.game_over_resets,
+            "message": (
+                "Episode died. Prior transitions remain in the Timeline. "
+                "Revise step()/is_goal if needed, then run_backtest on the FULL history "
+                "before planning again."
+            ),
+        }
+    return True
 
 def _apply_action(
     environment: Environment,
@@ -97,6 +198,7 @@ def _apply_action(
     *,
     kind: str,
 ) -> Transition:
+    """在真实环境执行一步，更新 metrics / history / journal，返回 Transition。"""
     before = environment.current
     after = environment.step(action)
     metrics.environment_actions += 1
@@ -119,7 +221,10 @@ def _run_baseline(
     metrics: RunMetrics,
     started: float,
 ) -> None:
+    """基线循环：每步由 agent 选动作并执行，直至预算耗尽。"""
     while _budget_ok(metrics, environment, config, started):
+        if _maybe_auto_reset(environment, config, history, journal, metrics):
+            continue
         before = environment.current
         fallback_before = metrics.fallback_actions
         action = agent.choose_action(before, history, journal, metrics)
@@ -128,12 +233,13 @@ def _run_baseline(
 
 
 def _explore_once(
-    agent: HarnessAgent,
+    agent: FsmHarnessAgent,
     environment: Environment,
     history: list[Transition],
     journal: AppendOnlyJournal,
     metrics: RunMetrics,
 ) -> bool:
+    """FSM harness 的一次探索步；无候选则 fallback。成功执行返回 True。"""
     action = agent.explore_action(environment.current, history)
     if action is None:
         action = choose_fallback_action(environment.current, history)
@@ -148,8 +254,8 @@ def _explore_once(
     return True
 
 
-def _run_harness(
-    agent: HarnessAgent,
+def _run_fsm_harness(
+    agent: FsmHarnessAgent,
     environment: Environment,
     config: ExperimentConfig,
     history: list[Transition],
@@ -157,10 +263,34 @@ def _run_harness(
     metrics: RunMetrics,
     started: float,
 ) -> None:
+    """声明式 FSM harness：强制探索 → 规划执行 → 预测不一致则 explore_burst。"""
+    burst_remaining = 0
     while _budget_ok(metrics, environment, config, started):
-        if metrics.exploration_actions < config.explore_steps:
+        if _maybe_auto_reset(environment, config, history, journal, metrics):
+            burst_remaining = max(config.explore_burst, 1)
+            continue
+        # 仍在初始探索配额内，或处于预测失败后的短 burst
+        if metrics.exploration_actions < config.explore_steps or burst_remaining > 0:
             if not _explore_once(agent, environment, history, journal, metrics):
                 metrics.status = "no_legal_action"
+                return
+            if burst_remaining > 0:
+                burst_remaining -= 1
+            continue
+
+        # 剩余时间不足世界模型预算时，跳过规划，改探索/fallback
+        remaining = config.run_timeout_seconds - (time.monotonic() - started)
+        if remaining < config.wm_time_reserve_seconds:
+            journal.append(
+                "wm_skipped",
+                {
+                    "reason": "insufficient_time_reserve",
+                    "remaining_seconds": remaining,
+                    "reserve_seconds": config.wm_time_reserve_seconds,
+                },
+            )
+            if not _explore_once(agent, environment, history, journal, metrics):
+                metrics.status = "timeout"
                 return
             continue
 
@@ -179,7 +309,8 @@ def _run_harness(
             },
         )
         if plan.reason != "planned" or plan.model is None:
-            # Retreat to one explore step instead of ending the episode.
+            # 未能规划：开一段探索 burst，再试
+            burst_remaining = max(config.explore_burst - 1, 0)
             if not _explore_once(agent, environment, history, journal, metrics):
                 metrics.status = plan.reason
                 return
@@ -226,10 +357,214 @@ def _run_harness(
                 {"predicted_state_id": step.predicted_state_id},
             )
         else:
-            # Entire short plan matched; continue with another plan next loop.
+            # for 正常走完（无 break）：继续外层 while，再规划
             continue
 
-        # Mismatch or illegal planned action: explore once, then replan.
+        # 规划中途 mismatch：再探索一段后重来
         if not matched_any or metrics.prediction_mismatches:
+            burst_remaining = max(config.explore_burst - 1, 0)
             if _budget_ok(metrics, environment, config, started):
                 _explore_once(agent, environment, history, journal, metrics)
+
+
+def _schema_explore_step(
+    environment: Environment,
+    history: list[Transition],
+    journal: AppendOnlyJournal,
+    metrics: RunMetrics,
+    *,
+    reason: str,
+) -> bool:
+    """强制执行一步探索（或 fallback）；成功返回 True。"""
+    action = next_explore_action(environment.current, history)
+    kind = "exploration"
+    if action is None:
+        action = choose_fallback_action(environment.current, history)
+        if action is None:
+            return False
+        metrics.fallback_actions += 1
+        kind = "fallback"
+        journal.append(
+            "fallback_action",
+            {
+                "reason": reason,
+                "action": {"id": action.id, "data": action.data},
+            },
+        )
+    else:
+        journal.append(
+            "forced_explore",
+            {
+                "reason": reason,
+                "action": {"id": action.id, "data": action.data},
+            },
+        )
+    _apply_action(environment, action, history, journal, metrics, kind="exploration")
+    del kind
+    return True
+
+
+def _run_schema_harness(
+    agent: SchemaHarnessAgent,
+    environment: Environment,
+    config: ExperimentConfig,
+    history: list[Transition],
+    journal: AppendOnlyJournal,
+    metrics: RunMetrics,
+    started: float,
+    workspace: Workspace,
+) -> None:
+    """程序世界模型 harness：外环调 deliberation，执行 commit，核对 planned 预测。"""
+    session = DeliberationSession(
+        agent.client,
+        workspace,
+        max_turns=config.deliberation_max_turns,
+        planner_max_nodes=config.planner_max_nodes,
+        max_plan_steps=config.max_plan_steps,
+        max_model_calls=config.max_model_calls_per_run,
+        max_spend_usd=config.max_spend_usd,
+    )
+    idle_theory_rounds = 0
+    while _budget_ok(metrics, environment, config, started):
+        if _maybe_auto_reset(
+            environment, config, history, journal, metrics, workspace=workspace
+        ):
+            idle_theory_rounds = 0
+            continue
+        if config.max_spend_usd > 0 and (metrics.usage.estimated_cost_usd or 0.0) >= config.max_spend_usd:
+            metrics.status = "spend_budget"
+            journal.append(
+                "spend_budget",
+                {
+                    "estimated_cost_usd": metrics.usage.estimated_cost_usd,
+                    "max_spend_usd": config.max_spend_usd,
+                },
+            )
+            return
+        remaining = config.run_timeout_seconds - (time.monotonic() - started)
+        if remaining < config.wm_time_reserve_seconds:
+            # 时间不够做内环：fallback 探索一步
+            journal.append(
+                "wm_skipped",
+                {
+                    "reason": "insufficient_time_reserve",
+                    "remaining_seconds": remaining,
+                    "reserve_seconds": config.wm_time_reserve_seconds,
+                },
+            )
+            if not _schema_explore_step(
+                environment, history, journal, metrics, reason="insufficient_time_reserve"
+            ):
+                metrics.status = "timeout"
+                return
+            continue
+
+        # Cold-start explore quota: gather Timeline evidence before long theorizing.
+        if metrics.environment_actions < config.explore_steps:
+            if not _schema_explore_step(
+                environment,
+                history,
+                journal,
+                metrics,
+                reason=f"cold_start_explore<{config.explore_steps}",
+            ):
+                metrics.status = "no_legal_action"
+                return
+            continue
+
+        # After several theory-only rounds, force an explore burst.
+        if idle_theory_rounds >= max(config.explore_burst, 1):
+            burst = max(config.explore_burst, 1)
+            journal.append(
+                "forced_explore_burst",
+                {"reason": "idle_theory_rounds", "burst": burst, "idle": idle_theory_rounds},
+            )
+            for _ in range(burst):
+                if not _budget_ok(metrics, environment, config, started):
+                    return
+                if not _schema_explore_step(
+                    environment,
+                    history,
+                    journal,
+                    metrics,
+                    reason="idle_theory_explore_burst",
+                ):
+                    metrics.status = "no_legal_action"
+                    return
+            idle_theory_rounds = 0
+            continue
+
+        result = session.run(environment.current, history, journal, metrics)
+        journal.append(
+            "deliberation_finished",
+            {
+                "reason": result.reason,
+                "has_commit": result.commit is not None,
+                "tools": [item.get("tool") for item in result.tool_trace],
+            },
+        )
+        if result.commit is None:
+            idle_theory_rounds += 1
+            # 内环无提交：fallback 一步，避免空转卡死
+            if not _schema_explore_step(
+                environment,
+                history,
+                journal,
+                metrics,
+                reason=f"no commit: {result.reason}",
+            ):
+                metrics.status = result.reason or "no_commit"
+                return
+            continue
+
+        commit = result.commit
+        model = workspace.model() if workspace.certified else None
+        acted = False
+        for index, action in enumerate(commit.actions):
+            if not _budget_ok(metrics, environment, config, started):
+                return
+            if action.id not in environment.current.available_actions:
+                metrics.prediction_mismatches += 1
+                journal.append(
+                    "prediction_mismatch",
+                    {"reason": "committed action no longer legal", "action_id": action.id},
+                )
+                break
+            before = environment.current
+            transition = _apply_action(
+                environment,
+                action,
+                history,
+                journal,
+                metrics,
+                kind=commit.kind if commit.kind == "planned" else "exploration",
+            )
+            acted = True
+            idle_theory_rounds = 0
+            # planned 且模型仍认证：逐步核对预测；失败则记 mismatch 并中断本批 commit
+            if commit.kind == "planned" and model is not None:
+                if not ensure_model_predictions(model, before, action, transition.after):
+                    metrics.prediction_mismatches += 1
+                    mismatch = {
+                        "reason": "predicted state differs from real observation",
+                        "action_id": action.id,
+                        "step_index": index,
+                        "delta": transition.delta().to_dict(),
+                        "predicted_levels": None,
+                        "actual_levels": transition.after.levels_completed,
+                    }
+                    try:
+                        predicted = model.predict(before, action)
+                        mismatch["predicted_levels"] = predicted.levels_completed
+                        mismatch["predicted_state"] = predicted.state
+                        mismatch["actual_state"] = transition.after.state
+                    except Exception as exc:
+                        mismatch["predict_error"] = f"{type(exc).__name__}: {exc}"
+                    workspace.record_mismatch(mismatch)
+                    journal.append("prediction_mismatch", mismatch)
+                    idle_theory_rounds += 1
+                    break
+                journal.append("prediction_matched", {"action_id": action.id, "step_index": index})
+                workspace.last_mismatch = None
+        if not acted:
+            idle_theory_rounds += 1

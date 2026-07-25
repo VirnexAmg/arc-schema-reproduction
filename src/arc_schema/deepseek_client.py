@@ -52,12 +52,37 @@ def _parse_json(text: str) -> dict[str, Any]:
     return value
 
 
-class DeepSeekClient:
+def _resolve_api_key(config: ModelConfig) -> str:
+    for name in (config.api_key_env, "OPENAI_API_KEY", "DEEPSEEK_API_KEY"):
+        value = os.environ.get(name, "").strip()
+        if value:
+            return value
+    raise ValueError(
+        "API key required: set OPENAI_API_KEY (for gpt-5.6-sol) or DEEPSEEK_API_KEY"
+    )
+
+
+def _is_openai_style(config: ModelConfig) -> bool:
+    model = config.model.lower()
+    base = config.base_url.lower()
+    return (
+        "openai.com" in base
+        or model.startswith("gpt-")
+        or "sol" in model
+        or "terra" in model
+        or "luna" in model
+    )
+
+
+class OpenAICompatClient:
+    """OpenAI-compatible JSON client for DeepSeek and OpenAI (incl. gpt-5.6-sol)."""
+
     def __init__(self, config: ModelConfig) -> None:
         config.validate_real()
         self.config = config
+        self._openai_style = _is_openai_style(config)
         self._client = OpenAI(
-            api_key=os.environ["DEEPSEEK_API_KEY"],
+            api_key=_resolve_api_key(config),
             base_url=config.base_url,
             timeout=config.timeout_seconds,
             max_retries=0,
@@ -72,47 +97,12 @@ class DeepSeekClient:
         max_tokens = self.config.max_tokens_for(purpose)
         for attempt in range(1, self.config.max_retries + 2):
             try:
-                kwargs: dict[str, Any] = {}
-                if self.config.seed is not None:
-                    kwargs["seed"] = self.config.seed
-                if self.config.thinking_mode == "enabled":
-                    kwargs["reasoning_effort"] = self.config.reasoning_effort
-                response = self._client.chat.completions.create(
-                    model=self.config.model,
-                    messages=messages,  # type: ignore[arg-type]
-                    temperature=self.config.temperature,
-                    max_tokens=max_tokens,
-                    response_format={"type": "json_object"},
-                    extra_body={"thinking": {"type": self.config.thinking_mode}},
-                    **kwargs,
-                )
+                kwargs = self._build_request_kwargs(messages, max_tokens)
+                response = self._client.chat.completions.create(**kwargs)
                 text = response.choices[0].message.content or ""
                 last_text = text
                 last_finish_reason = response.choices[0].finish_reason
-                prompt_tokens = int(response.usage.prompt_tokens if response.usage else 0)
-                completion_tokens = int(response.usage.completion_tokens if response.usage else 0)
-                completion_details = (
-                    response.usage.completion_tokens_details if response.usage else None
-                )
-                prompt_details = response.usage.prompt_tokens_details if response.usage else None
-                reasoning_tokens = int(
-                    (completion_details.reasoning_tokens if completion_details else 0) or 0
-                )
-                cached_prompt_tokens = int(
-                    (prompt_details.cached_tokens if prompt_details else 0) or 0
-                )
-                usage = Usage(
-                    prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens,
-                    reasoning_tokens=reasoning_tokens,
-                    cached_prompt_tokens=cached_prompt_tokens,
-                    total_tokens=int(response.usage.total_tokens if response.usage else 0),
-                    estimated_cost_usd=self._estimate_cost(
-                        prompt_tokens,
-                        cached_prompt_tokens,
-                        completion_tokens,
-                    ),
-                )
+                usage = self._usage_from_response(response)
                 accumulated_usage.add(usage)
                 return ModelResponse(
                     value=_parse_json(text),
@@ -121,7 +111,7 @@ class DeepSeekClient:
                     latency_seconds=time.monotonic() - started,
                     attempts=attempt,
                 )
-            except Exception as exc:  # SDK/network/JSON errors use one shared policy
+            except Exception as exc:
                 last_error = exc
                 if attempt <= self.config.max_retries:
                     time.sleep(min(2 ** (attempt - 1), 8))
@@ -134,6 +124,58 @@ class DeepSeekClient:
             raw_text=last_text,
             finish_reason=last_finish_reason,
         ) from last_error
+
+    def _build_request_kwargs(
+        self,
+        messages: list[dict[str, Any]],
+        max_tokens: int,
+    ) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {
+            "model": self.config.model,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+        }
+        if self.config.seed is not None and not self._openai_style:
+            kwargs["seed"] = self.config.seed
+
+        if self._openai_style:
+            # GPT-5.x chat completions prefer max_completion_tokens.
+            kwargs["max_completion_tokens"] = max_tokens
+            effort = self.config.reasoning_effort
+            if effort and effort not in {"disabled", "none"}:
+                kwargs["reasoning_effort"] = effort
+            # Many reasoning models reject custom temperature.
+        else:
+            kwargs["temperature"] = self.config.temperature
+            kwargs["max_tokens"] = max_tokens
+            kwargs["extra_body"] = {"thinking": {"type": self.config.thinking_mode}}
+            if self.config.thinking_mode == "enabled":
+                kwargs["reasoning_effort"] = self.config.reasoning_effort
+        return kwargs
+
+    def _usage_from_response(self, response: Any) -> Usage:
+        prompt_tokens = int(response.usage.prompt_tokens if response.usage else 0)
+        completion_tokens = int(response.usage.completion_tokens if response.usage else 0)
+        completion_details = (
+            response.usage.completion_tokens_details if response.usage else None
+        )
+        prompt_details = response.usage.prompt_tokens_details if response.usage else None
+        reasoning_tokens = int(
+            (completion_details.reasoning_tokens if completion_details else 0) or 0
+        )
+        cached_prompt_tokens = int((prompt_details.cached_tokens if prompt_details else 0) or 0)
+        return Usage(
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            reasoning_tokens=reasoning_tokens,
+            cached_prompt_tokens=cached_prompt_tokens,
+            total_tokens=int(response.usage.total_tokens if response.usage else 0),
+            estimated_cost_usd=self._estimate_cost(
+                prompt_tokens,
+                cached_prompt_tokens,
+                completion_tokens,
+            ),
+        )
 
     def _estimate_cost(
         self,
@@ -153,3 +195,7 @@ class DeepSeekClient:
                 cached_input_rate if cached_input_rate is not None else input_rate
             )
         return (input_cost + completion_tokens * output_rate) / 1_000_000
+
+
+# Backward-compatible alias used by older imports/tests.
+DeepSeekClient = OpenAICompatClient

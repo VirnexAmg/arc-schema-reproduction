@@ -281,6 +281,7 @@ class RunMetrics:
     model_failures: int = 0
     backtest_failures: int = 0
     prediction_mismatches: int = 0
+    game_over_resets: int = 0
     usage: Usage = field(default_factory=Usage)
     wall_clock_seconds: float = 0.0
     error: str | None = None
