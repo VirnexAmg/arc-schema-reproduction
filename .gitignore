@@ -16,4 +16,7 @@ env/
 /runs/
 /test-runs/
 /pilot-runs/
-/experiment-runs/
+# experiment-runs/ 已纳入版本库，便于复盘 Sol/DeepSeek 历史实验
+# 大体积本地打包勿提交
+*.tar
+arc-schema-reproduction.tar

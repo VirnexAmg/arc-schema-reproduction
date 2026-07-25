@@ -1,0 +1,254 @@
+{
+  "experiment_id": "20260721T153600.641677Z",
+  "created_at": "2026-07-21T15:36:00.643005+00:00",
+  "config": {
+    "game_id": "ls20",
+    "runs": 1,
+    "max_environment_actions": 50,
+    "seeds": [
+      0
+    ],
+    "output_dir": "experiment-runs",
+    "arc_operation_mode": "offline",
+    "render_mode": null,
+    "planner_max_nodes": 1000,
+    "harness_model_attempts": 2,
+    "explore_steps": 6,
+    "max_plan_steps": 3,
+    "run_timeout_seconds": 600.0,
+    "max_model_calls_per_run": 80,
+    "model": {
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-v4-pro",
+      "thinking_mode": "disabled",
+      "reasoning_effort": "high",
+      "temperature": 0.0,
+      "timeout_seconds": 60.0,
+      "max_retries": 1,
+      "seed": 0,
+      "max_output_tokens": 4096,
+      "baseline_max_output_tokens": 512,
+      "world_model_max_output_tokens": 4096,
+      "context_transitions": 12,
+      "vision_enabled": false,
+      "input_cost_per_million": 0.15,
+      "cached_input_cost_per_million": 0.075,
+      "output_cost_per_million": 1.5
+    }
+  },
+  "results": [
+    {
+      "agent": "baseline",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "action_budget_exhausted",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 50,
+      "exploration_actions": 0,
+      "planned_actions": 0,
+      "fallback_actions": 0,
+      "model_calls": 50,
+      "model_api_attempts": 50,
+      "model_failures": 0,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 393390,
+        "completion_tokens": 1050,
+        "reasoning_tokens": 0,
+        "cached_prompt_tokens": 18176,
+        "total_tokens": 394440,
+        "estimated_cost_usd": 0.0592203
+      },
+      "wall_clock_seconds": 92.5,
+      "error": null,
+      "paired_valid": false,
+      "paired_invalid_reason": "harness_timeout"
+    },
+    {
+      "agent": "harness",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "timeout",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 17,
+      "exploration_actions": 17,
+      "planned_actions": 0,
+      "fallback_actions": 0,
+      "model_calls": 20,
+      "model_api_attempts": 29,
+      "model_failures": 6,
+      "backtest_failures": 18,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 230834,
+        "completion_tokens": 74540,
+        "reasoning_tokens": 0,
+        "cached_prompt_tokens": 151808,
+        "total_tokens": 305374,
+        "estimated_cost_usd": 0.1350495
+      },
+      "wall_clock_seconds": 646.75,
+      "error": null,
+      "paired_valid": false,
+      "paired_invalid_reason": "harness_timeout"
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 50.0,
+        "stdev": 0.0
+      },
+      "exploration_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "planned_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "fallback_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 50.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 394440.0,
+        "stdev": 0.0
+      },
+      "reasoning_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "cached_prompt_tokens": {
+        "mean": 18176.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 92.5,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": {
+        "mean": 0.0592203,
+        "stdev": 0.0
+      }
+    },
+    "harness": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 17.0,
+        "stdev": 0.0
+      },
+      "exploration_actions": {
+        "mean": 17.0,
+        "stdev": 0.0
+      },
+      "planned_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "fallback_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 20.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 305374.0,
+        "stdev": 0.0
+      },
+      "reasoning_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "cached_prompt_tokens": {
+        "mean": 151808.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 646.75,
+        "stdev": 0.0
+      },
+      "backtest_failures": 18,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": {
+        "mean": 0.1350495,
+        "stdev": 0.0
+      }
+    },
+    "comparison": {
+      "paired_runs": 1,
+      "paired_valid_runs": 0,
+      "paired_invalid_reasons": [
+        "harness_timeout"
+      ],
+      "harness_minus_baseline": {
+        "score": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "levels_completed": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "environment_actions": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "model_calls": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "wall_clock_seconds": {
+          "mean": 0.0,
+          "stdev": 0.0
+        }
+      },
+      "completion_rate_difference": null,
+      "ability_sample_note": "only paired_valid runs contribute to ability deltas; invalid pairs are infrastructure/gate failures, not 0% ability samples"
+    }
+  },
+  "gate": {
+    "phase": 1,
+    "target": "any agent levels_completed >= 1",
+    "achieved": false,
+    "classification": "infrastructure_timeout"
+  }
+}

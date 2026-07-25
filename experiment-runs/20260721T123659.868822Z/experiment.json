@@ -1,0 +1,183 @@
+{
+  "experiment_id": "20260721T123659.868822Z",
+  "created_at": "2026-07-21T12:36:59.868822+00:00",
+  "config": {
+    "game_id": "ls20",
+    "runs": 1,
+    "max_environment_actions": 30,
+    "seeds": [
+      0
+    ],
+    "output_dir": "experiment-runs",
+    "arc_operation_mode": "offline",
+    "render_mode": null,
+    "planner_max_nodes": 1000,
+    "harness_model_attempts": 2,
+    "model": {
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-v4-pro",
+      "thinking_mode": "enabled",
+      "reasoning_effort": "high",
+      "temperature": 0.0,
+      "timeout_seconds": 120.0,
+      "max_retries": 1,
+      "seed": 0,
+      "max_output_tokens": 16384,
+      "context_transitions": 30,
+      "input_cost_per_million": 0.435,
+      "cached_input_cost_per_million": 0.003625,
+      "output_cost_per_million": 0.87
+    }
+  },
+  "results": [
+    {
+      "agent": "baseline",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "failed",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 3,
+      "model_calls": 4,
+      "model_api_attempts": 6,
+      "model_failures": 1,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 18185,
+        "completion_tokens": 51685,
+        "reasoning_tokens": 51643,
+        "cached_prompt_tokens": 7424,
+        "total_tokens": 69870,
+        "estimated_cost_usd": 0.04967389700000001
+      },
+      "wall_clock_seconds": 1104.9680000000008,
+      "error": "ModelRequestError: model request failed after 2 attempts: APITimeoutError: Request timed out."
+    },
+    {
+      "agent": "harness",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "failed",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 0,
+      "model_calls": 1,
+      "model_api_attempts": 2,
+      "model_failures": 1,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "reasoning_tokens": 0,
+        "cached_prompt_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": null
+      },
+      "wall_clock_seconds": 3188.6410000000033,
+      "error": "ModelRequestError: model request failed after 2 attempts: APIConnectionError: Connection error."
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 3.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 4.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 69870.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 1104.9680000000008,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 1,
+      "estimated_cost_usd": {
+        "mean": 0.04967389700000001,
+        "stdev": 0.0
+      }
+    },
+    "harness": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 1.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 3188.6410000000033,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 1,
+      "estimated_cost_usd": null
+    },
+    "comparison": {
+      "paired_runs": 1,
+      "harness_minus_baseline": {
+        "score": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "levels_completed": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "environment_actions": {
+          "mean": -3.0,
+          "stdev": 0.0
+        },
+        "model_calls": {
+          "mean": -3.0,
+          "stdev": 0.0
+        },
+        "wall_clock_seconds": {
+          "mean": 2083.6730000000025,
+          "stdev": 0.0
+        }
+      },
+      "completion_rate_difference": 0.0
+    }
+  }
+}

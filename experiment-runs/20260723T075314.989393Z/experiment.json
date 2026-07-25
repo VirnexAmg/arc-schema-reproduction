@@ -1,0 +1,220 @@
+{
+  "experiment_id": "20260723T075314.989393Z",
+  "created_at": "2026-07-23T07:53:15.457345+00:00",
+  "config": {
+    "game_id": "ls20",
+    "runs": 1,
+    "max_environment_actions": 220,
+    "seeds": [
+      0
+    ],
+    "output_dir": "experiment-runs",
+    "arc_operation_mode": "offline",
+    "render_mode": null,
+    "planner_max_nodes": 8000,
+    "harness_model_attempts": 2,
+    "explore_steps": 8,
+    "max_plan_steps": 20,
+    "explore_burst": 3,
+    "wm_time_reserve_seconds": 240.0,
+    "run_timeout_seconds": 9000.0,
+    "max_model_calls_per_run": 800,
+    "harness_mode": "schema",
+    "deliberation_max_turns": 24,
+    "max_spend_usd": 0.0,
+    "auto_reset_on_game_over": true,
+    "max_game_over_resets": 10,
+    "model": {
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-v4-pro",
+      "thinking_mode": "enabled",
+      "reasoning_effort": "high",
+      "temperature": 0.0,
+      "timeout_seconds": 180.0,
+      "max_retries": 1,
+      "seed": 0,
+      "max_output_tokens": 16384,
+      "baseline_max_output_tokens": 2048,
+      "world_model_max_output_tokens": 16384,
+      "context_transitions": 16,
+      "vision_enabled": false,
+      "api_key_env": "DEEPSEEK_API_KEY",
+      "input_cost_per_million": 0.15,
+      "cached_input_cost_per_million": 0.075,
+      "output_cost_per_million": 1.5
+    }
+  },
+  "results": [
+    {
+      "agent": "baseline",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "timeout",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 171,
+      "exploration_actions": 0,
+      "planned_actions": 0,
+      "fallback_actions": 148,
+      "model_calls": 171,
+      "model_api_attempts": 329,
+      "model_failures": 148,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "game_over_resets": 0,
+      "usage": {
+        "prompt_tokens": 2802313,
+        "completion_tokens": 646427,
+        "reasoning_tokens": 646103,
+        "cached_prompt_tokens": 1386112,
+        "total_tokens": 3448740,
+        "estimated_cost_usd": 1.2860290499999998
+      },
+      "wall_clock_seconds": 9012.632753836922,
+      "error": null,
+      "paired_valid": null,
+      "paired_invalid_reason": null
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 171.0,
+        "stdev": 0.0
+      },
+      "exploration_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "planned_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "fallback_actions": {
+        "mean": 148.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 171.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 3448740.0,
+        "stdev": 0.0
+      },
+      "reasoning_tokens": {
+        "mean": 646103.0,
+        "stdev": 0.0
+      },
+      "cached_prompt_tokens": {
+        "mean": 1386112.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 9012.632753836922,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": {
+        "mean": 1.2860290499999998,
+        "stdev": 0.0
+      }
+    },
+    "harness": {
+      "runs": 0,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "exploration_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "planned_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "fallback_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "reasoning_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "cached_prompt_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": null
+    },
+    "comparison": {
+      "paired_runs": 0,
+      "paired_valid_runs": 0,
+      "paired_invalid_reasons": [],
+      "harness_minus_baseline": {
+        "score": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "levels_completed": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "environment_actions": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "model_calls": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "wall_clock_seconds": {
+          "mean": 0.0,
+          "stdev": 0.0
+        }
+      },
+      "completion_rate_difference": null,
+      "ability_sample_note": "only paired_valid runs contribute to ability deltas; invalid pairs are infrastructure/gate failures, not 0% ability samples"
+    }
+  }
+}
