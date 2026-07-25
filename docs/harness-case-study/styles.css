@@ -496,9 +496,9 @@ section > h2 {
 }
 
 .shot-clear {
-  /* 面积约为原先 18rem 宽的 1/4 → 线宽减半 */
-  max-width: 9rem;
-  width: 9rem;
+  /* 相对上一版 9rem 边长放大约 1.5 倍 */
+  max-width: 13.5rem;
+  width: 13.5rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -516,8 +516,8 @@ section > h2 {
   .shot-row { grid-template-columns: 1fr; }
   .shot-hero { max-width: none; }
   .shot-clear {
-    max-width: min(9rem, 42vw);
-    width: min(9rem, 42vw);
+    max-width: min(13.5rem, 58vw);
+    width: min(13.5rem, 58vw);
   }
 }
 
