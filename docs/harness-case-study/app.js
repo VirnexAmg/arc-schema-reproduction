@@ -193,7 +193,7 @@ function renderVisionSection(data) {
         <ul>${v.not_only_reason.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
       </div>
 
-      ${renderFigure(figureById(figures, "l1-clear"))}
+      ${renderFigure(figureById(figures, "l1-clear"), "shot-clear")}
     </section>`;
 }
 
