@@ -1,0 +1,246 @@
+{
+  "experiment_id": "20260722T085445.477455Z",
+  "created_at": "2026-07-22T08:54:45.477555+00:00",
+  "config": {
+    "game_id": "ls20",
+    "runs": 1,
+    "max_environment_actions": 12,
+    "seeds": [
+      0
+    ],
+    "output_dir": "pilot-runs",
+    "arc_operation_mode": "offline",
+    "render_mode": null,
+    "planner_max_nodes": 5000,
+    "harness_model_attempts": 2,
+    "explore_steps": 8,
+    "max_plan_steps": 16,
+    "explore_burst": 3,
+    "wm_time_reserve_seconds": 180.0,
+    "run_timeout_seconds": 1800.0,
+    "max_model_calls_per_run": 120,
+    "harness_mode": "schema",
+    "deliberation_max_turns": 16,
+    "max_spend_usd": 55.0,
+    "model": {
+      "base_url": "https://api.openai.com/v1",
+      "model": "gpt-5.6-sol",
+      "thinking_mode": "disabled",
+      "reasoning_effort": "medium",
+      "temperature": 0.0,
+      "timeout_seconds": 180.0,
+      "max_retries": 1,
+      "seed": null,
+      "max_output_tokens": 8192,
+      "baseline_max_output_tokens": 1024,
+      "world_model_max_output_tokens": 8192,
+      "context_transitions": 16,
+      "vision_enabled": false,
+      "api_key_env": "OPENAI_API_KEY",
+      "input_cost_per_million": 5.0,
+      "cached_input_cost_per_million": 0.5,
+      "output_cost_per_million": 30.0
+    }
+  },
+  "results": [
+    {
+      "agent": "baseline",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "action_budget_exhausted",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 12,
+      "exploration_actions": 0,
+      "planned_actions": 0,
+      "fallback_actions": 12,
+      "model_calls": 12,
+      "model_api_attempts": 24,
+      "model_failures": 12,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "reasoning_tokens": 0,
+        "cached_prompt_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": null
+      },
+      "wall_clock_seconds": 1713.305592622608,
+      "error": null,
+      "paired_valid": true,
+      "paired_invalid_reason": null
+    },
+    {
+      "agent": "harness",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "action_budget_exhausted",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 12,
+      "exploration_actions": 12,
+      "planned_actions": 0,
+      "fallback_actions": 12,
+      "model_calls": 12,
+      "model_api_attempts": 24,
+      "model_failures": 12,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "reasoning_tokens": 0,
+        "cached_prompt_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": null
+      },
+      "wall_clock_seconds": 16.106306892819703,
+      "error": null,
+      "paired_valid": true,
+      "paired_invalid_reason": null
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "exploration_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "planned_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "fallback_actions": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "reasoning_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "cached_prompt_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 1713.305592622608,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": null
+    },
+    "harness": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "exploration_actions": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "planned_actions": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "fallback_actions": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 12.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "reasoning_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "cached_prompt_tokens": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 16.106306892819703,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": null
+    },
+    "comparison": {
+      "paired_runs": 1,
+      "paired_valid_runs": 1,
+      "paired_invalid_reasons": [],
+      "harness_minus_baseline": {
+        "score": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "levels_completed": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "environment_actions": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "model_calls": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "wall_clock_seconds": {
+          "mean": -1697.1992857297882,
+          "stdev": 0.0
+        }
+      },
+      "completion_rate_difference": 0.0,
+      "ability_sample_note": "only paired_valid runs contribute to ability deltas; invalid pairs are infrastructure/gate failures, not 0% ability samples"
+    }
+  }
+}

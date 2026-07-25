@@ -1,0 +1,175 @@
+{
+  "experiment_id": "20260721T121712.756967Z",
+  "created_at": "2026-07-21T12:17:12.756967+00:00",
+  "config": {
+    "game_id": "ls20",
+    "runs": 1,
+    "max_environment_actions": 1,
+    "seeds": [
+      0
+    ],
+    "output_dir": "pilot-runs",
+    "arc_operation_mode": "offline",
+    "render_mode": null,
+    "planner_max_nodes": 1000,
+    "harness_model_attempts": 1,
+    "model": {
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-v4-pro",
+      "thinking_mode": "disabled",
+      "reasoning_effort": "high",
+      "temperature": 0.0,
+      "timeout_seconds": 60.0,
+      "max_retries": 0,
+      "seed": 0,
+      "max_output_tokens": 2048,
+      "context_transitions": 20,
+      "input_cost_per_million": null,
+      "output_cost_per_million": null
+    }
+  },
+  "results": [
+    {
+      "agent": "baseline",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "action_budget_exhausted",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 1,
+      "model_calls": 1,
+      "model_api_attempts": 1,
+      "model_failures": 0,
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "usage": {
+        "prompt_tokens": 1486,
+        "completion_tokens": 21,
+        "total_tokens": 1507,
+        "estimated_cost_usd": null
+      },
+      "wall_clock_seconds": 2.3289999999979045,
+      "error": null
+    },
+    {
+      "agent": "harness",
+      "game_id": "ls20",
+      "run_index": 0,
+      "seed": 0,
+      "status": "action_budget_exhausted",
+      "score": 0.0,
+      "levels_completed": 0,
+      "win_levels": 7,
+      "completed": false,
+      "environment_actions": 1,
+      "model_calls": 1,
+      "model_api_attempts": 1,
+      "model_failures": 0,
+      "backtest_failures": 0,
+      "prediction_mismatches": 1,
+      "usage": {
+        "prompt_tokens": 1753,
+        "completion_tokens": 1641,
+        "total_tokens": 3394,
+        "estimated_cost_usd": null
+      },
+      "wall_clock_seconds": 14.14100000000326,
+      "error": null
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 1.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 1.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 1507.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 2.3289999999979045,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 0,
+      "failures": 0,
+      "estimated_cost_usd": null
+    },
+    "harness": {
+      "runs": 1,
+      "completion_rate": 0.0,
+      "score": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "levels_completed": {
+        "mean": 0.0,
+        "stdev": 0.0
+      },
+      "environment_actions": {
+        "mean": 1.0,
+        "stdev": 0.0
+      },
+      "model_calls": {
+        "mean": 1.0,
+        "stdev": 0.0
+      },
+      "total_tokens": {
+        "mean": 3394.0,
+        "stdev": 0.0
+      },
+      "wall_clock_seconds": {
+        "mean": 14.14100000000326,
+        "stdev": 0.0
+      },
+      "backtest_failures": 0,
+      "prediction_mismatches": 1,
+      "failures": 0,
+      "estimated_cost_usd": null
+    },
+    "comparison": {
+      "paired_runs": 1,
+      "harness_minus_baseline": {
+        "score": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "levels_completed": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "environment_actions": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "model_calls": {
+          "mean": 0.0,
+          "stdev": 0.0
+        },
+        "wall_clock_seconds": {
+          "mean": 11.812000000005355,
+          "stdev": 0.0
+        }
+      },
+      "completion_rate_difference": 0.0
+    }
+  }
+}
