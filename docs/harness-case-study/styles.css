@@ -496,9 +496,9 @@ section > h2 {
 }
 
 .shot-clear {
-  /* 相对上一版 9rem 边长放大约 1.5 倍 */
-  max-width: 13.5rem;
-  width: 13.5rem;
+  /* 相对曾过小的 9rem 版约 2.4 倍边长，一眼能看出变大 */
+  max-width: 22rem;
+  width: 22rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -516,8 +516,8 @@ section > h2 {
   .shot-row { grid-template-columns: 1fr; }
   .shot-hero { max-width: none; }
   .shot-clear {
-    max-width: min(13.5rem, 58vw);
-    width: min(13.5rem, 58vw);
+    max-width: min(22rem, 78vw);
+    width: min(22rem, 78vw);
   }
 }
 
