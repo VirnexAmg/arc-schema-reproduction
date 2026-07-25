@@ -392,8 +392,8 @@ function render(data) {
   document.getElementById("app").innerHTML = `
     <div class="draft-banner">
       <div class="wrap">
-        <span>当前为排版优化版 · 证据内容不变</span>
-        <a href="https://github.com/VirnexAmg/arc-schema-reproduction/tree/main/docs/harness-case-study-v1-draft" target="_blank" rel="noopener">查看暂定版源码（v1-draft）</a>
+        <span>最终版 · 证据内容只读自 experiment-runs</span>
+        <a href="https://github.com/VirnexAmg/arc-schema-reproduction/tree/main/docs/harness-case-study-v1-draft" target="_blank" rel="noopener">旧版排版备份（v1-draft）</a>
       </div>
     </div>
     <header class="site-header">
@@ -458,8 +458,8 @@ function render(data) {
 
     <footer class="site-footer">
       <div class="wrap">
-        <span>数据只读自 <code>experiment-runs/</code>；本页为排版优化版，证据与旧版一致。</span>
-        <span>暂定版备份：<code>docs/harness-case-study-v1-draft/</code> · 本地预览：<code>python3 -m http.server 8765</code></span>
+        <span>数据只读自 <code>experiment-runs/</code>；本页为最终版。</span>
+        <span>旧版备份：<code>docs/harness-case-study-v1-draft/</code> · 本地预览：<code>python3 -m http.server 8765</code></span>
       </div>
     </footer>
   `;
