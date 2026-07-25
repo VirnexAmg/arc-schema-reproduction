@@ -15,8 +15,7 @@ env/
 # 机器生成的实验结果（按需单独归档）
 /runs/
 /test-runs/
-/pilot-runs/
-# experiment-runs/ 已纳入版本库，便于复盘 Sol/DeepSeek 历史实验
+# experiment-runs/、pilot-runs/ 已纳入版本库，便于复盘历史实验
 # 大体积本地打包勿提交
 *.tar
 arc-schema-reproduction.tar
