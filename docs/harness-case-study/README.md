@@ -4,6 +4,21 @@
 
 ## 打开方式
 
+### 公开链接（GitHub Pages）
+
+启用 Pages 后（见下方「首次启用」）：
+
+- 案例页：https://virnexamg.github.io/arc-schema-reproduction/
+- 若改为 Deploy from branch + `/docs`：https://virnexamg.github.io/arc-schema-reproduction/harness-case-study/
+
+**首次启用（只需一次）**：打开
+https://github.com/VirnexAmg/arc-schema-reproduction/settings/pages
+→ Build and deployment → Source 选 **GitHub Actions** → Save。
+然后到 Actions 里手动 Run workflow「Deploy harness case study to GitHub Pages」，或再 push 一次本目录。
+
+## 本地打开方式
+
+
 ```bash
 cd /home/chenhongyi/arc-schema-reproduction/docs/harness-case-study
 python3 -m http.server 8765
