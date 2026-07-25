@@ -77,8 +77,7 @@ function renderColorSection(legend) {
     .join("");
 
   return `
-    <section id="colors">
-      <p class="section-kicker">附录视觉</p>
+    <section>
       <h2>颜色编号是什么意思？</h2>
       <p class="section-lead">${esc(legend.intro)}</p>
       <h3 class="subhead">调色板（编号 → 外观）</h3>
@@ -162,8 +161,7 @@ function renderVisionSection(data) {
   if (!v) return "";
   const figures = data.figures || [];
   return `
-    <section id="vision">
-      <p class="section-kicker">观测方式</p>
+    <section>
       <h2>${esc(v.title)}</h2>
       <p class="section-lead"><strong>${esc(v.short_answer)}</strong> ${esc(v.one_liner)}</p>
 
@@ -232,8 +230,7 @@ function renderPhase(data, key) {
   const figures = data.figures || [];
 
   return `
-    <section id="compare">
-      <p class="section-kicker">核心对照</p>
+    <section>
       <h2>真实机制，和模型实际写下的理解</h2>
       <p class="section-lead">${esc(
         data.model_theory_source_note ||
@@ -274,8 +271,7 @@ function renderPhase(data, key) {
 
     ${renderColorSection(data.color_legend)}
 
-    <section id="timeline">
-      <p class="section-kicker">迭代轨迹</p>
+    <section>
       <h2>假设是怎么一步步改过来的</h2>
       <p class="section-lead">
         实验编号 ${esc(p.run_id)}，模型 ${esc(p.model)}。
@@ -287,8 +283,7 @@ function renderPhase(data, key) {
       <div class="timeline">${renderTimeline(p.hypothesis_rounds)}</div>
     </section>
 
-    <section id="evidence" class="evidence">
-      <p class="section-kicker">原始材料</p>
+    <section class="evidence">
       <h2>可核对的原始证据</h2>
       <p class="section-lead">都能追溯到日志行号或 workspace 文件。原始 experiment-runs 没有改动。</p>
 
@@ -390,57 +385,36 @@ function render(data) {
   const conclusion = conclusionOf(data);
 
   document.getElementById("app").innerHTML = `
-    <div class="draft-banner">
-      <div class="wrap">
-        <span>当前为排版优化版 · 证据内容不变</span>
-        <a href="https://github.com/VirnexAmg/arc-schema-reproduction/tree/main/docs/harness-case-study-v1-draft" target="_blank" rel="noopener">查看暂定版源码（v1-draft）</a>
-      </div>
-    </div>
     <header class="site-header">
       <div class="wrap">
-        <div>
-          <p class="eyebrow">Schema-like harness · ls20 案例拆解</p>
-          <h1>${esc(data.title)}</h1>
-          <p class="lede">
-            这不是「谁过关更快」的对比页。我们想看清一件事：
-            harness 有没有引导模型形成并保存正确机制——
-            「十字表示把左下角 3×3 顺时针转 90°；转完与目标一致后，再走到对应位置通关」。
-            notes.md 几乎是空的，所以主要依据终态 <code>world_model.py</code> 的注释和逻辑。
-          </p>
-          <div class="phase-switch" role="tablist" aria-label="选择实验阶段">
-            <button type="button" data-phase="phase2" aria-pressed="${active === "phase2" ? "true" : "false"}">Phase2 · 看 world_model</button>
-            <button type="button" data-phase="phase1" aria-pressed="${active === "phase1" ? "true" : "false"}">Phase1 · 更短的故事</button>
-          </div>
+        <p class="eyebrow">Schema-like harness · ls20 案例拆解</p>
+        <h1>${esc(data.title)}</h1>
+        <p class="lede">
+          这不是「谁过关更快」的对比页。我们想看清一件事：
+          harness 有没有引导模型形成并保存正确机制——
+          「十字表示把左下角 3×3 顺时针转 90°；转完与目标一致后，再走到对应位置通关」。
+          notes.md 几乎是空的，所以主要依据终态 <code>world_model.py</code> 的注释和逻辑。
+        </p>
+        <div class="verdict ${esc(conclusion.color || "red")}">
+          <div class="verdict-label">结论：${esc(conclusion.label || "没有")}</div>
+          <p>${esc(conclusion.one_liner || "")}</p>
         </div>
-        <aside class="hero-aside">
-          <div class="verdict ${esc(conclusion.color || "red")}">
-            <div class="verdict-label">结论：${esc(conclusion.label || "没有")}</div>
-            <p>${esc(conclusion.one_liner || "")}</p>
-          </div>
-          <div class="meta-row">
-            <span>重点看：<strong>Phase2</strong> <code>${esc(data.phase2.run_id)}</code></span>
-            <span>补充：<strong>Phase1</strong> <code>${esc(data.phase1.run_id)}</code></span>
-            <span>对照：DeepSeek D2（0 关）</span>
-          </div>
-        </aside>
+        <div class="meta-row">
+          <span>重点看：<strong>Phase2 的 world_model</strong> <code>${esc(data.phase2.run_id)}</code></span>
+          <span>补充：<strong>Phase1</strong> <code>${esc(data.phase1.run_id)}</code></span>
+          <span>对照：DeepSeek D2（0 关）</span>
+        </div>
+        <div class="phase-switch" role="tablist" aria-label="选择实验阶段">
+          <button type="button" data-phase="phase2" aria-pressed="${active === "phase2" ? "true" : "false"}">Phase2 · 看 world_model</button>
+          <button type="button" data-phase="phase1" aria-pressed="${active === "phase1" ? "true" : "false"}">Phase1 · 更短的故事</button>
+        </div>
       </div>
     </header>
-
-    <nav class="toc-bar" aria-label="本页目录">
-      <div class="wrap">
-        <a href="#compare">机制对照</a>
-        <a href="#vision">观测方式</a>
-        <a href="#timeline">迭代轨迹</a>
-        <a href="#evidence">原始证据</a>
-        <a href="#deepseek">DeepSeek 对照</a>
-      </div>
-    </nav>
 
     <main class="wrap">
       <div id="phase-root">${renderPhase(data, active)}</div>
 
-      <section id="deepseek" class="footnote">
-        <p class="section-kicker">弱对照</p>
+      <section class="footnote">
         <h2>对照：DeepSeek D2</h2>
         <p>
           实验 <code>${esc(ds.run_id)}</code>：一关都没过，
@@ -458,8 +432,9 @@ function render(data) {
 
     <footer class="site-footer">
       <div class="wrap">
-        <span>数据只读自 <code>experiment-runs/</code>；本页为排版优化版，证据与旧版一致。</span>
-        <span>暂定版备份：<code>docs/harness-case-study-v1-draft/</code> · 本地预览：<code>python3 -m http.server 8765</code></span>
+        数据只读自 <code>experiment-runs/</code>；展示用文件在 <code>docs/harness-case-study/</code>。
+        本地查看：在本目录运行 <code>python3 -m http.server 8765</code>，打开
+        <code>http://127.0.0.1:8765/</code>。
       </div>
     </footer>
   `;
