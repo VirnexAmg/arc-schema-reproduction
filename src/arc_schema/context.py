@@ -33,7 +33,10 @@ def next_explore_action(
 
     Avoids collapsing to available_actions[0] forever after the first full sweep
     (which biased DeepSeek forced-explore toward action 1).
+    Never explores from terminal states — outer harness must RESET first.
     """
+    if current.state in {"GAME_OVER", "WIN", "NOT_PLAYED"}:
+        return None
     candidates = untried_actions(current, history)
     if candidates:
         for action_id in candidates:

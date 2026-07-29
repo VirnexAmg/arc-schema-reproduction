@@ -53,7 +53,6 @@ def is_goal(state):
 
 def test_auto_reset_on_game_over_preserves_budget(tmp_path) -> None:
     environment = ToyEnvironment(lethal_action=2)
-    agent = AlwaysAction2()
     # Monkeypatch BaselineAgent protocol via duck typing in run_agent — use real BaselineAgent
     # with a tiny wrapper client is heavy; call helper path via BaselineAgent subclassing name.
 

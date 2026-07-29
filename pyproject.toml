@@ -30,3 +30,7 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
+# Module docstrings sit between `from __future__` and imports in this package.
+extend-ignore = ["E402"]

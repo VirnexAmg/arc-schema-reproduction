@@ -226,11 +226,26 @@ class Transition:
     after: Observation
 
     def delta(self) -> FrameDelta:
-        frame_delta = compute_frame_delta(self.before.frame, self.after.frame)
+        meta = metadata_delta(self.before.snapshot(), self.after.snapshot())
+        try:
+            frame_delta = compute_frame_delta(self.before.frame, self.after.frame)
+        except ValueError:
+            # Geometry changed (rare / malformed post-terminal obs). Keep journaling
+            # alive: full before/after snapshots are already stored on the Transition.
+            return FrameDelta(
+                changed_rows=(),
+                bbox=None,
+                metadata={
+                    **meta,
+                    "frame_geometry_changed": True,
+                    "before_height": len(self.before.frame),
+                    "after_height": len(self.after.frame),
+                },
+            )
         return FrameDelta(
             changed_rows=frame_delta.changed_rows,
             bbox=frame_delta.bbox,
-            metadata=metadata_delta(self.before.snapshot(), self.after.snapshot()),
+            metadata=meta,
         )
 
     def to_dict(self) -> JsonDict:

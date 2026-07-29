@@ -19,6 +19,48 @@ class ModelResponse:
     usage: Usage
     latency_seconds: float
     attempts: int
+    # Persist whatever the channel returns for chain-of-thought / reasoning.
+    # Sol medium often returns reasoning_tokens without a text field.
+    reasoning_text: str | None = None
+    reasoning_status: str = "absent"
+
+
+def extract_reasoning_fields(response: Any) -> tuple[str | None, str]:
+    """Pull reasoning / thinking text from an OpenAI-compatible chat response.
+
+    Returns (text_or_none, status) where status is one of:
+    present | tokens_only | absent
+    """
+    try:
+        message = response.choices[0].message
+    except Exception:
+        return None, "absent"
+
+    candidates: list[Any] = [
+        getattr(message, "reasoning", None),
+        getattr(message, "reasoning_content", None),
+        getattr(message, "thinking", None),
+        getattr(message, "reasoning_text", None),
+    ]
+    model_extra = getattr(message, "model_extra", None) or {}
+    if isinstance(model_extra, dict):
+        for key in ("reasoning", "reasoning_content", "thinking", "reasoning_text"):
+            candidates.append(model_extra.get(key))
+
+    for item in candidates:
+        if isinstance(item, str) and item.strip():
+            return item, "present"
+        if isinstance(item, dict):
+            text = item.get("content") or item.get("text") or item.get("summary")
+            if isinstance(text, str) and text.strip():
+                return text, "present"
+
+    usage = getattr(response, "usage", None)
+    details = getattr(usage, "completion_tokens_details", None) if usage else None
+    reasoning_tokens = int(getattr(details, "reasoning_tokens", 0) or 0) if details else 0
+    if reasoning_tokens > 0:
+        return None, "tokens_only"
+    return None, "absent"
 
 
 class ModelClient(Protocol):
@@ -45,8 +87,17 @@ def _parse_json(text: str) -> dict[str, Any]:
     stripped = text.strip()
     if stripped.startswith("```"):
         lines = stripped.splitlines()
-        stripped = "\n".join(lines[1:-1])
-    value = json.loads(stripped)
+        stripped = "\n".join(lines[1:-1]).strip()
+    try:
+        value = json.loads(stripped)
+    except json.JSONDecodeError:
+        # Models sometimes append trailing commentary ("Extra data"). Take the
+        # first top-level JSON object if present.
+        start = stripped.find("{")
+        end = stripped.rfind("}")
+        if start < 0 or end <= start:
+            raise
+        value = json.loads(stripped[start : end + 1])
     if not isinstance(value, dict):
         raise ValueError("model response must be a JSON object")
     return value
@@ -104,12 +155,17 @@ class OpenAICompatClient:
                 last_finish_reason = response.choices[0].finish_reason
                 usage = self._usage_from_response(response)
                 accumulated_usage.add(usage)
+                reasoning_text, reasoning_status = extract_reasoning_fields(response)
+                if reasoning_status == "absent" and usage.reasoning_tokens > 0:
+                    reasoning_status = "tokens_only"
                 return ModelResponse(
                     value=_parse_json(text),
                     raw_text=text,
                     usage=accumulated_usage,
                     latency_seconds=time.monotonic() - started,
                     attempts=attempt,
+                    reasoning_text=reasoning_text,
+                    reasoning_status=reasoning_status,
                 )
             except Exception as exc:
                 last_error = exc

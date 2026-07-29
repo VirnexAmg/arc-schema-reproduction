@@ -99,6 +99,8 @@ def run_agent(
         metrics.completed = bool(summary.get("completed", environment.current.state == "WIN"))
         metrics.wall_clock_seconds = time.monotonic() - started
         journal.append("run_finished", metrics.to_dict())
+        if isinstance(agent, SchemaHarnessAgent) and agent.workspace is not None:
+            _write_trace_index(journal_path, agent.workspace, metrics)
     return metrics
 
 
@@ -178,6 +180,7 @@ def _maybe_auto_reset(
     if workspace is not None:
         workspace.certified = False
         workspace.last_backtest = None
+        workspace.mismatch_blocks_planning = True
         workspace.last_mismatch = {
             "reason": "life_reset_after_game_over",
             "reset_index": metrics.game_over_resets,
@@ -376,6 +379,13 @@ def _schema_explore_step(
     reason: str,
 ) -> bool:
     """强制执行一步探索（或 fallback）；成功返回 True。"""
+    # Do not explore while dead/won — caller should auto-reset instead.
+    if environment.current.state in {"GAME_OVER", "WIN", "NOT_PLAYED"}:
+        journal.append(
+            "explore_skipped_terminal",
+            {"reason": reason, "state": environment.current.state},
+        )
+        return False
     action = next_explore_action(environment.current, history)
     kind = "exploration"
     if action is None:
@@ -415,15 +425,6 @@ def _run_schema_harness(
     workspace: Workspace,
 ) -> None:
     """程序世界模型 harness：外环调 deliberation，执行 commit，核对 planned 预测。"""
-    session = DeliberationSession(
-        agent.client,
-        workspace,
-        max_turns=config.deliberation_max_turns,
-        planner_max_nodes=config.planner_max_nodes,
-        max_plan_steps=config.max_plan_steps,
-        max_model_calls=config.max_model_calls_per_run,
-        max_spend_usd=config.max_spend_usd,
-    )
     idle_theory_rounds = 0
     while _budget_ok(metrics, environment, config, started):
         if _maybe_auto_reset(
@@ -455,6 +456,8 @@ def _run_schema_harness(
             if not _schema_explore_step(
                 environment, history, journal, metrics, reason="insufficient_time_reserve"
             ):
+                if environment.current.state == "GAME_OVER":
+                    continue
                 metrics.status = "timeout"
                 return
             continue
@@ -468,6 +471,8 @@ def _run_schema_harness(
                 metrics,
                 reason=f"cold_start_explore<{config.explore_steps}",
             ):
+                if environment.current.state == "GAME_OVER":
+                    continue
                 metrics.status = "no_legal_action"
                 return
             continue
@@ -482,6 +487,11 @@ def _run_schema_harness(
             for _ in range(burst):
                 if not _budget_ok(metrics, environment, config, started):
                     return
+                # Mid-burst GAME_OVER: stop exploring and let the outer loop RESET.
+                if environment.current.state == "GAME_OVER":
+                    break
+                if environment.current.state == "WIN":
+                    return
                 if not _schema_explore_step(
                     environment,
                     history,
@@ -489,11 +499,24 @@ def _run_schema_harness(
                     metrics,
                     reason="idle_theory_explore_burst",
                 ):
+                    if environment.current.state == "GAME_OVER":
+                        break
                     metrics.status = "no_legal_action"
                     return
             idle_theory_rounds = 0
             continue
 
+        session = DeliberationSession(
+            agent.client,
+            workspace,
+            max_turns=config.deliberation_max_turns,
+            planner_max_nodes=config.planner_max_nodes,
+            max_plan_steps=config.max_plan_steps,
+            max_model_calls=config.max_model_calls_per_run,
+            max_spend_usd=config.max_spend_usd,
+            vision_enabled=config.model.vision_enabled,
+            env_actions_so_far=metrics.environment_actions,
+        )
         result = session.run(environment.current, history, journal, metrics)
         journal.append(
             "deliberation_finished",
@@ -501,6 +524,7 @@ def _run_schema_harness(
                 "reason": result.reason,
                 "has_commit": result.commit is not None,
                 "tools": [item.get("tool") for item in result.tool_trace],
+                "env_step": metrics.environment_actions,
             },
         )
         if result.commit is None:
@@ -513,6 +537,8 @@ def _run_schema_harness(
                 metrics,
                 reason=f"no commit: {result.reason}",
             ):
+                if environment.current.state == "GAME_OVER":
+                    continue
                 metrics.status = result.reason or "no_commit"
                 return
             continue
@@ -525,10 +551,12 @@ def _run_schema_harness(
                 return
             if action.id not in environment.current.available_actions:
                 metrics.prediction_mismatches += 1
-                journal.append(
-                    "prediction_mismatch",
-                    {"reason": "committed action no longer legal", "action_id": action.id},
-                )
+                mismatch = {
+                    "reason": "committed action no longer legal",
+                    "action_id": action.id,
+                }
+                workspace.record_mismatch(mismatch)
+                journal.append("prediction_mismatch", mismatch)
                 break
             before = environment.current
             transition = _apply_action(
@@ -541,6 +569,8 @@ def _run_schema_harness(
             )
             acted = True
             idle_theory_rounds = 0
+            if transition.after.state in {"GAME_OVER", "WIN"}:
+                break
             # planned 且模型仍认证：逐步核对预测；失败则记 mismatch 并中断本批 commit
             if commit.kind == "planned" and model is not None:
                 if not ensure_model_predictions(model, before, action, transition.after):
@@ -568,3 +598,97 @@ def _run_schema_harness(
                 workspace.last_mismatch = None
         if not acted:
             idle_theory_rounds += 1
+
+
+def _write_trace_index(
+    journal_path: Path,
+    workspace: Workspace,
+    metrics: RunMetrics,
+) -> None:
+    """Write a short human index for post-run sampling of thinking / notes / WM."""
+    records = list(AppendOnlyJournal.read_records(journal_path))
+    highlights: list[str] = []
+    for record in records:
+        event = record.get("event")
+        payload = record.get("payload") or {}
+        seq = record.get("sequence")
+        if event == "notes_revision":
+            highlights.append(
+                f"- seq={seq} notes_revision v{payload.get('notes_version')} "
+                f"env_step={payload.get('env_step')} preview={payload.get('text_preview', '')[:80]!r}"
+            )
+        elif event == "wm_revision":
+            highlights.append(
+                f"- seq={seq} wm_revision v{payload.get('version')} "
+                f"kind={payload.get('kind')} path={payload.get('path')}"
+            )
+        elif event == "prediction_mismatch":
+            highlights.append(
+                f"- seq={seq} prediction_mismatch reason={payload.get('reason')} "
+                f"action_id={payload.get('action_id')}"
+            )
+        elif event == "deliberation_started":
+            highlights.append(
+                f"- seq={seq} deliberation_started env_step={payload.get('env_step')} "
+                f"vision={payload.get('vision_enabled')} certified={payload.get('certified')}"
+            )
+        elif event == "life_reset":
+            highlights.append(
+                f"- seq={seq} life_reset #{payload.get('reset_index')} "
+                f"levels={payload.get('levels_completed_after')}"
+            )
+        elif event == "model_response" and payload.get("reasoning_status") == "present":
+            highlights.append(
+                f"- seq={seq} reasoning_text present turn={payload.get('turn')} "
+                f"env_step={payload.get('env_step')}"
+            )
+
+    # Keep a compact sample of up to ~12 highlights, preferring late mismatches / notes.
+    if len(highlights) > 12:
+        highlights = highlights[:4] + highlights[-8:]
+
+    reasoning_statuses = [
+        (record.get("payload") or {}).get("reasoning_status")
+        for record in records
+        if record.get("event") == "model_response"
+    ]
+    notes_writes = sum(1 for record in records if record.get("event") == "notes_revision")
+    wm_writes = sum(1 for record in records if record.get("event") == "wm_revision")
+    tokens_only = sum(1 for status in reasoning_statuses if status == "tokens_only")
+    present = sum(1 for status in reasoning_statuses if status == "present")
+
+    lines = [
+        "# Trace index (auto-generated)",
+        "",
+        f"- agent: `{metrics.agent}`",
+        f"- status: `{metrics.status}`",
+        f"- levels_completed: {metrics.levels_completed}",
+        f"- environment_actions: {metrics.environment_actions}",
+        f"- journal: `{journal_path}`",
+        f"- workspace: `{workspace.root}`",
+        f"- notes.md: `{workspace.notes_path}` (notes_version={workspace.notes_version})",
+        f"- world_model.py: `{workspace.world_model_path}` (wm_version={workspace.version})",
+        f"- wm_versions/: `{workspace.wm_versions_dir}`",
+        f"- notes_history/: `{workspace.notes_history_dir}`",
+        f"- notes_revision events: {notes_writes}",
+        f"- wm_revision events: {wm_writes}",
+        f"- reasoning_status present/tokens_only: {present}/{tokens_only}",
+        "",
+        "## Sample jump points",
+        "",
+    ]
+    lines.extend(highlights or ["- (no highlight events yet)"])
+    lines.extend(
+        [
+            "",
+            "## How to spot-check",
+            "",
+            "1. Open `notes.md` and `notes_history/` for hypothesis text.",
+            "2. Diff `wm_versions/vNNNN.py` around a `wm_revision` seq above.",
+            "3. In the jsonl, search `\"event\":\"deliberation_turn\"` or `\"event\":\"model_response\"`.",
+            "4. If `reasoning_status` is `tokens_only`, the channel billed reasoning tokens but returned no text.",
+            "",
+        ]
+    )
+    (workspace.root / "trace_index.md").write_text("\n".join(lines), encoding="utf-8")
+

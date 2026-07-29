@@ -168,23 +168,44 @@ class DeterministicMockClient:
         )
 
     def _deliberation_response(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
-        # Scripted Schema loop: write_code → run_backtest → run_bfs → commit_actions.
+        # Scripted Schema loop:
+        # write_code → explore commit (gather Timeline) → backtest → bfs → planned commit.
         del messages
         phase = self._deliberation_phase
         self._deliberation_phase += 1
         if phase == 0:
             return {"tool": "write_code", "args": {"source": TOY_STEP_SOURCE}}
         if phase == 1:
-            return {"tool": "run_backtest", "args": {}}
+            return {
+                "tool": "write_notes",
+                "args": {
+                    "text": (
+                        "# Working notes\n"
+                        "## Hypotheses\n"
+                        "- H1: ACTION1 advances position toward WIN.\n"
+                    )
+                },
+            }
         if phase == 2:
-            return {"tool": "run_bfs", "args": {}}
+            return {
+                "tool": "commit_actions",
+                "args": {
+                    "kind": "exploration",
+                    "actions": [{"id": 1, "data": {}}],
+                    "reason": "gather one transition before certify",
+                },
+            }
         if phase == 3:
+            return {"tool": "run_backtest", "args": {}}
+        if phase == 4:
+            return {"tool": "run_bfs", "args": {}}
+        if phase == 5:
             return {
                 "tool": "commit_actions",
                 "args": {
                     "kind": "planned",
-                    "actions": [{"id": 1, "data": {}}, {"id": 1, "data": {}}],
-                    "reason": "toy plan to WIN",
+                    "actions": [{"id": 1, "data": {}}],
+                    "reason": "toy plan to WIN from position 1",
                 },
             }
         return {"tool": "done", "args": {"reason": "already committed"}}

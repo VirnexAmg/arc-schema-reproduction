@@ -1,0 +1,52 @@
+{
+  "experiment_id": "20260728T132602.222517Z",
+  "created_at": "2026-07-28T13:26:02.222637+00:00",
+  "config": {
+    "game_id": "ls20",
+    "runs": 1,
+    "max_environment_actions": 200,
+    "seeds": [
+      0
+    ],
+    "output_dir": "experiment-runs",
+    "arc_operation_mode": "offline",
+    "render_mode": null,
+    "planner_max_nodes": 5000,
+    "harness_model_attempts": 2,
+    "explore_steps": 8,
+    "max_plan_steps": 16,
+    "explore_burst": 3,
+    "wm_time_reserve_seconds": 120.0,
+    "run_timeout_seconds": 10800.0,
+    "max_model_calls_per_run": 500,
+    "harness_mode": "schema",
+    "deliberation_max_turns": 16,
+    "max_spend_usd": 15.0,
+    "auto_reset_on_game_over": true,
+    "max_game_over_resets": 10,
+    "model": {
+      "base_url": "https://api.inferera.com/v1",
+      "model": "gpt-5.6-sol",
+      "thinking_mode": "disabled",
+      "reasoning_effort": "medium",
+      "temperature": 0.0,
+      "timeout_seconds": 180.0,
+      "max_retries": 1,
+      "seed": null,
+      "max_output_tokens": 8192,
+      "baseline_max_output_tokens": 2048,
+      "world_model_max_output_tokens": 8192,
+      "context_transitions": 16,
+      "vision_enabled": true,
+      "api_key_env": "OPENAI_API_KEY",
+      "input_cost_per_million": 5.0,
+      "cached_input_cost_per_million": 0.5,
+      "output_cost_per_million": 30.0
+    },
+    "agents": [
+      "harness"
+    ]
+  },
+  "results": [],
+  "aggregate": {}
+}

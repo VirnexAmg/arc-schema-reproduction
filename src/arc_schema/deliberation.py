@@ -7,19 +7,20 @@ from __future__ import annotations
 在 Workspace / ProgramWorldModel 上执行，最终通过 commit_actions 把动作交给 runner。
 
 主流程（DeliberationSession.run）：
-1. 组装 system 提示 + 当前观察/历史/代码/认证状态等上下文；
+1. 组装 system 提示 + 当前观察/历史/代码/认证状态等上下文（可选当前帧 PNG）；
 2. 在 max_turns / 模型调用次数 / 花费预算内循环调用 LLM；
 3. 分发工具：改代码、回测、BFS、笔记、提议探索；非法调用则反馈错误继续；
 4. commit_actions 校验通过后返回 CommitRequest；done / 预算耗尽 / 达上限则无 commit。
 
-认证约定：run_backtest 全 Timeline 通过后 workspace.certified=True；planned 提交与
-run_bfs 都要求已认证；exploration 可在未认证时提交恰好一个探索动作。
+认证约定：run_backtest 全 Timeline 通过且 checked>0 后 workspace.certified=True；
+planned 提交与 run_bfs 都要求已认证；exploration 可在未认证时提交恰好一个探索动作。
+mismatch 后必须改码并重新认证，才能再次 planned commit。
 """
 
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-from arc_schema.context import next_explore_action, untried_actions
+from arc_schema.context import frame_png_base64, next_explore_action, untried_actions
 from arc_schema.core import Action, Observation, RunMetrics, Transition, canonical_json
 from arc_schema.deepseek_client import ModelClient
 from arc_schema.history import AppendOnlyJournal
@@ -56,8 +57,17 @@ representation and/or mechanisms when backtest fails or last_mismatch is set.
 
 Prefer apply_patch for small edits to world_model.py; use write_code only for
 full rewrites. After any code change, run_backtest on the FULL Timeline before
-planning. If last_mismatch is present, revise representation or rules to explain it.
-When multiple rules fit history, commit one discriminating exploration action.
+planning. If last_mismatch is present, revise representation or rules to explain it
+BEFORE any planned commit_actions.
+When multiple rules fit history, use propose_experiment to pick one discriminating
+exploration action that would make competing hypotheses predict different outcomes.
+
+Working memory (required for mechanism discovery):
+- Keep notes.md updated with: objects you believe exist, competing mechanism
+  hypotheses, what experiments ruled out, and what still needs testing.
+- Prefer write_notes when your hypothesis changes — do not leave notes empty.
+- Coordinate shortcuts that only memorize one level-up cell are weak theories;
+  prefer reusable mechanisms that transfer across levels.
 
 CRITICAL efficiency rules:
 - With little Timeline evidence, prefer commit_actions kind=exploration SOON
@@ -67,12 +77,15 @@ CRITICAL efficiency rules:
 - Do not spend the whole turn budget only rewriting code.
 - Prefer propose_experiment then commit_actions over another full rewrite.
 
+Vision: when a PNG of the current frame is provided, use it together with the
+JSON/RLE context for grounding objects. Do not ignore the image.
+
 Tools (deliberation does not touch the real environment):
 - write_code / apply_patch: edit world_model.py
-- run_backtest: replay step() on the FULL Timeline (must pass before planning)
+- run_backtest: replay step() on the FULL Timeline (must pass with checked>0 before planning)
 - run_bfs: search inside a certified model for is_goal
 - write_notes / read_notes: persistent working memory
-- propose_experiment: suggest one informative explore action
+- propose_experiment: suggest one informative explore action (optionally with hypotheses)
 - commit_actions: the ONLY channel that executes real environment actions
 
 Return one JSON object per turn with EXACT schemas:
@@ -82,7 +95,7 @@ Return one JSON object per turn with EXACT schemas:
 {"tool":"run_bfs","args":{}}
 {"tool":"write_notes","args":{"text":"..."}}
 {"tool":"read_notes","args":{}}
-{"tool":"propose_experiment","args":{}}
+{"tool":"propose_experiment","args":{"hypotheses":["H1...","H2..."],"rationale":"..."}}
 {"tool":"commit_actions","args":{"kind":"planned"|"exploration","actions":[{"id":1,"data":{}}]}}
 {"tool":"done","args":{"reason":"..."}}
 
@@ -133,6 +146,41 @@ def _parse_tool_call(value: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     return tool, args
 
 
+def _user_content_with_optional_vision(
+    payload: JsonDict,
+    current: Observation,
+    *,
+    vision_enabled: bool,
+) -> str | list[dict[str, Any]]:
+    """Initial deliberation user message: JSON context, optionally plus current-frame PNG."""
+    text = canonical_json(payload)
+    if not vision_enabled:
+        return text
+    png = frame_png_base64(current)
+    return [
+        {
+            "type": "text",
+            "text": (
+                "Current frame as PNG. Use it together with the JSON context for "
+                "state grounding. JSON follows.\n"
+                + text
+            ),
+        },
+        {
+            "type": "image_url",
+            "image_url": {"url": f"data:image/png;base64,{png}"},
+        },
+    ]
+
+
+def _reasoning_payload(response: Any) -> JsonDict:
+    return {
+        "reasoning_text": getattr(response, "reasoning_text", None),
+        "reasoning_status": getattr(response, "reasoning_status", "absent"),
+        "reasoning_tokens": int(getattr(response.usage, "reasoning_tokens", 0) or 0),
+    }
+
+
 class DeliberationSession:
     """有界 Schema 内环：理论化 → 认证 → 规划 → 提交。"""
 
@@ -146,6 +194,8 @@ class DeliberationSession:
         max_plan_steps: int,
         max_model_calls: int,
         max_spend_usd: float = 0.0,
+        vision_enabled: bool = False,
+        env_actions_so_far: int = 0,
     ) -> None:
         self.client = client
         self.workspace = workspace
@@ -154,6 +204,8 @@ class DeliberationSession:
         self.max_plan_steps = max_plan_steps
         self.max_model_calls = max_model_calls
         self.max_spend_usd = max_spend_usd
+        self.vision_enabled = vision_enabled
+        self.env_actions_so_far = env_actions_so_far
 
     def run(
         self,
@@ -164,20 +216,62 @@ class DeliberationSession:
     ) -> DeliberationResult:
         """运行多轮工具循环，直到 commit / done / 预算或轮次耗尽。"""
         tool_trace: list[JsonDict] = []
+        context = self._context_payload(current, history)
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": SCHEMA_SYSTEM},
             {
                 "role": "user",
-                "content": canonical_json(self._context_payload(current, history)),
+                "content": _user_content_with_optional_vision(
+                    context,
+                    current,
+                    vision_enabled=self.vision_enabled,
+                ),
             },
         ]
-        for _turn in range(self.max_turns):
+        journal.append(
+            "deliberation_started",
+            {
+                "env_step": self.env_actions_so_far,
+                "timeline_len": len(history),
+                "vision_enabled": self.vision_enabled,
+                "certified": self.workspace.certified,
+                "mismatch_blocks_planning": self.workspace.mismatch_blocks_planning,
+                "wm_version": self.workspace.version,
+                "notes_version": self.workspace.notes_version,
+            },
+        )
+        for turn in range(self.max_turns):
             if metrics.model_calls >= self.max_model_calls:
                 return DeliberationResult(None, tool_trace, "model_call_budget")
             if self.max_spend_usd > 0 and (metrics.usage.estimated_cost_usd or 0.0) >= self.max_spend_usd:
                 return DeliberationResult(None, tool_trace, "spend_budget")
             metrics.model_calls += 1
-            journal.append("model_request", {"purpose": "deliberation", "messages": messages[-2:]})
+            # Log text-only request summary to avoid dumping huge base64 into the journal.
+            log_messages = []
+            for message in messages[-2:]:
+                content = message.get("content")
+                if isinstance(content, list):
+                    log_messages.append(
+                        {
+                            "role": message.get("role"),
+                            "content": "[multipart: text+image omitted from journal]",
+                            "has_image": any(
+                                isinstance(part, dict) and part.get("type") == "image_url"
+                                for part in content
+                            ),
+                        }
+                    )
+                else:
+                    log_messages.append(message)
+            journal.append(
+                "model_request",
+                {
+                    "purpose": "deliberation",
+                    "env_step": self.env_actions_so_far,
+                    "turn": turn,
+                    "messages": log_messages,
+                },
+            )
             try:
                 response = self.client.complete_json(messages, "deliberation")
             except Exception as exc:
@@ -190,6 +284,8 @@ class DeliberationSession:
                     "model_error",
                     {
                         "purpose": "deliberation",
+                        "env_step": self.env_actions_so_far,
+                        "turn": turn,
                         "type": type(exc).__name__,
                         "message": str(exc),
                         "api_attempts": int(getattr(exc, "attempts", 0)),
@@ -198,15 +294,19 @@ class DeliberationSession:
                 return DeliberationResult(None, tool_trace, f"model_error:{exc}")
             metrics.model_api_attempts += response.attempts
             metrics.usage.add(response.usage)
+            reasoning = _reasoning_payload(response)
             journal.append(
                 "model_response",
                 {
                     "purpose": "deliberation",
+                    "env_step": self.env_actions_so_far,
+                    "turn": turn,
                     "raw_text": response.raw_text,
                     "parsed": response.value,
                     "usage": asdict(response.usage),
                     "latency_seconds": response.latency_seconds,
                     "api_attempts": response.attempts,
+                    **reasoning,
                 },
             )
             if self.max_spend_usd > 0 and (metrics.usage.estimated_cost_usd or 0.0) >= self.max_spend_usd:
@@ -216,18 +316,50 @@ class DeliberationSession:
             except Exception as exc:
                 observation = {"ok": False, "error": f"bad tool call: {exc}"}
                 tool_trace.append({"tool": "invalid", "args": response.value, "result": observation})
+                journal.append(
+                    "deliberation_turn",
+                    {
+                        "env_step": self.env_actions_so_far,
+                        "turn": turn,
+                        "tool": "invalid",
+                        "ok": False,
+                        "error": str(exc),
+                    },
+                )
                 messages.append({"role": "assistant", "content": response.raw_text})
                 messages.append({"role": "user", "content": canonical_json(observation)})
                 continue
 
             if tool == "done":
                 tool_trace.append({"tool": tool, "args": args, "result": {"ok": True}})
+                journal.append(
+                    "deliberation_turn",
+                    {
+                        "env_step": self.env_actions_so_far,
+                        "turn": turn,
+                        "tool": tool,
+                        "ok": True,
+                        "reason": str(args.get("reason", "done")),
+                    },
+                )
                 return DeliberationResult(None, tool_trace, str(args.get("reason", "done")))
 
             if tool == "commit_actions":
                 commit, observation = self._handle_commit(args, current, history)
                 tool_trace.append({"tool": tool, "args": args, "result": observation})
                 journal.append("deliberation_tool", tool_trace[-1])
+                journal.append(
+                    "deliberation_turn",
+                    {
+                        "env_step": self.env_actions_so_far,
+                        "turn": turn,
+                        "tool": tool,
+                        "ok": bool(observation.get("ok")),
+                        "kind": args.get("kind"),
+                        "accepted": observation.get("accepted"),
+                        "error": observation.get("error"),
+                    },
+                )
                 if commit is not None:
                     return DeliberationResult(commit, tool_trace, "commit")
                 messages.append({"role": "assistant", "content": response.raw_text})
@@ -237,6 +369,19 @@ class DeliberationSession:
             observation = self._dispatch_tool(tool, args, current, history, metrics, journal)
             tool_trace.append({"tool": tool, "args": args, "result": observation})
             journal.append("deliberation_tool", tool_trace[-1])
+            journal.append(
+                "deliberation_turn",
+                {
+                    "env_step": self.env_actions_so_far,
+                    "turn": turn,
+                    "tool": tool,
+                    "ok": bool(observation.get("ok", True)),
+                    "version": observation.get("version"),
+                    "notes_version": observation.get("notes_version"),
+                    "certified": observation.get("certified"),
+                    "error": observation.get("error"),
+                },
+            )
             messages.append({"role": "assistant", "content": response.raw_text})
             messages.append({"role": "user", "content": canonical_json(observation)})
 
@@ -258,6 +403,22 @@ class DeliberationSession:
                     },
                 }
             )
+        instruction = (
+            "If timeline_len is small, commit one exploration action quickly. "
+            "Prefer apply_patch + run_backtest, then either run_bfs+commit_actions "
+            "(only if certified with checked>0) or commit a single explore action. "
+            "After level-up or life_reset, re-certify before trusting old plans. "
+            "Update notes.md with mechanism hypotheses. Do not loop on write_code "
+            "without committing an environment action."
+        )
+        if self.workspace.mismatch_blocks_planning:
+            instruction = (
+                "BLOCKED: last_mismatch must be explained by revising world_model.py "
+                "(apply_patch/write_code) and re-running run_backtest until certified "
+                "with checked>0 before any planned commit. Exploration is still allowed. "
+                "Also write_notes summarizing what the mismatch falsified. "
+                + instruction
+            )
         return {
             "current": {
                 "snapshot": current.snapshot(),
@@ -270,19 +431,17 @@ class DeliberationSession:
             "world_model_py": self.workspace.read_code(),
             "notes_md": self.workspace.read_notes()[:4000],
             "certified": self.workspace.certified,
+            "mismatch_blocks_planning": self.workspace.mismatch_blocks_planning,
+            "wm_version": self.workspace.version,
+            "notes_version": self.workspace.notes_version,
             "last_backtest": (
                 asdict(self.workspace.last_backtest)
                 if self.workspace.last_backtest is not None
                 else None
             ),
             "last_mismatch": self.workspace.last_mismatch,
-            "instruction": (
-                "If timeline_len is small, commit one exploration action quickly. "
-                "Prefer apply_patch + run_backtest, then either run_bfs+commit_actions "
-                "(only if certified) or commit a single explore action. After level-up "
-                "or life_reset, re-certify before trusting old plans. Do not loop on "
-                "write_code without committing an environment action."
-            ),
+            "vision_enabled": self.vision_enabled,
+            "instruction": instruction,
         }
 
     def _dispatch_tool(
@@ -295,7 +454,6 @@ class DeliberationSession:
         journal: AppendOnlyJournal,
     ) -> JsonDict:
         """执行除 commit_actions / done 以外的工具，返回观察结果给下一轮模型。"""
-        del journal
         try:
             if tool == "write_code":
                 source = str(
@@ -311,6 +469,15 @@ class DeliberationSession:
                         "error": "source required (use args.source with full world_model.py text)",
                     }
                 self.workspace.write_code(source)
+                journal.append(
+                    "wm_revision",
+                    {
+                        "env_step": self.env_actions_so_far,
+                        "version": self.workspace.version,
+                        "kind": "write_code",
+                        "path": str(self.workspace.wm_versions_dir / f"v{self.workspace.version:04d}.py"),
+                    },
+                )
                 return {
                     "ok": True,
                     "version": self.workspace.version,
@@ -323,6 +490,15 @@ class DeliberationSession:
                 if not old:
                     return {"ok": False, "error": "apply_patch requires unique args.old"}
                 self.workspace.apply_patch(old, new)
+                journal.append(
+                    "wm_revision",
+                    {
+                        "env_step": self.env_actions_so_far,
+                        "version": self.workspace.version,
+                        "kind": "apply_patch",
+                        "path": str(self.workspace.wm_versions_dir / f"v{self.workspace.version:04d}.py"),
+                    },
+                )
                 return {
                     "ok": True,
                     "version": self.workspace.version,
@@ -330,21 +506,59 @@ class DeliberationSession:
                     "message": "patch applied; run_backtest required before planning",
                 }
             if tool == "write_notes":
-                self.workspace.write_notes(str(args.get("text", "")))
-                return {"ok": True}
+                version = self.workspace.write_notes(str(args.get("text", "")))
+                journal.append(
+                    "notes_revision",
+                    {
+                        "env_step": self.env_actions_so_far,
+                        "notes_version": version,
+                        "chars": len(str(args.get("text", ""))),
+                        "text_preview": str(args.get("text", ""))[:500],
+                    },
+                )
+                return {"ok": True, "notes_version": version}
             if tool == "read_notes":
-                return {"ok": True, "text": self.workspace.read_notes()}
+                return {
+                    "ok": True,
+                    "text": self.workspace.read_notes(),
+                    "notes_version": self.workspace.notes_version,
+                }
             if tool == "run_backtest":
                 model = self.workspace.model()
                 result = backtest_program(model, history)
                 self.workspace.last_backtest = result
-                self.workspace.certified = bool(result.passed)
+                # Vacuous green (no gameplay transitions checked) cannot certify.
+                if result.passed and result.checked > 0:
+                    self.workspace.certified = True
+                    if self.workspace.mismatch_blocks_planning:
+                        self.workspace.clear_mismatch_block()
+                        self.workspace.last_mismatch = None
+                else:
+                    self.workspace.certified = False
                 if not result.passed:
                     metrics.backtest_failures += 1
-                return {"ok": True, "result": asdict(result), "certified": self.workspace.certified}
+                payload = {
+                    "ok": True,
+                    "result": asdict(result),
+                    "certified": self.workspace.certified,
+                }
+                if result.passed and result.checked == 0:
+                    payload["warning"] = (
+                        "vacuous backtest (checked=0): cannot certify or plan; "
+                        "gather exploration transitions first"
+                    )
+                return payload
             if tool == "run_bfs":
                 if not self.workspace.certified:
-                    return {"ok": False, "error": "run_bfs requires a certified world model"}
+                    return {
+                        "ok": False,
+                        "error": "run_bfs requires a certified world model (checked>0)",
+                    }
+                if self.workspace.mismatch_blocks_planning:
+                    return {
+                        "ok": False,
+                        "error": "run_bfs blocked until mismatch is revised and re-certified",
+                    }
                 model = self.workspace.model()
                 plan = bfs_program_plan(
                     model,
@@ -367,10 +581,21 @@ class DeliberationSession:
                 action = next_explore_action(current, history)
                 if action is None:
                     return {"ok": False, "error": "no legal explore action"}
+                hypotheses = args.get("hypotheses")
+                if not isinstance(hypotheses, list):
+                    hypotheses = []
+                rationale = str(args.get("rationale", "")).strip()
                 return {
                     "ok": True,
                     "action": {"id": action.id, "data": action.data},
-                    "note": "commit via commit_actions with kind=exploration",
+                    "hypotheses": [str(item) for item in hypotheses][:6],
+                    "rationale": rationale[:1000],
+                    "note": (
+                        "Commit via commit_actions kind=exploration. "
+                        "Prefer an action where your listed hypotheses predict "
+                        "different next frames / level flags. Then write_notes "
+                        "with what the outcome ruled out."
+                    ),
                 }
             return {"ok": False, "error": f"unsupported tool {tool}"}
         except SandboxError as exc:
@@ -394,10 +619,18 @@ class DeliberationSession:
         kind = str(args.get("kind", "planned"))
         if kind not in {"planned", "exploration"}:
             return None, {"ok": False, "error": "kind must be planned or exploration"}
+        if kind == "planned" and self.workspace.mismatch_blocks_planning:
+            return None, {
+                "ok": False,
+                "error": (
+                    "planned commit blocked: revise world_model for last_mismatch, "
+                    "then run_backtest until certified"
+                ),
+            }
         if kind == "planned" and not self.workspace.certified:
             return None, {
                 "ok": False,
-                "error": "planned commit requires certified backtest; use exploration",
+                "error": "planned commit requires certified backtest (checked>0); use exploration",
             }
         if kind == "exploration" and len(raw_actions) != 1:
             return None, {"ok": False, "error": "exploration commit allows exactly one action"}

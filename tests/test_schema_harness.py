@@ -43,7 +43,14 @@ def test_schema_harness_solves_toy_via_program_wm(tmp_path) -> None:
     )
     assert metrics.completed
     assert metrics.levels_completed == 1
-    assert metrics.planned_actions == 2
-    assert (tmp_path / "workspace-harness-0" / "world_model.py").exists()
-    workspace = Workspace(tmp_path / "workspace-harness-0")
+    assert metrics.exploration_actions == 1
+    assert metrics.planned_actions == 1
+    workspace_root = tmp_path / "workspace-harness-0"
+    assert (workspace_root / "world_model.py").exists()
+    assert (workspace_root / "trace_index.md").exists()
+    assert (workspace_root / "wm_versions").exists()
+    assert list((workspace_root / "wm_versions").glob("v*.py"))
+    assert list((workspace_root / "notes_history").glob("v*.md"))
+    workspace = Workspace(workspace_root)
     assert "def step" in workspace.read_code()
+    assert "Hypotheses" in workspace.read_notes()

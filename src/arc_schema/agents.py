@@ -84,6 +84,9 @@ def _record_call(
             "usage": asdict(response.usage),
             "latency_seconds": response.latency_seconds,
             "api_attempts": response.attempts,
+            "reasoning_text": getattr(response, "reasoning_text", None),
+            "reasoning_status": getattr(response, "reasoning_status", "absent"),
+            "reasoning_tokens": int(getattr(response.usage, "reasoning_tokens", 0) or 0),
         },
     )
     return response

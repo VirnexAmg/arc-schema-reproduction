@@ -50,8 +50,13 @@ class ArcEnvironmentAdapter:
 
         # RESET (id=0) is accepted by ARC even when omitted from available_actions,
         # and is required after GAME_OVER / WIN / NOT_PLAYED.
-        legal = set(self._current.available_actions)
-        if action.id == 0 or self._current.state in {"GAME_OVER", "WIN", "NOT_PLAYED"}:
+        # After a terminal state, ONLY RESET is legal — ARC may still list ACTION1-4 in
+        # available_actions, but stepping them can return malformed / geometry-changing
+        # frames and crash journaling (B3: frame heights must match for delta).
+        if self._current.state in {"GAME_OVER", "WIN", "NOT_PLAYED"}:
+            legal = {0}
+        else:
+            legal = set(self._current.available_actions)
             legal.add(0)
         if action.id not in legal:
             raise ValueError(f"illegal action {action.id}; legal={sorted(legal)}")
