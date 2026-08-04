@@ -1,0 +1,527 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_action_cost": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        14
+      ],
+      "id": "H_action_cost",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "Ordinary successful moves consume one leftmost meter column and blocked moves consume none; transform-switch entry is a confirmed zero-cost exception.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+          "revised_at_ledger_version": 3,
+          "statement": "Each action consumes one column from the left edge of both color-11 meter rows, including potentially blocked movement attempts."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's token displacement while independently consuming another meter column, grounding the vertical control pair and supporting a route toward the upper panel.",
+          "revised_at_ledger_version": 4,
+          "statement": "Every observed action consumes the leftmost remaining column of both color-11 meter rows; this holds for ACTION1 and ACTION2."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "reason": "The certified five-step route reached the cell directly below the upper panel with exact token motion and meter consumption, creating a clean boundary-interaction test.",
+          "revised_at_ledger_version": 5,
+          "statement": "Each action consumes one leftmost meter column; seven consecutive actions have matched this rule."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Transition 8 directly falsified solid collision at the upper panel and supports an enterable framed-portal model.",
+          "revised_at_ledger_version": 6,
+          "statement": "Each action consumes one leftmost meter column; all eight observed actions match this rule."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "reason": "Transition 9 was an exact no-op, falsifying immediate framed completion and showing that blocked actions do not consume the meter.",
+          "revised_at_ledger_version": 7,
+          "statement": "Only successful movement consumes a leftmost meter column; the blocked ninth action left the meter unchanged."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "reason": "Transition 10 exactly confirmed retreat, hidden-terrain restoration, and successful-move meter consumption.",
+          "revised_at_ledger_version": 9,
+          "statement": "Successful moves consume one leftmost meter column, while blocked moves consume none; transitions 9 and 10 distinguish these cases."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "reason": "Transition 11 exactly matched the provisional ACTION3-left prediction and consumed one meter column.",
+          "revised_at_ledger_version": 11,
+          "statement": "Successful vertical and horizontal moves consume one leftmost meter column, while blocked moves consume none; transition 11 extends the rule to ACTION3."
+        }
+      ],
+      "status": "active"
+    },
+    "H_directional_control": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "id": "H_directional_control",
+      "last_reason": "The certified five-step route reached the cell directly below the upper panel with exact token motion and meter consumption, creating a clean boundary-interaction test.",
+      "last_updated_version": 4,
+      "statement": "ACTION1 moves the token upward by one five-pixel tile whenever the destination footprint is color 3; five consecutive traversable moves were predicted exactly.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+          "revised_at_ledger_version": 2,
+          "statement": "One or more actions locally move or reorient the rare compact 0/1 arena glyph while the chamber layout persists."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+          "revised_at_ledger_version": 3,
+          "statement": "ACTION1 translates the 5x5 color-12/9 token upward by one five-pixel tile when its destination footprint is color 3; other action mappings remain unknown."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's token displacement while independently consuming another meter column, grounding the vertical control pair and supporting a route toward the upper panel.",
+          "revised_at_ledger_version": 4,
+          "statement": "ACTION1 moves the 5x5 token up one five-pixel floor tile and ACTION2 moves it down one tile; the two observed transitions are exact inverses apart from meter consumption."
+        }
+      ],
+      "status": "active"
+    },
+    "H_framed_goal": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "id": "H_framed_goal",
+      "last_reason": "Transition 9 was an exact no-op, falsifying immediate framed completion and showing that blocked actions do not consume the meter.",
+      "last_updated_version": 6,
+      "statement": "Rejected: ACTION1 from y=15 did not move the token into the framed interior and did not complete the level.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Transition 8 directly falsified solid collision at the upper panel and supports an enterable framed-portal model.",
+          "revised_at_ledger_version": 6,
+          "statement": "From y=15, ACTION1 should center the token at y=10 inside the panel's five-cell interior and produce LEVEL_COMPLETE."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_horizontal_pair": {
+      "evidence_seq": [
+        1,
+        2,
+        8,
+        9,
+        10,
+        11
+      ],
+      "id": "H_horizontal_pair",
+      "last_reason": "Transition 11 exactly matched the provisional ACTION3-left prediction and consumed one meter column.",
+      "last_updated_version": 9,
+      "statement": "ACTION3 is confirmed to move the token left by one five-pixel tile on traversable terrain; ACTION4 remains the compact predicted inverse, moving right, pending direct observation.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            8,
+            9,
+            10
+          ],
+          "reason": "The observed ACTION1/ACTION2 vertical inverse pair supports a compact symmetric horizontal extension, and the current y=25 corridor permits a clean ACTION3 test.",
+          "revised_at_ledger_version": 9,
+          "statement": "At the open y=25 corridor, ACTION3 provisionally moves the token left by one five-pixel tile and ACTION4 moves it right; successful horizontal movement should consume one meter column under the same general movement rule."
+        }
+      ],
+      "status": "active"
+    },
+    "H_identity_baseline": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_identity_baseline",
+      "last_reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+      "last_updated_version": 2,
+      "statement": "The identity baseline is falsified for ACTION1 because both the movable token and lower meter visibly changed.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+          "revised_at_ledger_version": 2,
+          "statement": "With no transition evidence, an unmatched action leaves the rendered grid unchanged, possibly while hidden state changes."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_marker_consumed": {
+      "evidence_seq": [
+        14
+      ],
+      "id": "H_marker_consumed",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "Competing hypothesis: the transform glyph is one-shot, so leaving it reveals ordinary floor rather than restoring the 0/1 pattern.",
+      "status": "active"
+    },
+    "H_marker_goal": {
+      "evidence_seq": [
+        1,
+        2,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "id": "H_marker_goal",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "Revised: the 0/1 glyph is an enterable transform switch rather than a terminal goal; contact changes the lower 5/9 pattern without completing the level.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+          "revised_at_ledger_version": 3,
+          "statement": "The stationary compact 0/1 glyph is a target, checkpoint, or orientation cue rather than the directly controlled object."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's token displacement while independently consuming another meter column, grounding the vertical control pair and supporting a route toward the upper panel.",
+          "revised_at_ledger_version": 7,
+          "statement": "The stationary compact 0/1 glyph is a possible secondary target, collectible, or directional cue rather than the controlled object."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            9,
+            10
+          ],
+          "reason": "Transition 10 exactly confirmed retreat, hidden-terrain restoration, and successful-move meter consumption.",
+          "revised_at_ledger_version": 10,
+          "statement": "The stationary 0/1 glyph in the left chamber is the strongest remaining candidate key or subgoal after the upper framed interior proved unreachable."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            9,
+            10,
+            11,
+            12,
+            13
+          ],
+          "reason": "The certified route reached the cell immediately right of the glyph with exact motion and meter consumption, enabling direct contact to distinguish interactive-marker and solid-obstacle theories.",
+          "revised_at_ledger_version": 11,
+          "statement": "The stationary 0/1 glyph may be an enterable key or goal; ACTION3 from token origin y=30, x=24 should reveal a glyph change, token entry, or level progress if it is interactive."
+        }
+      ],
+      "status": "active"
+    },
+    "H_marker_restores": {
+      "evidence_seq": [
+        14
+      ],
+      "id": "H_marker_restores",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "ACTION4 away from the occupied switch should restore the stored 0/1 glyph, preserve the reflected panel, and consume one ordinary movement unit.",
+      "status": "active"
+    },
+    "H_marker_solid": {
+      "evidence_seq": [
+        11,
+        12,
+        13,
+        14
+      ],
+      "id": "H_marker_solid",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "Rejected: ACTION3 entered the 0/1 glyph footprint and changed both token position and the lower panel.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            11,
+            12,
+            13
+          ],
+          "reason": "The certified route reached the cell immediately right of the glyph with exact motion and meter consumption, enabling direct contact to distinguish interactive-marker and solid-obstacle theories.",
+          "revised_at_ledger_version": 11,
+          "statement": "Competing hypothesis: the 0/1 glyph is a solid obstacle, so ACTION3 from y=30, x=24 produces an exact no-op and consumes no meter."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [
+        1,
+        2,
+        14
+      ],
+      "id": "H_panel_transform",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "Entering the 0/1 glyph horizontally reflects the unique sparse row-pair of the lower 10-wide 5/9 panel, changing `111/100/101` to `111/001/101`, which matches the upper target.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions transform or select repeated 5/9 panels or update state represented by the lower strip; the 0/1 glyph may be a cursor rather than an avatar."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+          "revised_at_ledger_version": 3,
+          "statement": "The lower-strip change under ACTION1 is per-action resource consumption rather than selection of the repeated 5/9 panels; the panels may still encode a goal pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's token displacement while independently consuming another meter column, grounding the vertical control pair and supporting a route toward the upper panel.",
+          "revised_at_ledger_version": 11,
+          "statement": "Repeated 5/9 panels likely encode targets or state; neither vertical control directly transformed them."
+        }
+      ],
+      "status": "active"
+    },
+    "H_portal_stop": {
+      "evidence_seq": [
+        8,
+        9
+      ],
+      "id": "H_portal_stop",
+      "last_reason": "Transition 9 was an exact no-op, falsifying immediate framed completion and showing that blocked actions do not consume the meter.",
+      "last_updated_version": 6,
+      "statement": "At the upper stopping pad, further upward movement is blocked with no grid or meter change.",
+      "status": "active"
+    },
+    "H_solid_panel": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_solid_panel",
+      "last_reason": "Transition 8 directly falsified solid collision at the upper panel and supports an enterable framed-portal model.",
+      "last_updated_version": 5,
+      "statement": "Rejected: transition 8 moved the token upward from y=20 into the framed panel at y=15 instead of leaving it fixed.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "reason": "The certified five-step route reached the cell directly below the upper panel with exact token motion and meter consumption, creating a clean boundary-interaction test.",
+          "revised_at_ledger_version": 5,
+          "statement": "The framed upper 5/9 panel is solid terrain; ACTION1 from y=20 leaves the token fixed and only consumes one meter column."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_submit_portal": {
+      "evidence_seq": [
+        14
+      ],
+      "id": "H_submit_portal",
+      "last_reason": "Transition 14 falsified solid collision: marker entry moved the token, cost no meter, and horizontally reflected the sparse lower-panel row into the upper target pattern.",
+      "last_updated_version": 11,
+      "statement": "With odd transform parity making the lower pattern match the upper target, returning the token to the upper stopping pad is the strongest candidate completion mechanism.",
+      "status": "active"
+    },
+    "H_top_portal": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "id": "H_top_portal",
+      "last_reason": "Transition 9 was an exact no-op, falsifying immediate framed completion and showing that blocked actions do not consume the meter.",
+      "last_updated_version": 6,
+      "statement": "The upper panel behaves as a one-tile stopping pad: ACTION1 from y=20 enters at y=15, but another ACTION1 is blocked.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's token displacement while independently consuming another meter column, grounding the vertical control pair and supporting a route toward the upper panel.",
+          "revised_at_ledger_version": 4,
+          "statement": "The framed upper 5/9 panel is a likely interaction endpoint because a token-width color-3 corridor connects the right chamber directly to it."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "reason": "The certified five-step route reached the cell directly below the upper panel with exact token motion and meter consumption, creating a clean boundary-interaction test.",
+          "revised_at_ledger_version": 5,
+          "statement": "When the token at x=34..38, y=20..24 attempts ACTION1 into the framed upper 5/9 panel, the panel changes or a level boundary occurs."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Transition 8 directly falsified solid collision at the upper panel and supports an enterable framed-portal model.",
+          "revised_at_ledger_version": 6,
+          "statement": "The framed upper 5/9 panel is enterable; ACTION1 from y=20 moves the token into its lower band at y=15 despite the non-floor destination."
+        }
+      ],
+      "status": "active"
+    },
+    "H_underlay": {
+      "evidence_seq": [
+        8,
+        9,
+        10
+      ],
+      "id": "H_underlay",
+      "last_reason": "Transition 10 exactly confirmed retreat, hidden-terrain restoration, and successful-move meter consumption.",
+      "last_updated_version": 7,
+      "statement": "Confirmed: retreat from the upper stopping pad restores every obscured panel and wall cell from stored terrain underlay.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            8,
+            9
+          ],
+          "reason": "Transition 9 was an exact no-op, falsifying immediate framed completion and showing that blocked actions do not consume the meter.",
+          "revised_at_ledger_version": 7,
+          "statement": "When the token retreats from the upper stopping pad, the obscured panel and wall footprint should be restored from static underlay."
+        }
+      ],
+      "status": "active"
+    }
+  },
+  "version": 11
+}

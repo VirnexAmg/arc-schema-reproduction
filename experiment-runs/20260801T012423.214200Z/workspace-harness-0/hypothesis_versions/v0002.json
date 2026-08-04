@@ -1,0 +1,62 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_avatar_motion": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_avatar_motion",
+      "last_reason": "Action 1 moved only the lower 12/9 tile upward by exactly five pixels and shortened the HUD bar; the 0/1 glyph and upper panel stayed fixed.",
+      "last_updated_version": 2,
+      "statement": "Rejected on transition 1: the unique color-0/1 glyph remained stationary while the separate 12/9 tile moved.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame admits both object groundings, but there are no recorded transitions from which action semantics can be inferred.",
+          "revised_at_ledger_version": 2,
+          "statement": "The unique asymmetric color-0/1 glyph in the left central chamber is controllable; action IDs cause movement or orientation changes, with the mapping to be learned from transitions."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_goal_marker": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_goal_marker",
+      "last_reason": "Action 1 moved only the lower 12/9 tile upward by exactly five pixels and shortened the HUD bar; the 0/1 glyph and upper panel stayed fixed.",
+      "last_updated_version": 2,
+      "statement": "The stationary color-0/1 glyph embedded in a maze cell is a destination marker; moving the 12/9 token onto it should trigger level progress or another interaction.",
+      "status": "active"
+    },
+    "H_panel_action": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_panel_action",
+      "last_reason": "Action 1 moved only the lower 12/9 tile upward by exactly five pixels and shortened the HUD bar; the 0/1 glyph and upper panel stayed fixed.",
+      "last_updated_version": 2,
+      "statement": "Revised non-avatar-object mechanism: actions move the separate 5x5 color-12/9 token through a 5-cell maze; action 1 is observed to move it upward by one cell.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame admits both object groundings, but there are no recorded transitions from which action semantics can be inferred.",
+          "revised_at_ledger_version": 2,
+          "statement": "The four actions manipulate or select the separate upper panel or HUD state while the central color-0/1 glyph remains stationary."
+        }
+      ],
+      "status": "active"
+    },
+    "H_step_meter": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_step_meter",
+      "last_reason": "Action 1 moved only the lower 12/9 tile upward by exactly five pixels and shortened the HUD bar; the 0/1 glyph and upper panel stayed fixed.",
+      "last_updated_version": 2,
+      "statement": "Each real action consumes one column from the long color-11 HUD bar on rows 61-62, independently of whether token movement succeeds.",
+      "status": "active"
+    }
+  },
+  "version": 2
+}

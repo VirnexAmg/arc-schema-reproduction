@@ -1,0 +1,116 @@
+def init_state(entry_grid):
+    markers = []
+    for y, row in enumerate(entry_grid):
+        for x, v in enumerate(row):
+            if v in (0, 1):
+                markers.append((x, y, v))
+    return {"markers": markers}
+
+def predict(latent, grid, action):
+    g = deepcopy(grid)
+    aid = int(action["id"])
+    pts = []
+    for y, row in enumerate(g):
+        for x, v in enumerate(row):
+            if v == 12:
+                pts.append((x, y))
+    if pts:
+        x0 = min(p[0] for p in pts)
+        y0 = min(p[1] for p in pts)
+        move = {1:(0,-5), 2:(0,5), 3:(-5,0), 4:(5,0)}
+        dx, dy = move[aid]
+        nx, ny = x0 + dx, y0 + dy
+        ok = 0 <= ny and ny + 4 < len(g) and 0 <= nx and nx + 4 < len(g[0])
+        if ok:
+            for yy in range(ny, ny + 5):
+                for xx in range(nx, nx + 5):
+                    # Gray (5) cells in the small top socket are enterable too;
+                    # the observed player moved from y=20 to y=15 across that border.
+                    # Static dark-red (9) glyph cells are solid. Gray (5) socket
+                    # floor is enterable, but the deeper move is blocked by the glyph.
+                    v = g[yy][xx]
+                    # The dark lower part of the player overlaps its own next
+                    # footprint and is not an obstacle.  Small dark glyphs in
+                    # the corridor are also enterable switches; large dark
+                    # target glyphs remain solid.
+                    own = x0 <= xx < x0 + 5 and y0 <= yy < y0 + 5
+                    if v not in (0, 1, 3, 5, 12) and not (v == 9 and own):
+                        ok = False
+            if not ok:
+                foreign_dark = 0
+                bad_other = False
+                for yy in range(ny, ny + 5):
+                    for xx in range(nx, nx + 5):
+                        v = g[yy][xx]
+                        own = x0 <= xx < x0 + 5 and y0 <= yy < y0 + 5
+                        if v == 9 and not own:
+                            foreign_dark += 1
+                        elif v not in (3, 5, 9, 12):
+                            bad_other = True
+                # Corridor switches are tiny (at most six pixels), unlike the
+                # solid target glyph.
+                # Sparse glyphs are switches only when embedded in the green
+                # corridor. The top glyph sits on gray socket floor and stays
+                # solid despite also having few dark pixels.
+                on_gray = False
+                for yy in range(ny, ny + 5):
+                    for xx in range(nx, nx + 5):
+                        if g[yy][xx] == 5:
+                            on_gray = True
+                if foreign_dark and foreign_dark <= 6 and not bad_other and not on_gray:
+                    ok = True
+                    for yy in (57, 58):
+                        if yy < len(g):
+                            # Contact clears the left 2x2 stroke of the
+                            # bottom-left state glyph.
+                            for xx in range(3, 5):
+                                g[yy][xx] = 5
+        if ok:
+            for yy in range(y0, y0 + 5):
+                for xx in range(x0, x0 + 5):
+                    # The socket entrance has a one-pixel gray lip beneath the
+                    # player's top row; ordinary corridor floor is green.
+                    g[yy][xx] = 5 if y0 == 15 and yy == 15 else 3
+            for yy in range(ny, ny + 5):
+                for xx in range(nx, nx + 5):
+                    g[yy][xx] = 12 if yy < ny + 2 else 9
+
+            # Moving immediately beside the tiny black/blue corridor glyph
+            # activates it.  The observable state change is the removal of a
+            # 4x2 horizontal stroke from the large lower-left status glyph.
+            near_small = False
+            # Remember the tiny glyph even while the player visually covers it.
+            # Its original 0/1 pixels are retained in latent state.
+            marker_pts = latent.get("markers", [])
+            for mx, my, mv in marker_pts:
+                if nx - 1 <= mx <= nx + 5 and ny - 1 <= my <= ny + 5:
+                    near_small = True
+            if near_small:
+                if aid in (1, 2):
+                    # Vertical passage reflects the logical glyph left-right.
+                    for yy in range(55, 61):
+                        if yy < len(g):
+                            a = g[yy][3]
+                            b = g[yy][7]
+                            for xx in (3, 4):
+                                g[yy][xx] = b
+                            for xx in (7, 8):
+                                g[yy][xx] = a
+                else:
+                    # Horizontal passage reflects it top-bottom.
+                    for off in range(2):
+                        yt = 55 + off
+                        yb = 59 + off
+                        if yb < len(g):
+                            for xx in range(3, 9):
+                                g[yt][xx], g[yb][xx] = g[yb][xx], g[yt][xx]
+    for y in (61, 62):
+        if y < len(g):
+            for x, v in enumerate(g[y]):
+                if v == 11:
+                    g[y][x] = 3
+                    break
+    return g, [], latent
+
+def is_goal(latent, grid):
+    return False

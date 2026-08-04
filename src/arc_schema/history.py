@@ -1,5 +1,15 @@
 from __future__ import annotations
 
+"""
+哈希链 Journal：只追加的 SHA-256 链式 JSONL，记录整次 run 的可审计事件。
+
+阅读导引：
+- AppendOnlyJournal.append(event, payload)：写一条并链接 previous_hash
+- verify()：启动时校验链完整；断链或改内容会抛 HistoryIntegrityError
+- 产物形如 harness-run-0.jsonl / baseline-run-0.jsonl
+注意：有文件系统写权限仍可整文件重写；这是篡改可检测，不是外部 WORM。
+"""
+
 import hashlib
 import json
 import os
@@ -14,15 +24,11 @@ GENESIS_HASH = "0" * 64
 
 
 class HistoryIntegrityError(ValueError):
-    pass
+    """哈希链断裂或记录被篡改。"""
 
 
 class AppendOnlyJournal:
-    """Append-only JSONL journal with a SHA-256 hash chain.
-
-    The chain makes edits detectable; it is not a substitute for external
-    signed/WORM storage because a user with filesystem access can rewrite it.
-    """
+    """只追加 JSONL + SHA-256 哈希链；使单条静默改写可被检出。"""
 
     def __init__(self, path: Path) -> None:
         self.path = path

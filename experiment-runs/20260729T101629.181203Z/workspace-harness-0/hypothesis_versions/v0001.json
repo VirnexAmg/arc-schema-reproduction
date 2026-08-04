@@ -1,0 +1,38 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_navigation",
+      "last_reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+      "statement": "Actions move the 5x5 magenta/red player one tile: 1 up, 2 down, 3 left, 4 right, when the destination is green/passable; the bottom bar advances one unit every action.",
+      "status": "active"
+    },
+    "H_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_target",
+      "last_reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+      "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; contact or entry completes the level.",
+      "status": "active"
+    }
+  },
+  "version": 1
+}

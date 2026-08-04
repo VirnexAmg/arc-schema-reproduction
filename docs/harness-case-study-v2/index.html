@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="ls20 Harness 案例：从真实日志追踪模型如何探索、修改 world_model、回测，以及它是否形成十字代表旋转的机制假设。"
+    />
+    <title>ls20 Harness 案例｜行为过关，机制说错</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="reading-progress" aria-hidden="true">
+      <span id="reading-progress-bar"></span>
+    </div>
+
+    <header class="site-rail">
+      <a class="wordmark" href="#top" aria-label="返回页首">
+        <span>ls20</span>
+        <small>HARNESSED TRIAL</small>
+      </a>
+      <nav class="rail-nav" aria-label="章节导航">
+        <a href="#mechanism">机制差距</a>
+        <a href="#timeline">迭代故事</a>
+        <a href="#evidence">原始证据</a>
+      </nav>
+      <div class="phase-switch" role="group" aria-label="选择运行阶段">
+        <button class="phase-button is-active" type="button" data-phase="phase1">
+          Phase 1
+        </button>
+        <button class="phase-button" type="button" data-phase="phase2">
+          Phase 2
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="cover" aria-labelledby="cover-title">
+        <div class="cover-grid">
+          <div class="cover-copy">
+            <p class="eyebrow">CASE NOTE · <span id="cover-run-id"></span></p>
+            <h1 id="cover-title">
+              行为过关，<br />
+              <em>机制说错。</em>
+            </h1>
+            <p class="cover-deck">
+              Harness 确实推动模型探索、写模拟器、回测、再修改；但保存下来的不是
+              “十字代表旋转 3×3 图形”。模型靠一套
+              <strong>迷宫移动 + 钥匙/房间 + 坐标记忆</strong>
+              的替代解释走过了第一关。
+            </p>
+            <p class="cover-proof" id="cover-proof"></p>
+          </div>
+
+          <aside class="verdict-sheet" aria-label="四项核心判断">
+            <div class="sheet-head">
+              <span>核心裁决</span>
+              <span class="verdict-mark">行为捷径</span>
+            </div>
+            <dl class="verdict-list">
+              <div>
+                <dt>十字 = 顺时针旋转？</dt>
+                <dd><span class="answer-no">否</span> 没有写出</dd>
+              </div>
+              <div>
+                <dt>旋转后与目标一致？</dt>
+                <dd><span class="answer-no">否</span> 没有建立匹配关系</dd>
+              </div>
+              <div>
+                <dt>正确认知被保存？</dt>
+                <dd><span class="answer-no">否</span> notes 仍是模板</dd>
+              </div>
+              <div>
+                <dt>实际保存了什么？</dt>
+                <dd><span class="answer-yes">是</span> 钥匙、房间与坐标</dd>
+              </div>
+            </dl>
+            <p class="sheet-source">
+              判定基于 <code>jsonl</code>、<code>world_model.py</code> 与
+              <code>notes.md</code> 的交叉检索。
+            </p>
+          </aside>
+        </div>
+        <a class="scroll-cue" href="#mechanism">
+          <span>先看模型错在何处</span>
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="mechanism section" id="mechanism" aria-labelledby="mechanism-title">
+        <header class="section-intro">
+          <p class="section-index">01 / 先把题意对齐</p>
+          <h2 id="mechanism-title">同一条通关路径，两种完全不同的解释</h2>
+          <p>
+            画面行为相似，不等于内部机制相同。真正要裁决的是：模型有没有把视觉符号的因果关系说出来并写进模拟器。
+          </p>
+        </header>
+
+        <div class="mechanism-compare">
+          <article class="mechanism-column mechanism-correct">
+            <p class="column-kicker">已知正确机制</p>
+            <h3>十字是一条“旋转”指令</h3>
+            <div class="mechanism-flow" aria-label="正确机制四步">
+              <figure>
+                <img src="assets/ls20-l1-cross-zoom.png" alt="画面中的白色十字符号" />
+                <figcaption><b>1</b> 识别十字</figcaption>
+              </figure>
+              <span class="flow-arrow" aria-hidden="true">↻</span>
+              <figure>
+                <img
+                  src="assets/ls20-l1-inventory-zoom.png"
+                  alt="左下角待旋转的 3×3 蓝色图形"
+                />
+                <figcaption><b>2</b> 顺时针转 90°</figcaption>
+              </figure>
+              <span class="flow-arrow" aria-hidden="true">=</span>
+              <figure>
+                <img src="assets/ls20-l1-target-zoom.png" alt="上方房间里的目标图形" />
+                <figcaption><b>3</b> 与目标一致</figcaption>
+              </figure>
+            </div>
+            <p class="mechanism-result">
+              图形对齐后，再走到对应位置，环境才会把
+              <code>levels_completed</code> 从 0 改成 1。
+            </p>
+          </article>
+
+          <article class="mechanism-column mechanism-actual">
+            <p class="column-kicker">本局写下的解释</p>
+            <h3>十字被当成“可捡的 0/1 图标”</h3>
+            <blockquote>
+              “The small 0/1 glyph is a collectible… changes the matching
+              inventory glyph below the maze.”
+            </blockquote>
+            <ol class="actual-chain">
+              <li><b>移动：</b>ACTION 1–4 被建模成 5×5 玩家上下左右走格。</li>
+              <li><b>拾取：</b>走到十字所在格，被解释为捡起钥匙 / collectible。</li>
+              <li><b>出口：</b>再走进上方 framed symbol / chamber。</li>
+              <li><b>记忆：</b>最终用 <code>(34, 15) + ACTION1</code> 硬编码升关。</li>
+            </ol>
+            <a class="text-link" href="#evidence">查看代码与日志行号 →</a>
+          </article>
+        </div>
+
+        <div class="gap-statement" role="note">
+          <span>差距不在“有没有走到”</span>
+          <strong>而在“为什么要先走十字，再去目标”</strong>
+          <p>真实答案是旋转与图形匹配；模型答案是捡钥匙与进房间。</p>
+        </div>
+      </section>
+
+      <section class="timeline-section section" id="timeline" aria-labelledby="timeline-title">
+        <header class="section-intro timeline-heading">
+          <div>
+            <p class="section-index">02 / Harness 如何推动试错</p>
+            <h2 id="timeline-title">从第一次试探，到第 18 步升关</h2>
+            <p id="timeline-lead"></p>
+          </div>
+          <div class="run-ledger" aria-label="当前运行摘要">
+            <p><span id="ledger-edits"></span><small>代码修改</small></p>
+            <p><span id="ledger-backtests"></span><small>回测</small></p>
+            <p><span id="ledger-pass-rate"></span><small>通过 / 失败</small></p>
+          </div>
+        </header>
+
+        <div class="timeline-layout">
+          <aside class="timeline-aside">
+            <p class="aside-label">工具环</p>
+            <ol>
+              <li>探索动作</li>
+              <li>提出可执行假设</li>
+              <li>修改 world_model</li>
+              <li>run_backtest</li>
+              <li>BFS / 再探索</li>
+            </ol>
+            <p class="aside-note">
+              下文的“6 轮”是为阅读归并的叙事回合；原始代码版本与回测次数不做删改。
+            </p>
+          </aside>
+
+          <div class="timeline" id="timeline-entries" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="evidence section" id="evidence" aria-labelledby="evidence-title">
+        <header class="section-intro evidence-heading">
+          <div>
+            <p class="section-index">03 / 专项证据检索</p>
+            <h2 id="evidence-title">“旋转”没藏在别处</h2>
+            <p>
+              检索范围分开统计：最终 <code>world_model.py</code>、最终
+              <code>notes.md</code>，以及 jsonl 里的全部代码修改。关键词出现不等于命中机制，必须回到上下文复核。
+            </p>
+          </div>
+          <div class="evidence-phase" aria-hidden="true" id="evidence-phase-label"></div>
+        </header>
+
+        <div class="keyword-ruling" id="keyword-ruling"></div>
+
+        <div class="search-table-wrap">
+          <table class="search-table">
+            <thead>
+              <tr>
+                <th>专项词</th>
+                <th>最终模拟器</th>
+                <th>全部代码修改</th>
+                <th>复核结论</th>
+              </tr>
+            </thead>
+            <tbody id="keyword-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="evidence-stack">
+          <details open>
+            <summary>
+              <span>关键代码证据</span>
+              <small>模型究竟把机制写成了什么</small>
+            </summary>
+            <div class="details-body" id="key-code-evidence"></div>
+          </details>
+
+          <details>
+            <summary>
+              <span>notes.md 与保存路径</span>
+              <small>推断写进代码注释，而不是 notes</small>
+            </summary>
+            <div class="details-body">
+              <p>
+                两次 Sol 运行的 <code>notes.md</code> 都停留在初始模板，且
+                <code>write_notes</code> 调用为 0。可追踪的认知链存在于
+                <code>write_code / apply_patch</code> 的参数、最终
+                <code>world_model.py</code> 注释，以及动作后的环境转移里。
+              </p>
+              <pre><code># Working notes
+Infer objects and mechanisms from transitions only.</code></pre>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>原始文件入口</span>
+              <small>页面中的每项数字都能回到本地记录</small>
+            </summary>
+            <div class="details-body source-links" id="source-links"></div>
+          </details>
+        </div>
+      </section>
+
+      <section class="context section" aria-labelledby="context-title">
+        <div class="context-copy">
+          <p class="section-index">04 / 背景，不是主结论</p>
+          <h2 id="context-title">Harness 有用，但这次有用在“可执行迭代”</h2>
+          <p>
+            它迫使模型把猜测变成代码，再用历史转移校验，因而能比只看一次画面更快形成可行动策略。可惜，回测只保证“复现已见行为”，不保证“解释了真实机制”。
+          </p>
+        </div>
+        <div class="context-facts">
+          <p>
+            <span>Sol · Phase 1</span>
+            <b id="phase1-context"></b>
+          </p>
+          <p>
+            <span>Sol · Phase 2</span>
+            <b id="phase2-context"></b>
+          </p>
+          <p>
+            <span>DeepSeek D2</span>
+            <b id="deepseek-context"></b>
+          </p>
+        </div>
+      </section>
+
+      <section class="closing section" aria-labelledby="closing-title">
+        <p class="section-index">最终一句话</p>
+        <h2 id="closing-title">
+          Harness 保存了一个能走通第一关的<br />
+          <em>可执行捷径</em>，没有保存正确的旋转机制。
+        </h2>
+        <p>
+          下一步若要测“理解”，不能只看 levels；还要把“十字 → 旋转 → 目标匹配 → 到位通关”设为必须显式写入并接受反事实验证的机制断言。
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>ls20 Harness case note · 只读原始日志 · 衍生数据随页面保存</p>
+      <a href="#top">回到页首 ↑</a>
+    </footer>
+
+    <script src="case-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -249,3 +249,110 @@ Schema 单局常需数百环境步 + xhigh）。详见 [`docs/sol-budget.md`](so
 - Public 多游戏：`$1000+`
 
 在 `$10` 内只建议：medium effort + `ARC_MAX_SPEND_USD=8` + 短 pilot。
+# 2026-07-29：Schema 机制闭环与 B4′ 预注册
+
+- planned commit 现在必须携带当前认证 WM、当前 observation 绑定的 BFS `plan_id`，
+  且动作序列必须与 BFS 输出完全一致；
+- 新增 latent/event 世界模型接口；关卡切换核验 LEVEL_COMPLETE 等事件，不再要求模型
+  生成未知下一关整帧；旧 `step(GridState, action)` 保持兼容；
+- WM 静态审计会拒绝轨迹规模的 RLE / 数值字面量表，抑制整关画面与坐标查表记忆；
+- 所有认证模型驱动的动作在执行前记录 prequential prediction，planned 与探索均可被反例
+  立即吊销认证；
+- mismatch 后必须真实修订 WM 才能重新认证；life reset / level boundary 只要求全历史重认证；
+- `propose_experiment` 现在要求具体合法动作、至少两个命名且预测不同的假说，并用
+  `experiment_id` 绑定探索 commit；
+- forced exploration 从 exact-frame 计数改为 level/state/action-space regime 均衡，避免
+  HUD 变化导致持续 ACTION1；
+- vision PNG 改为高对比 ARC RGB palette、近邻放大，并保存 hash/path 到 workspace；
+- JSON 解析使用 `raw_decode` 取第一个完整对象，避免双 JSON 的 Extra data 浪费；
+- baseline/schema 共用单局预算预留，另有实验总花费上限；ls20 正式 Schema 运行前强制检查
+  Sol medium、thinking disabled、Inferera、vision on 与正预算上限；
+- trace_index 改为按 level boundary、假说/WM、backtest/BFS、prequential、commit/experiment、
+  mismatch/reset/spend 分类；
+- 本地验证：`ruff` 通过，`pytest` 47 passed；未启动付费 API。
+
+下一次正式实验按
+[`experiment-plan-b4-preregistered.md`](experiment-plan-b4-preregistered.md)
+执行，仍需用户明确批准。
+
+## 2026-07-29：B4′ 负向结果与离线修复
+
+B4′（`20260729T043320.478531Z`）使用固定 Sol medium / thinking disabled /
+vision on，正式费用约 19.02 USD，结果为 0 level。没有达到条件式 baseline 门槛，
+所以未追加 baseline 或第二次付费运行。
+
+轨迹显示退化不是 API 故障（500 responses / 0 failures），而是目标错配与路径依赖：
+
+- 94 次 WM 修订把早期错误的方向 FSM 逐步补成 501 行坐标/阶段特例；
+- 104 个所谓分辨实验多数是路线或计费检查，假说 ID 高频重建，缺乏累积淘汰；
+- 88% prequential match 主要来自普通移动，不能代表目标机制正确；
+- 只有 2 个 BFS 计划、11 个 planned actions，局部拟合没有转化为通关；
+- model-call budget 在 env step 150 耗尽，旧 runner 又盲走 70 步并误报 action budget。
+
+已进行离线结构修复：
+
+- `model_call_budget` 现在立即终止，记录 `model_budget_exhausted_at_action`；
+- workspace 新增 `hypotheses.json` 与 `hypothesis_versions/`：稳定 `H_<name>` ID、
+  同一思路允许带历史版本地修订；24 个总假说/8 个未决假说仅作软整理提示；
+- 正式分辨实验比较至少两个已登记假说并回填 outcome；普通导航、机会性探索和新的
+  高价值实验不因旧实验尚未整理而被阻塞；
+- WM 写入改为先审计再覆盖；320 行、4000 AST nodes、96 branch nodes 是软压缩目标，
+  只有极端膨胀或轨迹字面量查表才硬拒绝；
+- prompt 增加通用对象级变换候选与最短描述偏好，不注入任何关卡专属答案；
+- 小范围、非终局视觉误差可作为 approximate match，不吊销仍可用于导航的模型；
+  level/WIN/GAME_OVER/动作空间错误仍严格失败；
+- runner 根据 mismatch、实验结果和认证状态分配 4–6 个 deliberation turns，
+  并记录 `deliberation_scheduled`，减少 routine 状态上的调用浪费；
+- trace index 新增假说账本版本、实验 observed/resolved、真实模型预算停止点。
+
+下一步仍是离线审计与 mock/replay；未经再次明确批准不启动真实 API。
+
+## 2026-07-31：C0.5 与 Codex runtime 收口（尚未运行真实 C0.5）
+
+根据 C0-R 的两次真实 Codex 调用轨迹，主线从“每次 `codex exec` 只完成一个
+JSON 小工具动作”改为更接近编码代理的一次性 episode：Codex 可先在 workspace
+内原生检查和修改，再以 `schema_cycle` 请求 harness 自动执行全历史回放、精确
+BFS，以及 planned/navigation/exploration 三选一提交。runner 的 routine/trigger
+deliberation 预算相应收敛到 1/2 turns，避免把高强度调用浪费在协议往返上。
+
+本轮实现与防回归包括：
+
+- 原生 Codex JSONL 改为边运行边落盘；超时或失败仍保留已产生事件和 thread id；
+- 加入 thread turn/prompt 阈值与 level boundary rollover，避免超长会话持续膨胀；
+- 除调用数、动作数和墙钟外，增加 total/uncached/output token、每调用 reserve、
+  notional cost proxy 五类可复现实验边界；
+- exact 与 approximate certification 分离：approximate 可用于受监控 navigation，
+  但 BFS/planned 仍要求全 Timeline exact；这允许暂时有用的机制解释继续帮助过关；
+- BFS 在每个预测状态重新读取 `available_actions`，不再错误地固定初始动作空间；
+- backtest 报告 `checked_by_action`，便于发现“高 checked 只是重复验证移动”的假繁荣；
+- 假说账本 prompt 优先保留近期、未解决、与实验相关的假说，同时保留完整磁盘历史；
+- 修复缺省 `experiment_id=None` 被当成字符串而拒绝合法探索的问题；
+- 新增离线 C0.5 验收器与 mock：2 个模型回合可完成 Toy 探索 → WM/notes 修订 →
+  exact replay → BFS → planned commit → WIN，且生成机器可读验收报告。
+
+当前 `.env` 已切到 Codex CLI / `gpt-5.6-sol xhigh` / vision on，并预配置 C1 的
+160 actions、12 calls 与多维 token 边界；`.env` 继续由 `.gitignore` 排除。
+C0.5 方案见 [`experiment-plan-c05-codex-toy.md`](experiment-plan-c05-codex-toy.md)。
+截至此记录只完成离线验证，未消费新的 Codex Plus 配额，也尚无 L2/completion gap。
+
+## 2026-07-31：真实 C0.5 / C0.5-R 结果
+
+首次真实 C0.5（`20260731T135841.105613Z`）在受限网络执行，4 次 Codex turn
+全部在采样前超时：36 次 reconnect、4 次 HTTPS fallback、4 次 `turn.failed`，
+0 actions、0 reported tokens。它只能证明原生 trace 在失败时可保留，不能评价模型
+或 harness 解题能力。随后修复了失败指标汇总、`infrastructure_error` 分类与首次
+terminal transport failure 快速熔断，并为 harness 子进程关闭 remote plugin catalog。
+
+获批的非受限网络 C0.5-R（`20260731T151325.670056Z`，最多 2 calls）成功取得两次
+模型响应：189,414 total tokens（162,304 cached prompt，4,153 output；原始事件另有
+2,248 reasoning output tokens）、notional proxy $0.320527、8 reconnect、2 HTTPS
+fallback、0 terminal timeout。第一回合用 `schema_cycle` 执行 ACTION1 探索；第二回合
+正确从 transition 学到 ACTION1 改变左格并修订 WM，但最终返回兼容层 `apply_patch`
+而非 `schema_cycle`，因此在 2-call 上限处停止：1 action、0 level、无 backtest/BFS、
+notes 未修订。该结果是协议闭环失败，不是 Toy 机制推断失败。
+
+审计后继续完成离线修正：workspace-native prompt 明确最终只能返回
+`schema_cycle|done`，优先 Codex 原生 apply_patch 而非 shell；若 Windows 文件工具
+不可用，`schema_cycle.workspace_edits` 可原子携带 WM source/patch 与 notes，再在
+同一 turn 自动 replay/BFS/commit。CLI 的 `reasoning_output_tokens` 解析也已修正。
+尚未获批第三次真实调用；ls20/C1 仍未启动，仍无 L2/completion gap。

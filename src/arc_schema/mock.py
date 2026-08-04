@@ -1,5 +1,15 @@
 from __future__ import annotations
 
+"""
+无网络 Toy 环境与确定性模拟模型：验证 Schema 闭环而不调用真实 ARC / API。
+
+阅读导引：
+- ToyEnvironment：三格前进游戏（位置 0→1→2 即 WIN），最小真实环境替身
+- DeterministicMockClient：脚本化工具链（write_code → explore → backtest → BFS → planned）
+- CompoundDeterministicMockClient：workspace-native，两次 schema_cycle 跑通认证+BFS+提交
+- TOY_STEP_SOURCE：可过 Toy 的最小世界模型源码
+"""
+
 import json
 from typing import Any
 
@@ -8,6 +18,7 @@ from arc_schema.deepseek_client import ModelResponse
 
 
 def toy_observation(position: int, *, state: str | None = None) -> Observation:
+    """按位置构造 Toy 观察；position==2 时为 WIN。"""
     if state is None:
         state = "WIN" if position == 2 else "NOT_FINISHED"
     levels = 1 if state == "WIN" or (state == "NOT_FINISHED" and position == 2) else 0
@@ -26,6 +37,8 @@ def toy_observation(position: int, *, state: str | None = None) -> Observation:
 
 
 class ToyEnvironment:
+    """最小可交互环境：ACTION1 前进，到位置 2 过关；可选 lethal_action 触发 GAME_OVER。"""
+
     def __init__(self, *, lethal_action: int | None = None) -> None:
         self.position = 0
         self._current = toy_observation(0)
@@ -94,6 +107,20 @@ def _payload_from_messages(messages: list[dict[str, Any]]) -> dict[str, Any]:
     return {}
 
 
+def _last_json_object(messages: list[dict[str, Any]]) -> dict[str, Any]:
+    for message in reversed(messages):
+        content = message.get("content")
+        if not isinstance(content, str):
+            continue
+        try:
+            value = json.loads(content)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            return value
+    return {}
+
+
 def _ref_for_position(payload: dict[str, Any], position: int) -> str | None:
     target = toy_observation(position).fingerprint
     current = payload.get("current", {})
@@ -124,7 +151,8 @@ def _state_spec(state_id: str, position: int, base_ref: str, *, goal: bool) -> d
     }
 
 
-TOY_STEP_SOURCE = '''\
+# 可过 Toy 的最小 legacy 世界模型：ACTION1 前进并在终点标 WIN。
+TOY_STEP_SOURCE = """\
 def step(state, action):
     nxt = state.copy()
     if int(action["id"]) == 1:
@@ -138,11 +166,11 @@ def step(state, action):
 
 def is_goal(state):
     return state.state == "WIN" or state.levels_completed >= 1
-'''
+"""
 
 
 class DeterministicMockClient:
-    """No-network client used by tests and the mock A/B command."""
+    """无网络脚本客户端：按固定阶段返回审议工具调用，供测试与 mock A/B。"""
 
     def __init__(self) -> None:
         self.calls = 0
@@ -170,7 +198,6 @@ class DeterministicMockClient:
     def _deliberation_response(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         # Scripted Schema loop:
         # write_code → explore commit (gather Timeline) → backtest → bfs → planned commit.
-        del messages
         phase = self._deliberation_phase
         self._deliberation_phase += 1
         if phase == 0:
@@ -200,10 +227,12 @@ class DeterministicMockClient:
         if phase == 4:
             return {"tool": "run_bfs", "args": {}}
         if phase == 5:
+            plan_id = str(_last_json_object(messages).get("plan_id", ""))
             return {
                 "tool": "commit_actions",
                 "args": {
                     "kind": "planned",
+                    "plan_id": plan_id,
                     "actions": [{"id": 1, "data": {}}],
                     "reason": "toy plan to WIN from position 1",
                 },
@@ -271,3 +300,87 @@ class DeterministicMockClient:
             ensure_position(min(position + 1, 2))
 
         return {"states": states, "transitions": transitions}
+
+
+class CompoundDeterministicMockClient:
+    """Workspace-native 模拟：两次 schema_cycle 完成探索 → 改码认证 → BFS planned。"""
+
+    workspace_native = True
+
+    def __init__(self) -> None:
+        self.calls = 0
+        self.workspace = None
+
+    def bind_workspace(self, workspace) -> None:
+        self.workspace = workspace
+
+    def complete_json(self, messages, purpose):
+        del messages
+        assert purpose == "deliberation"
+        if self.calls == 0:
+            value = {
+                "tool": "schema_cycle",
+                "args": {
+                    "strategy": "exploration",
+                    "hypothesis_updates": {
+                        "hypotheses": [
+                            {
+                                "id": "H_action1_progress",
+                                "statement": "ACTION1 advances a progress state.",
+                                "status": "active",
+                            }
+                        ],
+                        "evidence_seq": [],
+                        "reason": "register the initial action hypothesis",
+                    },
+                    "exploration_action": {"id": 1, "data": {}},
+                    "decision_record": {
+                        "hypotheses": ["H_action1_progress"],
+                        "evidence_seq": [],
+                        "expected_observation": "position advances",
+                        "revision_trigger": "position does not advance",
+                    },
+                    "rationale": "gather one transition before certification",
+                },
+            }
+        else:
+            value = {
+                "tool": "schema_cycle",
+                "args": {
+                    "strategy": "auto",
+                    "workspace_edits": {
+                        "source": TOY_STEP_SOURCE,
+                        "notes_text": (
+                            "# Toy mechanism\nACTION1 advances position; exact replay then BFS.\n"
+                        ),
+                    },
+                    "hypothesis_updates": {
+                        "hypotheses": [
+                            {
+                                "id": "H_action1_progress",
+                                "statement": "ACTION1 increments position toward WIN.",
+                                "status": "supported",
+                            }
+                        ],
+                        "evidence_seq": [1],
+                        "reason": "the first transition supports progress",
+                    },
+                    "exploration_action": {"id": 2, "data": {}},
+                    "decision_record": {
+                        "hypotheses": ["H_action1_progress"],
+                        "evidence_seq": [1],
+                        "expected_observation": "BFS reaches WIN",
+                        "revision_trigger": "any prequential mismatch",
+                    },
+                    "rationale": "certify the edited model and execute exact BFS",
+                },
+            }
+        self.calls += 1
+        text = json.dumps(value)
+        return ModelResponse(
+            value=value,
+            raw_text=text,
+            usage=Usage(prompt_tokens=10, completion_tokens=5, total_tokens=15),
+            latency_seconds=0.0,
+            attempts=1,
+        )

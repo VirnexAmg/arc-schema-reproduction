@@ -36,12 +36,12 @@ class AlwaysAction2:
 
 def test_backtest_skips_reset_transitions() -> None:
     model = ProgramWorldModel(
-        '''
+        """
 def step(state, action):
     return state.copy()
 def is_goal(state):
     return False
-'''
+"""
     )
     before = toy_observation(0, state="GAME_OVER")
     after = toy_observation(0)

@@ -1,0 +1,93 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_block_motion": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_block_motion",
+      "last_reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+      "last_updated_version": 3,
+      "statement": "The patterned 5x5 color-12/9 tile is controlled and moves by one tile width through color-3 lanes; ACTION1 moves up and ACTION2 moves down.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The patterned 5x5 color-12/9 tile is controlled and moves by one tile width through color-3 lanes; ACTION1 is upward."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_cardinal_controls": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_cardinal_controls",
+      "last_reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+      "last_updated_version": 3,
+      "statement": "ACTION1 and ACTION2 are the opposite vertical tile translations; ACTION3 and ACTION4 are candidates for the horizontal pair.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The remaining action ids likely produce other tile-width translations of the 12/9 tile, subject to traversability."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_marker_motion": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_marker_motion",
+      "last_reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+      "last_updated_version": 2,
+      "statement": "The compact color-0/1 motif is the controlled moving object.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+          "revised_at_ledger_version": 2,
+          "statement": "One or more action ids transform or translate the compact color-0/1 motif through the color-3 structure toward an interaction object."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_panel_transform",
+      "last_reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+      "last_updated_version": 3,
+      "statement": "The bottom color-11 bar advances by one cell in each row after every observed successful tile move.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions may primarily alter a glyph or state panel while leaving the compact color-0/1 motif fixed."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The bottom color-11 bar is a counter that advances by one cell after a successful tile move."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 3
+}

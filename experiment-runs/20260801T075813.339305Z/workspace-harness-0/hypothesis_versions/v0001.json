@@ -1,0 +1,30 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_actor_motion": {
+      "evidence_seq": [],
+      "id": "H_actor_motion",
+      "last_reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+      "last_updated_version": 1,
+      "statement": "Actions 1-4 move or reorient the black/blue motif; the action mapping is not yet grounded.",
+      "status": "active"
+    },
+    "H_glyph_gate": {
+      "evidence_seq": [],
+      "id": "H_glyph_gate",
+      "last_reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+      "last_updated_version": 1,
+      "statement": "The red glyph panels specify an object-level transformation or target condition, with the purple/red block acting as an interaction point.",
+      "status": "uncertain"
+    },
+    "H_room_navigation": {
+      "evidence_seq": [],
+      "id": "H_room_navigation",
+      "last_reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+      "last_updated_version": 1,
+      "statement": "The connected green component is the legal movement region while yellow and gray cells are non-traversable.",
+      "status": "active"
+    }
+  },
+  "version": 1
+}

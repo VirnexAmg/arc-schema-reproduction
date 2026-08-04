@@ -8,7 +8,11 @@ from arc_schema.workspace import Workspace
 
 def test_workspace_apply_patch_unique(tmp_path) -> None:
     ws = Workspace(tmp_path / "ws")
-    assert "identity transition" in ws.read_code() or "Identity" in ws.read_code() or "nxt" in ws.read_code()
+    assert (
+        "identity transition" in ws.read_code()
+        or "Identity" in ws.read_code()
+        or "nxt" in ws.read_code()
+    )
     old = "return nxt"
     new = "nxt.state = state.state\n    return nxt"
     ws.apply_patch(old, new)

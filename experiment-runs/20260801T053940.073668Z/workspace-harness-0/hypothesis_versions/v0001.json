@@ -1,0 +1,22 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_marker_motion": {
+      "evidence_seq": [],
+      "id": "H_marker_motion",
+      "last_reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+      "last_updated_version": 1,
+      "statement": "One or more action ids transform or translate the compact color-0/1 motif through the color-3 structure toward an interaction object.",
+      "status": "active"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [],
+      "id": "H_panel_transform",
+      "last_reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+      "last_updated_version": 1,
+      "statement": "Actions may primarily alter a glyph or state panel while leaving the compact color-0/1 motif fixed.",
+      "status": "uncertain"
+    }
+  },
+  "version": 1
+}

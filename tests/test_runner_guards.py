@@ -157,8 +157,10 @@ def test_explore_first_skips_world_model(tmp_path) -> None:
     assert client.calls == 0
     assert metrics.exploration_actions == 2
     assert metrics.environment_actions == 2
-    assert environment.position == 2
-    assert metrics.completed
+    # Regime-balanced exploration tries ACTION1 then ACTION2 instead of repeatedly
+    # selecting the lowest id from each changing exact frame.
+    assert environment.position == 1
+    assert not metrics.completed
 
 
 def test_explore_burst_before_second_world_model(tmp_path) -> None:
@@ -234,7 +236,9 @@ def test_fake_goal_without_level_advance_is_rejected(tmp_path) -> None:
     )
     assert metrics.backtest_failures >= 1
     assert metrics.planned_actions == 0
-    events = [item["event"] for item in AppendOnlyJournal.read_records(tmp_path / "fake-goal.jsonl")]
+    events = [
+        item["event"] for item in AppendOnlyJournal.read_records(tmp_path / "fake-goal.jsonl")
+    ]
     assert "backtest_failed" in events
 
 

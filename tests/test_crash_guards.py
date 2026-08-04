@@ -60,3 +60,10 @@ def test_parse_json_tolerates_trailing_extra_data() -> None:
     # Still rejects non-object payloads.
     with pytest.raises((json.JSONDecodeError, ValueError)):
         _parse_json("[1,2,3]")
+
+
+def test_parse_json_uses_first_of_multiple_objects() -> None:
+    value = _parse_json(
+        '{"tool":"run_backtest","args":{}}\n{"tool":"done","args":{"reason":"duplicate"}}'
+    )
+    assert value["tool"] == "run_backtest"

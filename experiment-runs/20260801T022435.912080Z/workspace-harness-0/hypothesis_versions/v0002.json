@@ -1,0 +1,80 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_action_cost": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_action_cost",
+      "last_reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+      "last_updated_version": 2,
+      "statement": "Each action consumes one column from the left edge of both color-11 meter rows, including potentially blocked movement attempts.",
+      "status": "active"
+    },
+    "H_directional_control": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_directional_control",
+      "last_reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+      "last_updated_version": 2,
+      "statement": "ACTION1 translates the 5x5 color-12/9 token upward by one five-pixel tile when its destination footprint is color 3; other action mappings remain unknown.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+          "revised_at_ledger_version": 2,
+          "statement": "One or more actions locally move or reorient the rare compact 0/1 arena glyph while the chamber layout persists."
+        }
+      ],
+      "status": "active"
+    },
+    "H_identity_baseline": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_identity_baseline",
+      "last_reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+      "last_updated_version": 2,
+      "statement": "The identity baseline is falsified for ACTION1 because both the movable token and lower meter visibly changed.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+          "revised_at_ledger_version": 2,
+          "statement": "With no transition evidence, an unmatched action leaves the rendered grid unchanged, possibly while hidden state changes."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_marker_goal": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_marker_goal",
+      "last_reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+      "last_updated_version": 2,
+      "statement": "The stationary compact 0/1 glyph is a target, checkpoint, or orientation cue rather than the directly controlled object.",
+      "status": "active"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_panel_transform",
+      "last_reason": "Transition 1 exactly grounds ACTION1 as an upward one-tile token translation and reveals simultaneous consumption of the color-11 meter.",
+      "last_updated_version": 2,
+      "statement": "The lower-strip change under ACTION1 is per-action resource consumption rather than selection of the repeated 5/9 panels; the panels may still encode a goal pattern.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions transform or select repeated 5/9 panels or update state represented by the lower strip; the 0/1 glyph may be a cursor rather than an avatar."
+        }
+      ],
+      "status": "active"
+    }
+  },
+  "version": 2
+}

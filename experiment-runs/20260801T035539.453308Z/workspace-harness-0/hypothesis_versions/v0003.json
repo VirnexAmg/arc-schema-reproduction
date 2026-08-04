@@ -1,0 +1,92 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_directional_move": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "id": "H_directional_move",
+      "last_reason": "Five exact upward transitions establish the movement and meter rules and place the payload at the first informative collision point.",
+      "last_updated_version": 3,
+      "statement": "ACTION1 translates the 5x5 color-12/9 payload upward by exactly five pixels when every destination pixel is color 3, preserving its pattern and clearing its old footprint; each action advances the bottom meter once.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The entry frame contains a uniquely asymmetric glyph suitable for discriminating translation from orientation/transform control, but no transition evidence yet assigns action semantics.",
+          "revised_at_ledger_version": 2,
+          "statement": "The four available actions translate the compact asymmetric blue/black glyph through the large color-3 play region; a legal ACTION1 should change its anchor without changing its internal pattern."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly identifies a five-pixel upward payload translation and one-cell meter advance, while leaving the blue/black glyph and payload orientation unchanged.",
+          "revised_at_ledger_version": 3,
+          "statement": "ACTION1 translates the 5x5 color-12/9 payload upward by exactly five pixels, preserving its pattern and replacing its old footprint with color 3, provided the destination is color 3; every action also advances the bottom two-row meter by one cell."
+        }
+      ],
+      "status": "active"
+    },
+    "H_dock_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "id": "H_dock_target",
+      "last_reason": "Five exact upward transitions establish the movement and meter rules and place the payload at the first informative collision point.",
+      "last_updated_version": 3,
+      "statement": "From payload top row 20, another ACTION1 against the framed top glyph causes a docking, transform, displacement, or level boundary rather than an ordinary blocked move.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly identifies a five-pixel upward payload translation and one-cell meter advance, while leaving the blue/black glyph and payload orientation unchanged.",
+          "revised_at_ledger_version": 3,
+          "statement": "The open color-3 vertical shaft above the payload's right-hand room leads to a useful interaction with the framed top glyph; moving the payload to top row 20 should place it immediately below that panel."
+        }
+      ],
+      "status": "active"
+    },
+    "H_orientation_control": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_orientation_control",
+      "last_reason": "Transition 1 exactly identifies a five-pixel upward payload translation and one-cell meter advance, while leaving the blue/black glyph and payload orientation unchanged.",
+      "last_updated_version": 2,
+      "statement": "ACTION1 rotates or reorients the asymmetric glyph or payload without translation.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The entry frame contains a uniquely asymmetric glyph suitable for discriminating translation from orientation/transform control, but no transition evidence yet assigns action semantics.",
+          "revised_at_ledger_version": 2,
+          "statement": "The available actions rotate, reorient, or select a transform for the asymmetric glyph while leaving its anchor fixed; ACTION1 should change orientation or a related panel state rather than translate it."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_solid_panel": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "id": "H_solid_panel",
+      "last_reason": "Five exact upward transitions establish the movement and meter rules and place the payload at the first informative collision point.",
+      "last_updated_version": 3,
+      "statement": "The framed top glyph is a solid non-color-3 boundary; ACTION1 from payload top row 20 leaves the payload unchanged and only advances the action meter.",
+      "status": "active"
+    }
+  },
+  "version": 3
+}

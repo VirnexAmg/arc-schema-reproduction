@@ -8,8 +8,14 @@ from __future__ import annotations
 2. builtins 白名单（_ALLOWED_BUILTINS）：exec 时只注入纯计算常用内置，且以只读 MappingProxyType 挂载；
 3. 超时（run_with_timeout / SIGALRM）：限制墙钟执行时间，避免死循环拖死宿主。
 
-对外入口为 exec_world_model；违规、语法错误、超时或加载期运行失败均统一为 SandboxError。
-注意：这是应用级轻量沙箱，不是进程/容器级隔离，适用于执行 LLM 生成的纯计算型世界模型。
+阅读导引：
+- validate_source / _NodeGuard：静态拒绝危险语法
+- exec_world_model：编译执行并返回命名空间（含 step/predict/is_goal）
+- 允许：纯计算 + 宿主注入的 helpers（GridState、np 等）
+- 禁止：文件、网络、任意 import、dunder 反射
+
+对外入口为 exec_world_model；违规统一为 SandboxError。
+注意：应用级轻量沙箱，不是进程/容器隔离。
 """
 
 import ast
@@ -87,6 +93,8 @@ _ALLOWED_BUILTINS: dict[str, Any] = {
 
 
 class _NodeGuard(ast.NodeVisitor):
+    """AST 访问器：遇到 import / 危险名 / dunder 访问立即抛 SandboxError。"""
+
     def visit_Import(self, node: ast.Import) -> None:
         raise SandboxError("import statements are forbidden in world_model.py")
 
@@ -150,9 +158,9 @@ def exec_world_model(
     timeout_seconds: float = 2.0,
 ) -> dict[str, Any]:
     """
-    Compile and execute model-authored world_model.py in a restricted namespace.
+    在受限命名空间中编译并执行模型撰写的 world_model.py。
 
-    Returns the module globals (functions/classes defined by the source).
+    返回模块全局（含模型定义的函数）；失败统一包装为 SandboxError。
     """
     tree = validate_source(source)
     code = compile(tree, "world_model.py", "exec")

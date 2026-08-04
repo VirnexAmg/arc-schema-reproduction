@@ -1,0 +1,30 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_directional_control": {
+      "evidence_seq": [],
+      "id": "H_directional_control",
+      "last_reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+      "last_updated_version": 1,
+      "statement": "One or more actions locally move or reorient the rare compact 0/1 arena glyph while the chamber layout persists.",
+      "status": "active"
+    },
+    "H_identity_baseline": {
+      "evidence_seq": [],
+      "id": "H_identity_baseline",
+      "last_reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+      "last_updated_version": 1,
+      "statement": "With no transition evidence, an unmatched action leaves the rendered grid unchanged, possibly while hidden state changes.",
+      "status": "active"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [],
+      "id": "H_panel_transform",
+      "last_reason": "Initial visual grounding yields competing control and panel-state interpretations; the identity model is the conservative executable baseline for the first probe.",
+      "last_updated_version": 1,
+      "statement": "Actions transform or select repeated 5/9 panels or update state represented by the lower strip; the 0/1 glyph may be a cursor rather than an avatar.",
+      "status": "active"
+    }
+  },
+  "version": 1
+}

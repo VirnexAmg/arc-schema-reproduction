@@ -83,7 +83,7 @@ class ModelRequestError(RuntimeError):
         self.finish_reason = finish_reason
 
 
-def _parse_json(text: str) -> dict[str, Any]:
+def parse_json_object(text: str) -> dict[str, Any]:
     stripped = text.strip()
     if stripped.startswith("```"):
         lines = stripped.splitlines()
@@ -91,16 +91,20 @@ def _parse_json(text: str) -> dict[str, Any]:
     try:
         value = json.loads(stripped)
     except json.JSONDecodeError:
-        # Models sometimes append trailing commentary ("Extra data"). Take the
-        # first top-level JSON object if present.
+        # Models sometimes append commentary or even a second JSON object. Decode
+        # exactly the first top-level object instead of spanning first "{" to last
+        # "}", which would raise Extra data and waste an otherwise usable response.
         start = stripped.find("{")
-        end = stripped.rfind("}")
-        if start < 0 or end <= start:
+        if start < 0:
             raise
-        value = json.loads(stripped[start : end + 1])
+        value, _ = json.JSONDecoder().raw_decode(stripped, start)
     if not isinstance(value, dict):
         raise ValueError("model response must be a JSON object")
     return value
+
+
+# Kept for callers/tests that imported the former private helper.
+_parse_json = parse_json_object
 
 
 def _resolve_api_key(config: ModelConfig) -> str:
@@ -108,9 +112,7 @@ def _resolve_api_key(config: ModelConfig) -> str:
         value = os.environ.get(name, "").strip()
         if value:
             return value
-    raise ValueError(
-        "API key required: set OPENAI_API_KEY (for gpt-5.6-sol) or DEEPSEEK_API_KEY"
-    )
+    raise ValueError("API key required: set OPENAI_API_KEY (for gpt-5.6-sol) or DEEPSEEK_API_KEY")
 
 
 def _is_openai_style(config: ModelConfig) -> bool:
@@ -159,7 +161,7 @@ class OpenAICompatClient:
                 if reasoning_status == "absent" and usage.reasoning_tokens > 0:
                     reasoning_status = "tokens_only"
                 return ModelResponse(
-                    value=_parse_json(text),
+                    value=parse_json_object(text),
                     raw_text=text,
                     usage=accumulated_usage,
                     latency_seconds=time.monotonic() - started,
@@ -212,9 +214,7 @@ class OpenAICompatClient:
     def _usage_from_response(self, response: Any) -> Usage:
         prompt_tokens = int(response.usage.prompt_tokens if response.usage else 0)
         completion_tokens = int(response.usage.completion_tokens if response.usage else 0)
-        completion_details = (
-            response.usage.completion_tokens_details if response.usage else None
-        )
+        completion_details = response.usage.completion_tokens_details if response.usage else None
         prompt_details = response.usage.prompt_tokens_details if response.usage else None
         reasoning_tokens = int(
             (completion_details.reasoning_tokens if completion_details else 0) or 0

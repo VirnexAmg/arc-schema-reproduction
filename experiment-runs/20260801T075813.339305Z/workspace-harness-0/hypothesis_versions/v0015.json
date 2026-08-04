@@ -1,0 +1,955 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_action4_right": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_action4_right",
+      "last_reason": "Evidence 4 exactly reversed action 3, confirming all four cardinal controls. The safe route can now go around the central yellow wall toward the still-untested motif.",
+      "last_updated_version": 5,
+      "statement": "Action 4 is the rightward inverse of action 3, completing two opposite cardinal movement pairs.",
+      "status": "supported"
+    },
+    "H_action_timer": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        12,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "id": "H_action_timer",
+      "last_reason": "Evidence 40 made the empty timer visible; evidence 41 showed that the next input triggers a refill/respawn/glyph-restore cycle and consumes the rightmost reserve. The restored glyph also changes which cyan transformation is most useful to test.",
+      "last_updated_version": 13,
+      "statement": "In the current level, ordinary actions consume two timer cells per row; after the bar becomes empty, the following input is consumed by a soft reset that refills the timer, respawns the actor, restores the entry glyph, and emits no GAME_OVER.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "Each submitted action consumes the leftmost cyan column of the two-row bottom status bar, recoloring it green."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "Every submitted action consumes the leftmost cyan column of the two-row status bar, including inverse movement actions."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "Action 3 translated the patterned tile left by exactly five pixels and advanced the status bar, grounding a third cardinal direction. The sole remaining action is predicted to be right by the compact inverse-pair model.",
+          "revised_at_ledger_version": 7,
+          "statement": "Every submitted action advances the two-row bottom status bar by one column."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            12
+          ],
+          "reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+          "revised_at_ledger_version": 9,
+          "statement": "Ordinary movement and blocked attempts consume one cyan timer column, while successful motif collection does not."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            12,
+            18,
+            19
+          ],
+          "reason": "Evidence 19 completed the prior level only after the tile advanced into the framed interior. The new entry frame relocates that same object to the left-center and introduces a separate cyan source glyph, requiring object-based exit detection and timer localization.",
+          "revised_at_ledger_version": 10,
+          "statement": "Ordinary movement consumes the leftmost cyan cell only in each bottom timer row; cyan components elsewhere are persistent level glyphs."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            12,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ],
+          "reason": "The monitored route matched actor motion, while each ordinary action removed two\u2014not one\u2014cyan cells from each bottom timer row. The separate upper cyan glyph remained unchanged, localizing timer effects and providing a level-visible rate cue.",
+          "revised_at_ledger_version": 11,
+          "statement": "Ordinary movement changes only the two bottom timer rows, with a level-dependent consumption rate; successful switch activation does not consume timer."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            12,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ],
+          "reason": "The black/blue interaction moved normally, consumed two timer cells per bottom row, and vertically reflected the lower glyph. The resulting logical pattern is one 180-degree rotation away from the exit-panel pattern, motivating the cyan-ring transform test.",
+          "revised_at_ledger_version": 12,
+          "statement": "Timer cost is level-dependent: current-level ordinary moves and black-switch activation consume two bottom cells per row, while the prior level's switch activation was free."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            12,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
+          ],
+          "reason": "Four exact up moves exhausted the remaining visible timer without a terminal event, refill, or detached-marker change. The black/blue motif also reappeared exactly after departure.",
+          "revised_at_ledger_version": 13,
+          "statement": "The current level consumes two cells per ordinary action until the bottom timer rows are empty; an empty visible bar is stable and does not immediately cause GAME_OVER."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_actor_motion": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        37,
+        38,
+        39,
+        40
+      ],
+      "id": "H_actor_motion",
+      "last_reason": "Four exact up moves exhausted the remaining visible timer without a terminal event, refill, or detached-marker change. The black/blue motif also reappeared exactly after departure.",
+      "last_updated_version": 12,
+      "statement": "Cardinal movement preserves the tile pattern and restores remembered terrain or persistent switch content when the tile leaves.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions 1-4 move or reorient the black/blue motif; the action mapping is not yet grounded."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "Actions control the 5x5 purple/red tile rather than the black/blue motif; action 1 translates the tile upward by one five-pixel object cell without changing its pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "Actions control the 5x5 purple/red tile; action 1 moves it up five pixels and action 2 moves it down five pixels while preserving its pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "Action 3 translated the patterned tile left by exactly five pixels and advanced the status bar, grounding a third cardinal direction. The sole remaining action is predicted to be right by the compact inverse-pair model.",
+          "revised_at_ledger_version": 5,
+          "statement": "Actions 1, 2, and 3 translate the 5x5 purple/red tile one lattice cell up, down, and left respectively while preserving its pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Evidence 4 exactly reversed action 3, confirming all four cardinal controls. The safe route can now go around the central yellow wall toward the still-untested motif.",
+          "revised_at_ledger_version": 8,
+          "statement": "Actions 1, 2, 3, and 4 translate the patterned 5x5 tile one lattice cell up, down, left, and right respectively while preserving its pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ],
+          "reason": "The motif reappeared after departure, and the planned route reached and entered the panel lip. Evidence 18 disproved first-contact completion but showed the gray panel is traversable.",
+          "revised_at_ledger_version": 12,
+          "statement": "Cardinal movement preserves the tile pattern and restores any remembered underlying terrain or persistent object when the tile leaves."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_black_flip": {
+      "evidence_seq": [
+        36
+      ],
+      "id": "H_black_flip",
+      "last_reason": "The black/blue interaction moved normally, consumed two timer cells per bottom row, and vertically reflected the lower glyph. The resulting logical pattern is one 180-degree rotation away from the exit-panel pattern, motivating the cyan-ring transform test.",
+      "last_updated_version": 11,
+      "statement": "In the current level, overlapping the black/blue switch vertically reflects the large lower-left glyph.",
+      "status": "supported"
+    },
+    "H_cyan_rotate": {
+      "evidence_seq": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
+      ],
+      "id": "H_cyan_rotate",
+      "last_reason": "The corrected ten-action route matched exactly and placed the actor immediately above the ring. With only two ordinary actions remaining and no exact completion plan, a single down action now cleanly distinguishes the horizontal-flip and passive-source interpretations.",
+      "last_updated_version": 15,
+      "statement": "Entering the upper cyan ring is predicted to reflect the large lower glyph across its vertical axis, transforming `111/001/101` into the exit target `111/100/101`.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            36
+          ],
+          "reason": "The black/blue interaction moved normally, consumed two timer cells per bottom row, and vertically reflected the lower glyph. The resulting logical pattern is one 180-degree rotation away from the exit-panel pattern, motivating the cyan-ring transform test.",
+          "revised_at_ledger_version": 12,
+          "statement": "The upper cyan ring is a second traversable transform switch predicted to rotate the large glyph 180 degrees, which would change the current glyph into the exit target."
+        },
+        {
+          "evidence_seq": [
+            36,
+            37,
+            38,
+            39,
+            40
+          ],
+          "reason": "Four exact up moves exhausted the remaining visible timer without a terminal event, refill, or detached-marker change. The black/blue motif also reappeared exactly after departure.",
+          "revised_at_ledger_version": 13,
+          "statement": "The upper cyan ring is a traversable transform switch predicted to rotate the lower glyph 180 degrees, producing the exact exit target from the current state."
+        },
+        {
+          "evidence_seq": [
+            36,
+            37,
+            38,
+            39,
+            40,
+            41
+          ],
+          "reason": "Evidence 40 made the empty timer visible; evidence 41 showed that the next input triggers a refill/respawn/glyph-restore cycle and consumes the rightmost reserve. The restored glyph also changes which cyan transformation is most useful to test.",
+          "revised_at_ledger_version": 14,
+          "statement": "The upper cyan ring is a traversable transform-switch candidate. A 180-degree rotation remains the model's provisional prediction, but the reset glyph differs from the exit by a horizontal reflection, which is now a live competing mechanism."
+        },
+        {
+          "evidence_seq": [
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50
+          ],
+          "reason": "The monitored burst showed one successful up move followed by eight exact wall bumps, grounding the shifted corridor. The timeout-restored glyph and exit target differ by a single horizontal reflection, motivating the simpler cyan mechanism and an exact-search attempt.",
+          "revised_at_ledger_version": 15,
+          "statement": "The upper cyan ring is predicted to reflect the large lower glyph across its vertical axis. From the timeout-restored glyph `111/001/101`, this produces the exit target `111/100/101` directly."
+        }
+      ],
+      "status": "active"
+    },
+    "H_cyan_source": {
+      "evidence_seq": [
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
+      ],
+      "id": "H_cyan_source",
+      "last_reason": "The corrected ten-action route matched exactly and placed the actor immediately above the ring. With only two ordinary actions remaining and no exact completion plan, a single down action now cleanly distinguishes the horizontal-flip and passive-source interpretations.",
+      "last_updated_version": 15,
+      "statement": "Competing interpretation: the upper cyan ring is a passive source or timer-rate cue rather than a transform switch, so overlap moves the actor but leaves the lower glyph unchanged.",
+      "status": "uncertain"
+    },
+    "H_exit_panel": {
+      "evidence_seq": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "id": "H_exit_panel",
+      "last_reason": "Evidence 19 completed the prior level only after the tile advanced into the framed interior. The new entry frame relocates that same object to the left-center and introduces a separate cyan source glyph, requiring object-based exit detection and timer localization.",
+      "last_updated_version": 9,
+      "statement": "After glyph synchronization, level completion occurs when the movable tile exactly occupies the 5x5 interior of the compact 7x7 gray exit frame.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            12
+          ],
+          "reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+          "revised_at_ledger_version": 8,
+          "statement": "Once the displayed glyph matches the upper target, contacting the upper gray panel completes the level."
+        },
+        {
+          "evidence_seq": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ],
+          "reason": "The motif reappeared after departure, and the planned route reached and entered the panel lip. Evidence 18 disproved first-contact completion but showed the gray panel is traversable.",
+          "revised_at_ledger_version": 9,
+          "statement": "Level completion occurs when the synchronized tile advances fully into the upper panel's central 5x5 target area, rather than on first contact with its lower edge."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_glyph_gate": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "id": "H_glyph_gate",
+      "last_reason": "The motif reappeared after departure, and the planned route reached and entered the panel lip. Evidence 18 disproved first-contact completion but showed the gray panel is traversable.",
+      "last_updated_version": 8,
+      "statement": "The black/blue motif is a persistent floor switch: tile overlap hides it and synchronizes the lower glyph, while leaving restores the motif underlay.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "The red glyph panels specify an object-level transformation or target condition, with the purple/red block acting as an interaction point."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "The upper glyph panel or black/blue motif is a destination or transformation target for the moving purple/red tile."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "The lattice-aligned black/blue motif is an intermediate interaction target, while the upper glyph panel may be an exit or transformation target."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Evidence 4 exactly reversed action 3, confirming all four cardinal controls. The safe route can now go around the central yellow wall toward the still-untested motif.",
+          "revised_at_ledger_version": 6,
+          "statement": "The black/blue motif is an intermediate interaction target, after which the upper glyph panel may serve as an exit or pattern goal."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "reason": "The monitored route reached the cell directly above the motif without mismatch. A single down action now distinguishes an interaction from ordinary collision.",
+          "revised_at_ledger_version": 7,
+          "statement": "Entering the black/blue motif may collect or transform it, enabling progress toward the upper glyph panel."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+          "revised_at_ledger_version": 8,
+          "statement": "The black/blue motif is a collectible switch: entering its cell consumes it and synchronizes the large lower-left glyph with the small upper target glyph."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_goal_match": {
+      "evidence_seq": [
+        36,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "id": "H_goal_match",
+      "last_reason": "The monitored burst showed one successful up move followed by eight exact wall bumps, grounding the shifted corridor. The timeout-restored glyph and exit target differ by a single horizontal reflection, motivating the simpler cyan mechanism and an exact-search attempt.",
+      "last_updated_version": 14,
+      "statement": "When a switch transforms the lower logical glyph to exactly equal the red glyph inside the compact gray frame, the actor can complete the level by entering the panel interior.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            36
+          ],
+          "reason": "The black/blue interaction moved normally, consumed two timer cells per bottom row, and vertically reflected the lower glyph. The resulting logical pattern is one 180-degree rotation away from the exit-panel pattern, motivating the cyan-ring transform test.",
+          "revised_at_ledger_version": 14,
+          "statement": "The exit becomes usable when the transformed lower-left logical 3x3 glyph equals the red 3x3 glyph inside the compact gray frame."
+        }
+      ],
+      "status": "active"
+    },
+    "H_motif_block": {
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "id": "H_motif_block",
+      "last_reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+      "last_updated_version": 7,
+      "statement": "The black/blue motif is a solid non-green obstacle that blocks entry.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "reason": "The monitored route reached the cell directly above the motif without mismatch. A single down action now distinguishes an interaction from ordinary collision.",
+          "revised_at_ledger_version": 7,
+          "statement": "The black/blue motif is a solid non-green obstacle, so attempting to enter its cell leaves the tile stationary while still advancing the timer."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_panel_entry": {
+      "evidence_seq": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "id": "H_panel_entry",
+      "last_reason": "The motif reappeared after departure, and the planned route reached and entered the panel lip. Evidence 18 disproved first-contact completion but showed the gray panel is traversable.",
+      "last_updated_version": 8,
+      "statement": "After glyph synchronization, the tile may traverse the lower gray edge of the upper panel as ordinary movement.",
+      "status": "supported"
+    },
+    "H_panel_layout": {
+      "evidence_seq": [
+        18,
+        19
+      ],
+      "id": "H_panel_layout",
+      "last_reason": "Evidence 19 completed the prior level only after the tile advanced into the framed interior. The new entry frame relocates that same object to the left-center and introduces a separate cyan source glyph, requiring object-based exit detection and timer localization.",
+      "last_updated_version": 9,
+      "statement": "Across levels, the exit is grounded as a compact 7x7 gray frame with a 5x5 interior, while its board position may change.",
+      "status": "active"
+    },
+    "H_panel_match": {
+      "evidence_seq": [
+        12,
+        36
+      ],
+      "id": "H_panel_match",
+      "last_reason": "The black/blue interaction moved normally, consumed two timer cells per bottom row, and vertically reflected the lower glyph. The resulting logical pattern is one 180-degree rotation away from the exit-panel pattern, motivating the cyan-ring transform test.",
+      "last_updated_version": 11,
+      "statement": "Switch interactions transform the existing lower-left glyph; the prior level's copied-looking result was level-specific rather than a universal direct copy.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            12
+          ],
+          "reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+          "revised_at_ledger_version": 11,
+          "statement": "Motif collection rewrites the large lower-left glyph to equal the small upper target, using the target's object-level pattern at doubled scale."
+        }
+      ],
+      "status": "active"
+    },
+    "H_room_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
+      ],
+      "id": "H_room_navigation",
+      "last_reason": "The corrected ten-action route matched exactly and placed the actor immediately above the ring. With only two ordinary actions remaining and no exact completion plan, a single down action now cleanly distinguishes the horizontal-flip and passive-source interpretations.",
+      "last_updated_version": 15,
+      "statement": "The corrected route from the shifted central corridor is right once, up five times, then left four times; it reaches the cell immediately above the upper cyan ring with every movement matching exactly.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "The connected green component is the legal movement region while yellow and gray cells are non-traversable."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "The purple/red tile translates between five-pixel-aligned green locations, restores green beneath itself, and is blocked by non-green destinations."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "The tile moves on a five-pixel lattice over green terrain, restores green beneath itself, and actions 1 and 2 are inverse vertical translations."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "Action 3 translated the patterned tile left by exactly five pixels and advanced the status bar, grounding a third cardinal direction. The sole remaining action is predicted to be right by the compact inverse-pair model.",
+          "revised_at_ledger_version": 6,
+          "statement": "The tile moves on a five-pixel lattice over green terrain and restores green beneath itself after successful movement."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "reason": "The monitored route reached the cell directly above the motif without mismatch. A single down action now distinguishes an interaction from ordinary collision.",
+          "revised_at_ledger_version": 10,
+          "statement": "The tile moves on a five-pixel lattice over green terrain, preserves its pattern, and restores green beneath itself; the seven-step route around the central wall matched exactly."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ],
+          "reason": "The monitored route matched actor motion, while each ordinary action removed two\u2014not one\u2014cyan cells from each bottom timer row. The separate upper cyan glyph remained unchanged, localizing timer effects and providing a level-visible rate cue.",
+          "revised_at_ledger_version": 14,
+          "statement": "The tile moves on a five-pixel lattice over green corridors; the 16-action route through the upper passage reached the cell immediately above the switch with all tile positions matching."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50
+          ],
+          "reason": "The monitored burst showed one successful up move followed by eight exact wall bumps, grounding the shifted corridor. The timeout-restored glyph and exit target differ by a single horizontal reflection, motivating the simpler cyan mechanism and an exact-search attempt.",
+          "revised_at_ledger_version": 15,
+          "statement": "The actor moves on a five-pixel lattice, but the central vertical corridor shifts right by one lattice cell above rows 35-39. Inputs into walls leave the actor fixed while still consuming timer."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_source_glyph": {
+      "evidence_seq": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "id": "H_source_glyph",
+      "last_reason": "The black/blue interaction moved normally, consumed two timer cells per bottom row, and vertically reflected the lower glyph. The resulting logical pattern is one 180-degree rotation away from the exit-panel pattern, motivating the cyan-ring transform test.",
+      "last_updated_version": 11,
+      "statement": "The upper cyan ring is persistent interactive level content, but evidence 36 rejects treating its shape as something universally copied by the black/blue switch.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            18,
+            19
+          ],
+          "reason": "Evidence 19 completed the prior level only after the tile advanced into the framed interior. The new entry frame relocates that same object to the left-center and introduces a separate cyan source glyph, requiring object-based exit detection and timer localization.",
+          "revised_at_ledger_version": 10,
+          "statement": "The small source glyph may change display color by level; switch activation copies its object-level shape at doubled scale into the lower-left red display."
+        },
+        {
+          "evidence_seq": [
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ],
+          "reason": "The monitored route matched actor motion, while each ordinary action removed two\u2014not one\u2014cyan cells from each bottom timer row. The separate upper cyan glyph remained unchanged, localizing timer effects and providing a level-visible rate cue.",
+          "revised_at_ledger_version": 11,
+          "statement": "The small cyan source glyph is persistent level content, remains unchanged during ordinary movement, and supplies the shape copied into the lower-left display after switch activation."
+        }
+      ],
+      "status": "uncertain"
+    },
+    "H_timer_rate": {
+      "evidence_seq": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "id": "H_timer_rate",
+      "last_reason": "The monitored route matched actor motion, while each ordinary action removed two\u2014not one\u2014cyan cells from each bottom timer row. The separate upper cyan glyph remained unchanged, localizing timer effects and providing a level-visible rate cue.",
+      "last_updated_version": 10,
+      "statement": "The current level's separate upper cyan source glyph is an observable cue for consuming two bottom timer cells per ordinary action, versus one cell in the prior level without that cue.",
+      "status": "active"
+    },
+    "H_timer_reserve": {
+      "evidence_seq": [
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "id": "H_timer_reserve",
+      "last_reason": "Evidence 40 made the empty timer visible; evidence 41 showed that the next input triggers a refill/respawn/glyph-restore cycle and consumes the rightmost reserve. The restored glyph also changes which cyan transformation is most useful to test.",
+      "last_updated_version": 13,
+      "statement": "The detached bottom-right markers are timeout reserves: the observed soft reset removed the rightmost reserve while refilling the timer and restoring board objects.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            37,
+            38,
+            39,
+            40
+          ],
+          "reason": "Four exact up moves exhausted the remaining visible timer without a terminal event, refill, or detached-marker change. The black/blue motif also reappeared exactly after departure.",
+          "revised_at_ledger_version": 13,
+          "statement": "The three detached right-side markers immediately refill the cyan bar when its visible segment reaches zero."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 15
+}

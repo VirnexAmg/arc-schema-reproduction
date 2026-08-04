@@ -1,0 +1,94 @@
+{
+  "experiments": {
+    "exp-f150d871c9b0e9ae": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "f6e7958176df13ce6caae9d85c959131e1b7887555ff270bdc285ba8e7e3a1b0",
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "experiment_id": "exp-f150d871c9b0e9ae",
+      "hypotheses": [
+        {
+          "id": "H_target",
+          "prediction": "Moving upward from y=20 into/contacting the aligned target chamber triggers LEVEL_COMPLETE and loads the next level."
+        },
+        {
+          "id": "H_blocked_target",
+          "prediction": "The upward move is blocked by the gray/yellow boundary; the player remains at y=20 and only the bottom timer advances."
+        }
+      ],
+      "rationale": "The player is directly aligned beneath the target at the endpoint of the known corridor, so one upward action is both goal-directed and maximally discriminating.",
+      "status": "proposed"
+    }
+  },
+  "hypotheses": {
+    "H_blocked_target": {
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_blocked_target",
+      "last_reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+      "statement": "The gray target chamber is physically blocked; an upward attempt from y=20 will leave the player stationary, implying another interaction or route is required.",
+      "status": "active"
+    },
+    "H_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_navigation",
+      "last_reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+      "statement": "Actions move the 5x5 magenta/red player one tile: 1 up, 2 down, 3 left, 4 right, when the destination is green/passable; the bottom bar advances one unit every action.",
+      "status": "active"
+    },
+    "H_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_target",
+      "last_reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+      "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; attempting to move upward from the corridor endpoint may trigger completion by contact.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+          "revised_at_ledger_version": 2,
+          "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; contact or entry completes the level."
+        }
+      ],
+      "status": "active"
+    }
+  },
+  "version": 3
+}

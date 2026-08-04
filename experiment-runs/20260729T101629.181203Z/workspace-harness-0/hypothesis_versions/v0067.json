@@ -1,0 +1,2416 @@
+{
+  "experiments": {
+    "exp-0d20d9d3b75ea76d": {
+      "action": {
+        "data": {},
+        "id": 2
+      },
+      "current_fingerprint": "eb879ea140aba434922ad8160b584c51a65317e2f2860cf319c94bde2cd62808",
+      "evidence_seq": [
+        2028,
+        2068
+      ],
+      "experiment_id": "exp-0d20d9d3b75ea76d",
+      "hypotheses": [
+        {
+          "id": "H_level2_navigation",
+          "prediction": "ACTION2 moves the player downward from x\u224829,y\u224840 to x\u224829,y\u224845 along the visible vertical green corridor and consumes one timer unit."
+        },
+        {
+          "id": "H_multi_transform",
+          "prediction": "If the corridor narrows or terminates before accommodating the player footprint, ACTION2 is blocked at the current position and only the countdown changes."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 2
+        },
+        "after_fingerprint": "0fde715e254ff6055669d67156451186a196ff66abd9bc9318c667dd014c0fa9",
+        "before_fingerprint": "eb879ea140aba434922ad8160b584c51a65317e2f2860cf319c94bde2cd62808",
+        "delta": {
+          "bbox": {
+            "x0": 21,
+            "x1": 22,
+            "y0": 61,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:10,11:32,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:10,11:32,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2096,
+      "rationale": "The just-confirmed left move ends beside a wall, while the rendered frame shows the only unexplored connected branch continuing downward. This reversible move maps the route toward the lower glyphs without prematurely assigning object roles.",
+      "status": "observed"
+    },
+    "exp-2a873c2d5fe6dae5": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "2073d387220993a271fb2a82652af647b6eb5d4172fb449b5befcd6cb3849e89",
+      "evidence_seq": [
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175
+      ],
+      "experiment_id": "exp-2a873c2d5fe6dae5",
+      "hypotheses": [
+        {
+          "id": "H_corridor_snap",
+          "prediction": "ACTION1 moves or snaps the player upward into the narrow vertical neck despite its current right-offset alignment."
+        },
+        {
+          "id": "H_strict_footprint",
+          "prediction": "ACTION1 is blocked because part of the translated 5x5 footprint overlaps the yellow wall; only the timer advances."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "038c03fbe4cb6abdd7e456999af761c93bab8a31964711cea6ca73c18cfb78ad",
+        "before_fingerprint": "2073d387220993a271fb2a82652af647b6eb5d4172fb449b5befcd6cb3849e89",
+        "delta": {
+          "bbox": {
+            "x0": 34,
+            "x1": 42,
+            "y0": 20,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:30,12:5,4:25",
+              "y": 20
+            },
+            {
+              "rle": "5:4,4:30,12:5,4:25",
+              "y": 21
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 22
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 23
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 24
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 25
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 26
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 27
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 28
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 29
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:30,11:12,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:30,11:12,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 486,
+      "rationale": "This is the most direct goalward action and cleanly tests whether the corridor supports alignment correction or enforces strict footprint collision.",
+      "resolution_evidence_seq": [
+        486
+      ],
+      "resolution_reason": "The bound ACTION1 experiment produced a real upward translation rather than being blocked. This rejects strict footprint collision and shows permissive edge-overlap movement without horizontal snapping.",
+      "status": "reviewed"
+    },
+    "exp-32e1f05f8240b4de": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+      "evidence_seq": [
+        130
+      ],
+      "experiment_id": "exp-32e1f05f8240b4de",
+      "hypotheses": [
+        {
+          "id": "H_deep_target",
+          "prediction": "The player advances from y=15 to y=10, fully aligns with the glyph, and triggers LEVEL_COMPLETE."
+        },
+        {
+          "id": "H_socket_navigation",
+          "prediction": "The player advances to y=10 but the level remains NOT_FINISHED, showing that alignment alone is insufficient."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+        "before_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+        "delta": {
+          "metadata": {},
+          "rows": []
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 168,
+      "rationale": "The glyph is one tile above the current player position, so upward movement is the most direct goal action and discriminates completion by full alignment from ordinary traversal.",
+      "resolution_evidence_seq": [
+        168
+      ],
+      "resolution_reason": "Experiment exp-32e1f05f8240b4de observed no visual change on ACTION1 at y=15, falsifying direct deeper traversal and motivating the distinct small-object interaction.",
+      "status": "reviewed"
+    },
+    "exp-56760483058f4175": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "a4faf1d5ecc2168ab8d195bcfcb6f7e0e55cd436aef939c7b1989d1e0a39302e",
+      "evidence_seq": [
+        639,
+        689
+      ],
+      "experiment_id": "exp-56760483058f4175",
+      "hypotheses": [
+        {
+          "id": "H_directional_transform",
+          "prediction": "ACTION1 moves the player upward onto the tiny glyph and applies the vertical-passage left-right reflection, changing status 111/100/101 into target 111/001/101."
+        },
+        {
+          "id": "H_glyph_match",
+          "prediction": "If only leaving the glyph or crossing its center triggers transformation, ACTION1 moves upward but leaves status 111/100/101 unchanged."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "f621f856555ffe3c4e379036a1f718e181e8d587dfd240ceb6a6c072dcf2e5ef",
+        "before_fingerprint": "a4faf1d5ecc2168ab8d195bcfcb6f7e0e55cd436aef939c7b1989d1e0a39302e",
+        "delta": {
+          "bbox": {
+            "x0": 3,
+            "x1": 23,
+            "y0": 30,
+            "y1": 58
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 30
+            },
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 31
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 32
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 33
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 34
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 35
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 36
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 37
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 38
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 39
+            },
+            {
+              "rle": "4:1,5:6,9:2,5:2,4:53",
+              "y": 57
+            },
+            {
+              "rle": "4:1,5:6,9:2,5:2,4:53",
+              "y": 58
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 744,
+      "rationale": "The player is directly below the tiny glyph and the status is one left-right reflection from the top target. Upward movement is the shortest reversible action that may create an exact match.",
+      "resolution_evidence_seq": [
+        639,
+        689,
+        744
+      ],
+      "resolution_reason": "The latest bound ACTION1 experiment moved upward and changed the status by the predicted left-right reflection, producing an exact match with the top target. This confirms the axis-dependent transform mechanism and makes immediate return to the socket the highest-value plan.",
+      "status": "reviewed"
+    },
+    "exp-58a69d392585461a": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "4098d05211133443066357298351f7eb844a6f12a9442a9c09ba58a6896509a5",
+      "evidence_seq": [
+        639
+      ],
+      "experiment_id": "exp-58a69d392585461a",
+      "hypotheses": [
+        {
+          "id": "H_directional_transform",
+          "prediction": "ACTION1 moves upward past the tiny glyph and applies the same left-right reflection again, returning the status from 101/100/111 to 101/001/111."
+        },
+        {
+          "id": "H_glyph_match",
+          "prediction": "If transformation depends on directed approach rather than movement axis, ACTION1 may apply a different inverse/rotation or leave the current status unchanged; the resulting pattern will identify the operation needed to reach target 111/001/101."
+        }
+      ],
+      "rationale": "The player is immediately below/overlapping the tiny glyph. Moving upward is reversible and directly tests whether vertical crossings implement a horizontal reflection, while positioning the player for a subsequent horizontal crossing expected to implement the required vertical reflection.",
+      "status": "proposed"
+    },
+    "exp-61f73f52b84c2864": {
+      "action": {
+        "data": {},
+        "id": 2
+      },
+      "current_fingerprint": "a7b16e4d78335574237b0b70b7a5ee805e89c1d54f47a30b7f20583dd937ffb1",
+      "evidence_seq": [
+        168,
+        486,
+        510,
+        534
+      ],
+      "experiment_id": "exp-61f73f52b84c2864",
+      "hypotheses": [
+        {
+          "id": "H_directional_transform",
+          "prediction": "ACTION2 moves the player downward across the tiny glyph from directly above and changes the lower-left status glyph to a new orientation, plausibly matching the top target pattern."
+        },
+        {
+          "id": "H_single_toggle",
+          "prediction": "ACTION2 moves downward but the lower-left status glyph remains unchanged because the tiny glyph is a one-shot or two-state switch independent of approach direction."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 2
+        },
+        "after_fingerprint": "4098d05211133443066357298351f7eb844a6f12a9442a9c09ba58a6896509a5",
+        "before_fingerprint": "a7b16e4d78335574237b0b70b7a5ee805e89c1d54f47a30b7f20583dd937ffb1",
+        "delta": {
+          "bbox": {
+            "x0": 3,
+            "x1": 49,
+            "y0": 25,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 25
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 26
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 27
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 28
+            },
+            {
+              "rle": "5:4,4:10,3:40,4:10",
+              "y": 29
+            },
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 30
+            },
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 31
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 32
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 33
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 34
+            },
+            {
+              "rle": "4:1,5:2,9:2,5:6,4:53",
+              "y": 57
+            },
+            {
+              "rle": "4:1,5:2,9:2,5:6,4:53",
+              "y": 58
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:37,11:5,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:37,11:5,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 639,
+      "rationale": "The player is now aligned directly above the persistent tiny glyph. A downward move is the shortest goal-directed test of whether approach direction applies a distinct glyph transformation.",
+      "resolution_evidence_seq": [
+        168,
+        486,
+        510,
+        534,
+        639
+      ],
+      "resolution_reason": "Experiment exp-61f73f52b84c2864 showed ACTION2 moved downward and changed the status glyph from 101/001/111 to 101/100/111, exactly a horizontal reflection. This supports a reusable directional transformation and rejects a one-shot toggle.",
+      "status": "reviewed"
+    },
+    "exp-683ee0bcf247a748": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "04594aea682eaba8b60e95682cdb139bf2050a55c990252ef9932f70f9c25826",
+      "evidence_seq": [
+        744,
+        1144,
+        2718
+      ],
+      "experiment_id": "exp-683ee0bcf247a748",
+      "hypotheses": [
+        {
+          "id": "H_timeout_reset",
+          "prediction": "Because no color-11 countdown cells remain, ACTION1 restores the exact level-2 entry frame, including the starting player position, initial status, and full countdown."
+        },
+        {
+          "id": "H_level2_navigation",
+          "prediction": "If exhaustion does not reset on the following input, ACTION1 attempts ordinary northward movement from approximately (19,15), either translating to (19,10) or being blocked."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "4da0748cb245c3eab9260a81432459a8586572769c2a238aaac7fb775cedc789",
+        "before_fingerprint": "04594aea682eaba8b60e95682cdb139bf2050a55c990252ef9932f70f9c25826",
+        "delta": {
+          "bbox": {
+            "x0": 13,
+            "x1": 63,
+            "y0": 15,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:5,3:15,4:5,3:10,4:5,3:10,4:10",
+              "y": 15
+            },
+            {
+              "rle": "5:4,4:5,3:6,11:3,3:6,4:5,3:10,4:5,3:10,4:10",
+              "y": 16
+            },
+            {
+              "rle": "5:4,4:5,3:6,11:1,3:1,11:1,3:6,4:5,3:10,4:5,3:10,4:10",
+              "y": 17
+            },
+            {
+              "rle": "5:4,4:5,3:6,11:3,3:6,4:5,3:10,4:5,3:10,4:10",
+              "y": 18
+            },
+            {
+              "rle": "5:4,4:5,3:15,4:5,3:10,4:5,3:10,4:10",
+              "y": 19
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:7,3:1,4:8,12:5,3:5,4:5,3:15,4:5",
+              "y": 40
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:2,9:3,5:2,3:1,4:8,12:5,3:5,4:5,3:15,4:5",
+              "y": 41
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:2,9:1,5:4,3:1,4:8,9:5,3:5,4:5,3:15,4:5",
+              "y": 42
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:2,9:1,5:1,9:1,5:2,3:1,4:8,9:5,3:5,4:5,3:15,4:5",
+              "y": 43
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:7,3:1,4:8,9:5,3:5,4:5,3:15,4:5",
+              "y": 44
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,11:42,5:1,8:2,5:1,8:2,5:1,3:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,11:42,5:1,8:2,5:1,8:2,5:1,3:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2747,
+      "rationale": "The countdown is visibly empty, so one input decisively tests the established delayed-reset rule and should provide a fresh timer for the next exploration route.",
+      "status": "observed"
+    },
+    "exp-6ab9a8cbe98733b5": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "65c067810ad57a84d774ed923381fcbb097b2b0637090843c2de6d1f7e770c2e",
+      "evidence_seq": [
+        744
+      ],
+      "experiment_id": "exp-6ab9a8cbe98733b5",
+      "hypotheses": [
+        {
+          "id": "H_directional_transform",
+          "prediction": "ACTION1 moves from x=15,y=35 to x=15,y=30 beside the tiny glyph and left-right reflects status 111/100/101 into the target 111/001/101."
+        },
+        {
+          "id": "H_glyph_match",
+          "prediction": "If the player is not close enough on this offset, ACTION1 moves upward but leaves status 111/100/101 unchanged."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "8c3dfa19776eac12c3c768653439de9cd38b649c9e98be823fe18a1097d85fa9",
+        "before_fingerprint": "65c067810ad57a84d774ed923381fcbb097b2b0637090843c2de6d1f7e770c2e",
+        "delta": {
+          "bbox": {
+            "x0": 5,
+            "x1": 30,
+            "y0": 30,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 30
+            },
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 31
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 32
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 33
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 34
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 35
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 36
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 37
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 38
+            },
+            {
+              "rle": "5:4,4:10,3:15,4:5,3:20,4:10",
+              "y": 39
+            },
+            {
+              "rle": "4:1,5:2,9:2,5:2,9:2,5:2,4:53",
+              "y": 55
+            },
+            {
+              "rle": "4:1,5:2,9:2,5:2,9:2,5:2,4:53",
+              "y": 56
+            },
+            {
+              "rle": "4:1,5:2,9:6,5:2,4:53",
+              "y": 59
+            },
+            {
+              "rle": "4:1,5:2,9:6,5:2,4:1,5:52",
+              "y": 60
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:18,11:24,5:1,8:2,5:1,8:2,5:1,3:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:18,11:24,5:1,8:2,5:1,8:2,5:1,3:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 1144,
+      "rationale": "The timer has reset with 25 steps remaining. One upward move is goal-directed, should recreate the known target match, and leaves ample time for the 12-step return route.",
+      "resolution_evidence_seq": [
+        744,
+        1144
+      ],
+      "resolution_reason": "Reviewed exp-6ab9a8cbe98733b5: ACTION1 recreated the exact predicted match after timeout. The shortest route now leaves the interaction zone upward and heads directly through the upper corridor to the socket.",
+      "status": "reviewed"
+    },
+    "exp-82ad95a708df5b80": {
+      "action": {
+        "data": {},
+        "id": 2
+      },
+      "current_fingerprint": "54751246816beb108c47e85824c833fc7a24e19def38a486f6519225f5d570a9",
+      "evidence_seq": [
+        2028,
+        2068,
+        2141
+      ],
+      "experiment_id": "exp-82ad95a708df5b80",
+      "hypotheses": [
+        {
+          "id": "H_multi_transform",
+          "prediction": "ACTION2 moves the player downward from x\u224814,y\u224810 beside/over the upper tiny glyph and applies the level-1 vertical-passage left-right reflection, changing status 111/001/101 into 111/100/101 to match the lower gray target."
+        },
+        {
+          "id": "H_level2_navigation",
+          "prediction": "If the tiny glyph requires a different alignment or is solid, ACTION2 either moves downward without changing the status or is blocked; only the countdown changes."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 2
+        },
+        "after_fingerprint": "dfb264f1c222d8def93c33e9fbf3ba800bf05dd4f662110e35fc807235a1e768",
+        "before_fingerprint": "54751246816beb108c47e85824c833fc7a24e19def38a486f6519225f5d570a9",
+        "delta": {
+          "bbox": {
+            "x0": 13,
+            "x1": 46,
+            "y0": 10,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:5,3:45,4:10",
+              "y": 10
+            },
+            {
+              "rle": "5:4,4:5,3:45,4:10",
+              "y": 11
+            },
+            {
+              "rle": "5:4,4:5,3:45,4:10",
+              "y": 12
+            },
+            {
+              "rle": "5:4,4:5,3:45,4:10",
+              "y": 13
+            },
+            {
+              "rle": "5:4,4:5,3:45,4:10",
+              "y": 14
+            },
+            {
+              "rle": "5:4,4:5,3:5,12:5,3:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 15
+            },
+            {
+              "rle": "5:4,4:5,3:5,12:5,3:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 16
+            },
+            {
+              "rle": "5:4,4:5,3:5,9:5,3:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 17
+            },
+            {
+              "rle": "5:4,4:5,3:5,9:5,3:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 18
+            },
+            {
+              "rle": "5:4,4:5,3:5,9:5,3:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 19
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,11:42,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,11:42,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2342,
+      "rationale": "The player is directly above the upper tiny glyph, and the current status differs from the lower gray target by exactly a left-right reflection. This is the shortest transferable-mechanism test despite the nearly exhausted timer.",
+      "resolution_evidence_seq": [
+        2342
+      ],
+      "resolution_reason": "Experiment exp-82ad95a708df5b80 falsified the transferred-reflection prediction for the upper glyph: status rows did not change, while the timer recharged completely. Subsequent transitions map the current dead end.",
+      "status": "reviewed"
+    },
+    "exp-82e917ecafda76f7": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "812f4b865550e24d4c51cd137530bb234624f0538cfa67a4e526c6b296bb0a76",
+      "evidence_seq": [
+        639,
+        689
+      ],
+      "experiment_id": "exp-82e917ecafda76f7",
+      "hypotheses": [
+        {
+          "id": "H_directional_transform",
+          "prediction": "ACTION1 moves upward away from the tiny glyph and applies the vertical-passage left-right reflection, changing status 111/100/101 into the target 111/001/101."
+        },
+        {
+          "id": "H_glyph_match",
+          "prediction": "If transforms occur only when entering/covering the tiny glyph rather than crossing away from it, ACTION1 moves upward but leaves status at 111/100/101."
+        }
+      ],
+      "rationale": "The current player overlaps the tiny glyph and the status is one left-right reflection from the target. ACTION1 is reversible, directly tests whether leaving counts as a vertical passage, and may immediately create the required match.",
+      "status": "proposed"
+    },
+    "exp-83014c8328917d48": {
+      "action": {
+        "data": {},
+        "id": 3
+      },
+      "current_fingerprint": "2bf8a42d081fe2e796c2bcf07903bc351a23eb158bada2a59c46239accb86f59",
+      "evidence_seq": [
+        639
+      ],
+      "experiment_id": "exp-83014c8328917d48",
+      "hypotheses": [
+        {
+          "id": "H_directional_transform",
+          "prediction": "ACTION3 moves left across/onto the tiny glyph and vertically reflects the status from 101/100/111 to 111/100/101."
+        },
+        {
+          "id": "H_glyph_match",
+          "prediction": "If transformations depend only on vertical passage or exact overlap, ACTION3 moves left but leaves the status at 101/100/111."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 3
+        },
+        "after_fingerprint": "812f4b865550e24d4c51cd137530bb234624f0538cfa67a4e526c6b296bb0a76",
+        "before_fingerprint": "2bf8a42d081fe2e796c2bcf07903bc351a23eb158bada2a59c46239accb86f59",
+        "delta": {
+          "bbox": {
+            "x0": 5,
+            "x1": 51,
+            "y0": 30,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 30
+            },
+            {
+              "rle": "5:4,4:10,3:5,12:5,3:5,4:5,3:20,4:10",
+              "y": 31
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 32
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 33
+            },
+            {
+              "rle": "5:4,4:10,3:5,9:5,3:5,4:5,3:20,4:10",
+              "y": 34
+            },
+            {
+              "rle": "4:1,5:2,9:6,5:2,4:53",
+              "y": 55
+            },
+            {
+              "rle": "4:1,5:2,9:6,5:2,4:53",
+              "y": 56
+            },
+            {
+              "rle": "4:1,5:2,9:2,5:2,9:2,5:2,4:53",
+              "y": 59
+            },
+            {
+              "rle": "4:1,5:2,9:2,5:2,9:2,5:2,4:1,5:52",
+              "y": 60
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:39,11:3,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:39,11:3,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 689,
+      "rationale": "The player is immediately right of the tiny glyph. A horizontal crossing is the shortest test of the complementary top-bottom reflection needed before a vertical crossing can produce the target 111/001/101.",
+      "resolution_evidence_seq": [
+        639,
+        689
+      ],
+      "resolution_reason": "The ACTION3 outcome exactly matched the directional-transform prediction: horizontal passage produced a top-bottom reflection. The shortest goal-directed next action is ACTION1, expected to apply the complementary left-right reflection and produce an exact target match.",
+      "status": "reviewed"
+    },
+    "exp-8875ee530a7f1b70": {
+      "action": {
+        "data": {},
+        "id": 3
+      },
+      "current_fingerprint": "b3bc3b95de4a2e45fe65c951d0492968ad3605ab24bdd327f644d5ff293e9e64",
+      "evidence_seq": [
+        2028
+      ],
+      "experiment_id": "exp-8875ee530a7f1b70",
+      "hypotheses": [
+        {
+          "id": "H_level2_navigation",
+          "prediction": "ACTION3 moves the player left from x\u224834,y\u224840 to x\u224829,y\u224840 along the visible green corridor, consuming one timer unit."
+        },
+        {
+          "id": "H_multi_transform",
+          "prediction": "If the left edge of the apparent corridor is blocked by the adjacent patterned gray chamber or footprint collision, ACTION3 leaves the player stationary and only advances the timer."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 3
+        },
+        "after_fingerprint": "eb879ea140aba434922ad8160b584c51a65317e2f2860cf319c94bde2cd62808",
+        "before_fingerprint": "b3bc3b95de4a2e45fe65c951d0492968ad3605ab24bdd327f644d5ff293e9e64",
+        "delta": {
+          "bbox": {
+            "x0": 19,
+            "x1": 38,
+            "y0": 40,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:8,3:1,5:7,3:1,4:8,12:5,3:5,4:5,3:15,4:5",
+              "y": 40
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:2,9:3,5:2,3:1,4:8,12:5,3:5,4:5,3:15,4:5",
+              "y": 41
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:2,9:1,5:4,3:1,4:8,9:5,3:5,4:5,3:15,4:5",
+              "y": 42
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:2,9:1,5:1,9:1,5:2,3:1,4:8,9:5,3:5,4:5,3:15,4:5",
+              "y": 43
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:7,3:1,4:8,9:5,3:5,4:5,3:15,4:5",
+              "y": 44
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:8,11:34,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:8,11:34,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2068,
+      "rationale": "ACTION3 is the only untried action at this state and probes the visible left branch toward the patterned chamber while remaining reversible.",
+      "resolution_evidence_seq": [
+        2028,
+        2068
+      ],
+      "resolution_reason": "Reviewed exp-8875ee530a7f1b70: ACTION3 translated the player left exactly as the navigation hypothesis predicted. The resulting frame shows the patterned chamber is not directly entered from this position and leaves a visible downward branch as the highest-value next move.",
+      "status": "reviewed"
+    },
+    "exp-8a2ee6604ed64a37": {
+      "action": {
+        "data": {},
+        "id": 4
+      },
+      "current_fingerprint": "baba741b41afe77074bf95b16457c448e731e4e837f193768cc1bb3e36e4f864",
+      "evidence_seq": [
+        108,
+        109
+      ],
+      "experiment_id": "exp-8a2ee6604ed64a37",
+      "hypotheses": [
+        {
+          "id": "H_level2_navigation",
+          "prediction": "ACTION4 moves the player right from the x\u224829 vertical corridor into the x\u224834..38 green corridor; the timer advances."
+        },
+        {
+          "id": "H_multi_transform",
+          "prediction": "If the apparent right branch is not passable for the player footprint, ACTION4 is blocked and only the timer advances."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 4
+        },
+        "after_fingerprint": "f2c73a38ebf19c4c384889012cfb968f0406e3c98c09f30a3d86a4be6419e6bc",
+        "before_fingerprint": "baba741b41afe77074bf95b16457c448e731e4e837f193768cc1bb3e36e4f864",
+        "delta": {
+          "bbox": {
+            "x0": 15,
+            "x1": 38,
+            "y0": 35,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:10,3:5,4:10,3:5,12:5,4:10,3:5,4:10",
+              "y": 35
+            },
+            {
+              "rle": "5:4,4:10,3:5,4:10,3:5,12:5,4:10,3:5,4:10",
+              "y": 36
+            },
+            {
+              "rle": "5:4,4:10,3:5,4:10,3:5,9:5,4:10,3:5,4:10",
+              "y": 37
+            },
+            {
+              "rle": "5:4,4:8,3:9,4:8,3:5,9:5,4:10,3:5,4:10",
+              "y": 38
+            },
+            {
+              "rle": "5:4,4:8,3:1,5:7,3:1,4:8,3:5,9:5,4:10,3:10,4:5",
+              "y": 39
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:4,11:38,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:4,11:38,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2028,
+      "rationale": "The upward route is now closed by yellow cells and left is also yellow; the rendered maze shows the only new branch extending right. This both maps level-2 collision and advances toward the right-side transform glyphs.",
+      "resolution_evidence_seq": [
+        2028
+      ],
+      "resolution_reason": "Reviewed the observed ACTION4 experiment: it produced the predicted rightward player translation and consumed timer, supporting level-2 navigation and rejecting the proposed blocked-branch alternative.",
+      "status": "reviewed"
+    },
+    "exp-9386cb1b7b6ab0a9": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "24801050478f7dbf2ca93866e454eba636195b2bfb37453c4a981860108cdd3b",
+      "evidence_seq": [
+        168,
+        486,
+        510
+      ],
+      "experiment_id": "exp-9386cb1b7b6ab0a9",
+      "hypotheses": [
+        {
+          "id": "H_key_unlock",
+          "prediction": "With the lower-left status stroke cleared, ACTION1 from the socket entrance crosses the formerly solid top glyph or triggers LEVEL_COMPLETE."
+        },
+        {
+          "id": "H_socket_navigation",
+          "prediction": "ACTION1 remains blocked at y=15, showing that the tiny-glyph interaction did not make the top glyph traversable."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "24801050478f7dbf2ca93866e454eba636195b2bfb37453c4a981860108cdd3b",
+        "before_fingerprint": "24801050478f7dbf2ca93866e454eba636195b2bfb37453c4a981860108cdd3b",
+        "delta": {
+          "metadata": {},
+          "rows": []
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 534,
+      "rationale": "The player is now at the same socket position where ACTION1 was previously blocked, but after activating the corridor glyph. Repeating ACTION1 is the shortest decisive unlock test.",
+      "resolution_evidence_seq": [
+        168,
+        486,
+        510,
+        534
+      ],
+      "resolution_reason": "Experiment exp-9386cb1b7b6ab0a9 observed no change on ACTION1 after the corridor interaction, decisively rejecting direct unlock. The rendered frame shows the status pattern 101/001/111 while the target is 111/001/101, suggesting a reusable reflection/matching mechanism.",
+      "status": "reviewed"
+    },
+    "exp-b6969b52a07058c3": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "038c03fbe4cb6abdd7e456999af761c93bab8a31964711cea6ca73c18cfb78ad",
+      "evidence_seq": [
+        486
+      ],
+      "experiment_id": "exp-b6969b52a07058c3",
+      "hypotheses": [
+        {
+          "id": "H_key_unlock",
+          "prediction": "After the small-glyph activation, ACTION1 advances the player upward from y=20 into the top socket or triggers LEVEL_COMPLETE."
+        },
+        {
+          "id": "H_socket_navigation",
+          "prediction": "The top glyph remains solid after switch activation, so ACTION1 is blocked and only the bottom timer advances."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "24801050478f7dbf2ca93866e454eba636195b2bfb37453c4a981860108cdd3b",
+        "before_fingerprint": "038c03fbe4cb6abdd7e456999af761c93bab8a31964711cea6ca73c18cfb78ad",
+        "delta": {
+          "bbox": {
+            "x0": 34,
+            "x1": 43,
+            "y0": 15,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:28,3:1,5:1,12:5,5:1,3:1,4:23",
+              "y": 15
+            },
+            {
+              "rle": "5:4,4:28,3:2,12:5,3:2,4:23",
+              "y": 16
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 17
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 18
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 19
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 20
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 21
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 22
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 23
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 24
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:31,11:11,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:31,11:11,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 510,
+      "rationale": "The player is immediately below and partially aligned with the top socket. Another upward action is the shortest goal-directed test of whether the corridor switch unlocked the target.",
+      "resolution_evidence_seq": [
+        168,
+        486,
+        510
+      ],
+      "resolution_reason": "The observed post-switch ACTION1 moved from y=20 to y=15, exactly as it did before switch activation. Thus it does not yet demonstrate unlocking or completion; the decisive test is another upward attempt from y=15.",
+      "status": "reviewed"
+    },
+    "exp-cb80249b511af48d": {
+      "action": {
+        "data": {},
+        "id": 4
+      },
+      "current_fingerprint": "5db30defceda413bd215bdb16cc0bc1a83048305df034889a9a23ccd84a385d8",
+      "evidence_seq": [
+        2068
+      ],
+      "experiment_id": "exp-cb80249b511af48d",
+      "hypotheses": [
+        {
+          "id": "H_level2_navigation",
+          "prediction": "ACTION4 moves the player east from x\u224834,y\u224840 to x\u224839,y\u224840 along the broad visible green corridor and consumes one timer unit."
+        },
+        {
+          "id": "H_multi_transform",
+          "prediction": "If the corridor narrows or collision is governed by the nearby wall footprint, ACTION4 is blocked and only the countdown changes."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 4
+        },
+        "after_fingerprint": "204fe626be303a82016b933c3417a2e6d43b4892845903acfc868e34e12552b9",
+        "before_fingerprint": "5db30defceda413bd215bdb16cc0bc1a83048305df034889a9a23ccd84a385d8",
+        "delta": {
+          "bbox": {
+            "x0": 25,
+            "x1": 26,
+            "y0": 61,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:14,11:28,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:14,11:28,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2141,
+      "rationale": "The western and downward branches have been tested and are dead ends. Moving east is reversible and follows the only open route toward the sparse cyan/black glyph on the right.",
+      "resolution_evidence_seq": [
+        2028,
+        2068,
+        2141
+      ],
+      "resolution_reason": "Reviewed exp-cb80249b511af48d: ACTION4 changed only the countdown, so the player was blocked rather than moving east. The visible frame confirms yellow wall directly to the player's right; north is the remaining passable exit.",
+      "status": "reviewed"
+    },
+    "exp-d2f1323d3d301cc0": {
+      "action": {
+        "data": {},
+        "id": 4
+      },
+      "current_fingerprint": "d509b8fcdc10a3c77fd69e25a85d5f9e3aada458c123a48ac7f08350d5bcb07b",
+      "evidence_seq": [
+        2342,
+        2592
+      ],
+      "experiment_id": "exp-d2f1323d3d301cc0",
+      "hypotheses": [
+        {
+          "id": "H_level2_navigation",
+          "prediction": "ACTION4 moves the player east from approximately (14,15) to (19,15) through the visibly open upper corridor and consumes the final countdown unit."
+        },
+        {
+          "id": "H_multi_transform",
+          "prediction": "If the upper glyph footprint or nearby yellow corner blocks eastward passage, ACTION4 leaves the player stationary and only exhausts the countdown."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 4
+        },
+        "after_fingerprint": "04594aea682eaba8b60e95682cdb139bf2050a55c990252ef9932f70f9c25826",
+        "before_fingerprint": "d509b8fcdc10a3c77fd69e25a85d5f9e3aada458c123a48ac7f08350d5bcb07b",
+        "delta": {
+          "bbox": {
+            "x0": 14,
+            "x1": 54,
+            "y0": 15,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:5,3:10,12:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 15
+            },
+            {
+              "rle": "5:4,4:5,3:10,12:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 16
+            },
+            {
+              "rle": "5:4,4:5,3:10,9:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 17
+            },
+            {
+              "rle": "5:4,4:5,3:10,9:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 18
+            },
+            {
+              "rle": "5:4,4:5,3:10,9:5,4:5,3:10,4:5,3:10,4:10",
+              "y": 19
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:42,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:42,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2718,
+      "rationale": "East is the only route from the current upper-glyph position that advances toward the central/right maze; the action is informative even with timeout imminent because the next input should reset the cycle.",
+      "resolution_evidence_seq": [
+        2342,
+        2592,
+        2718
+      ],
+      "resolution_reason": "Reviewed exp-d2f1323d3d301cc0: ACTION4 produced the predicted five-cell eastward translation and exhausted the countdown. This confirms the open upper corridor and makes intentional timeout restoration the immediate next step.",
+      "status": "reviewed"
+    },
+    "exp-e1b653168fd278e9": {
+      "action": {
+        "data": {},
+        "id": 2
+      },
+      "current_fingerprint": "89ca30638c621a5099963f3014fb897bf89bda4794933087bc09cea6732ec7de",
+      "evidence_seq": [
+        2342
+      ],
+      "experiment_id": "exp-e1b653168fd278e9",
+      "hypotheses": [
+        {
+          "id": "H_level2_target",
+          "prediction": "The current status panel exactly matches the gray chamber directly below the player; ACTION2 pushes into/contacting that chamber and triggers LEVEL_COMPLETE."
+        },
+        {
+          "id": "H_level2_navigation",
+          "prediction": "The chamber remains physically solid despite the matching pattern, so ACTION2 leaves the player at x\u224814,y\u224835 and only advances the countdown."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 2
+        },
+        "after_fingerprint": "89ca30638c621a5099963f3014fb897bf89bda4794933087bc09cea6732ec7de",
+        "before_fingerprint": "89ca30638c621a5099963f3014fb897bf89bda4794933087bc09cea6732ec7de",
+        "delta": {
+          "metadata": {},
+          "rows": []
+        },
+        "levels_after": 1,
+        "levels_before": 1,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 2592,
+      "rationale": "The player has navigated directly above the matching patterned chamber. A downward push is the shortest possible completion attempt and cleanly distinguishes a match-activated target from an ordinary solid chamber.",
+      "resolution_evidence_seq": [
+        2342,
+        2592
+      ],
+      "resolution_reason": "Experiment exp-e1b653168fd278e9 produced no visual change and no completion. Direct frame decoding also corrects the status/target comparison, changing the next decision from repeated target contact to seeking another transformation.",
+      "status": "reviewed"
+    },
+    "exp-f150d871c9b0e9ae": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "f6e7958176df13ce6caae9d85c959131e1b7887555ff270bdc285ba8e7e3a1b0",
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "experiment_id": "exp-f150d871c9b0e9ae",
+      "hypotheses": [
+        {
+          "id": "H_target",
+          "prediction": "Moving upward from y=20 into/contacting the aligned target chamber triggers LEVEL_COMPLETE and loads the next level."
+        },
+        {
+          "id": "H_blocked_target",
+          "prediction": "The upward move is blocked by the gray/yellow boundary; the player remains at y=20 and only the bottom timer advances."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+        "before_fingerprint": "f6e7958176df13ce6caae9d85c959131e1b7887555ff270bdc285ba8e7e3a1b0",
+        "delta": {
+          "bbox": {
+            "x0": 26,
+            "x1": 38,
+            "y0": 15,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:28,3:1,5:1,12:5,5:1,3:1,4:23",
+              "y": 15
+            },
+            {
+              "rle": "5:4,4:28,3:2,12:5,3:2,4:23",
+              "y": 16
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 17
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 18
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 19
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 20
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 21
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 22
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 23
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 24
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:14,11:28,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:14,11:28,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 130,
+      "rationale": "The player is directly aligned beneath the target at the endpoint of the known corridor, so one upward action is both goal-directed and maximally discriminating.",
+      "resolution_evidence_seq": [
+        130
+      ],
+      "resolution_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "status": "reviewed"
+    }
+  },
+  "hypotheses": {
+    "H_blocked_target": {
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8,
+        130
+      ],
+      "id": "H_blocked_target",
+      "last_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "statement": "The top socket is enterable despite color 5; the observed upward move from y=20 to y=15 rejects the blocked-boundary theory.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+          "revised_at_ledger_version": 5,
+          "statement": "The gray target chamber is physically blocked; an upward attempt from y=20 will leave the player stationary, implying another interaction or route is required."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_corridor_snap": {
+      "evidence_seq": [
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        486
+      ],
+      "id": "H_corridor_snap",
+      "last_reason": "The bound ACTION1 experiment produced a real upward translation rather than being blocked. This rejects strict footprint collision and shows permissive edge-overlap movement without horizontal snapping.",
+      "statement": "Movement does not require the full 5x5 footprint to lie on passable cells. ACTION1 from x=34,y=25 advanced to x=34,y=20 while overlapping the narrow neck only at its right edge; the player retains its x-coordinate rather than snapping.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175
+          ],
+          "reason": "After activating the small glyph, the player approached the neck on an x-coordinate lattice offset from the known socket position. Testing upward at the current right-edge alignment is goal-directed and distinguishes corridor snapping from strict footprint collision.",
+          "revised_at_ledger_version": 12,
+          "statement": "When a 5x5 player attempts to enter a narrow corridor whose pixel alignment differs from its current lattice, movement may snap or clip the player into the corridor; from x=34,y=25 an upward move may align it with the x=30..34 vertical neck."
+        }
+      ],
+      "status": "active"
+    },
+    "H_deep_target": {
+      "evidence_seq": [
+        130,
+        168
+      ],
+      "id": "H_deep_target",
+      "last_reason": "Experiment exp-32e1f05f8240b4de observed no visual change on ACTION1 at y=15, falsifying direct deeper traversal and motivating the distinct small-object interaction.",
+      "statement": "The deeper upward move from y=15 is blocked by the solid dark-red glyph; full alignment cannot be reached directly.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            130
+          ],
+          "reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+          "revised_at_ledger_version": 8,
+          "statement": "Completion occurs when the player advances from the socket entrance at y=15 to y=10 and fully aligns with the top glyph."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_directional_transform": {
+      "evidence_seq": [
+        168,
+        486,
+        510,
+        534,
+        639,
+        689,
+        744,
+        1144
+      ],
+      "id": "H_directional_transform",
+      "last_reason": "Reviewed exp-6ab9a8cbe98733b5: ACTION1 recreated the exact predicted match after timeout. The shortest route now leaves the interaction zone upward and heads directly through the upper corridor to the socket.",
+      "statement": "Crossing the tiny corridor glyph horizontally applies a top-bottom reflection to the lower-left status glyph, while vertical passage applies a left-right reflection. The observed move from y=35 to y=30 applied the predicted vertical reflection and produced an exact target match.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534
+          ],
+          "reason": "Direct unlocking was rejected, while the status and target glyphs differ by vertical reflection. A reusable directional transform mechanism is the simplest next theory.",
+          "revised_at_ledger_version": 22,
+          "statement": "The persistent tiny corridor glyph applies a transformation determined by the side from which the player approaches it. The first right-side approach changed the lower-left status glyph; approaching from above is a plausible way to vertically reflect the status into the top target pattern."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639
+          ],
+          "reason": "Experiment exp-61f73f52b84c2864 showed ACTION2 moved downward and changed the status glyph from 101/001/111 to 101/100/111, exactly a horizontal reflection. This supports a reusable directional transformation and rejects a one-shot toggle.",
+          "revised_at_ledger_version": 26,
+          "statement": "A vertical pass beside the tiny glyph transforms the lower-left status pattern rather than merely toggling a door. The observed ACTION2 changed 101/001/111 into 101/100/111, an exact horizontal reflection, so vertical movement applies a left-right reflection to the status glyph."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639,
+            689
+          ],
+          "reason": "The ACTION3 outcome exactly matched the directional-transform prediction: horizontal passage produced a top-bottom reflection. The shortest goal-directed next action is ACTION1, expected to apply the complementary left-right reflection and produce an exact target match.",
+          "revised_at_ledger_version": 30,
+          "statement": "Crossing the tiny corridor glyph horizontally applies a top-bottom reflection to the lower-left status glyph. Experiment exp-83014c8328917d48 changed 101/100/111 into 111/100/101 exactly as predicted. Together with the observed vertical-crossing left-right reflection, movement axis determines the transform."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639,
+            689,
+            744
+          ],
+          "reason": "The latest bound ACTION1 experiment moved upward and changed the status by the predicted left-right reflection, producing an exact match with the top target. This confirms the axis-dependent transform mechanism and makes immediate return to the socket the highest-value plan.",
+          "revised_at_ledger_version": 34,
+          "statement": "Crossing the tiny corridor glyph horizontally applies a top-bottom reflection to the lower-left status glyph, while vertical passage applies a left-right reflection. The latest ACTION1 changed status 111/100/101 into 111/001/101, confirming the complementary vertical transform."
+        }
+      ],
+      "status": "active"
+    },
+    "H_glyph_match": {
+      "evidence_seq": [
+        168,
+        486,
+        510,
+        534,
+        639,
+        689,
+        744,
+        1144
+      ],
+      "id": "H_glyph_match",
+      "last_reason": "Reviewed exp-6ab9a8cbe98733b5: ACTION1 recreated the exact predicted match after timeout. The shortest route now leaves the interaction zone upward and heads directly through the upper corridor to the socket.",
+      "statement": "The lower-left status now exactly matches the top target (111/001/101). Leaving upward to y=25 should preserve the match because it moves away from the tiny glyph; then the short upper-corridor route can return to the socket before timeout.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534
+          ],
+          "reason": "Experiment exp-9386cb1b7b6ab0a9 observed no change on ACTION1 after the corridor interaction, decisively rejecting direct unlock. The rendered frame shows the status pattern 101/001/111 while the target is 111/001/101, suggesting a reusable reflection/matching mechanism.",
+          "revised_at_ledger_version": 22,
+          "statement": "The lower-left 3x3 status glyph is currently a vertical reflection of the top target glyph. The tiny corridor object may apply orientation-dependent transformations, and completion may require transforming the status glyph to match the target before returning."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639
+          ],
+          "reason": "Experiment exp-61f73f52b84c2864 showed ACTION2 moved downward and changed the status glyph from 101/001/111 to 101/100/111, exactly a horizontal reflection. This supports a reusable directional transformation and rejects a one-shot toggle.",
+          "revised_at_ledger_version": 26,
+          "statement": "Completion likely requires transforming the lower-left 3x3 status glyph to equal the top target 111/001/101. The current status is 101/100/111; further directional interactions should be tested as compact reflections or rotations."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639,
+            689
+          ],
+          "reason": "The ACTION3 outcome exactly matched the directional-transform prediction: horizontal passage produced a top-bottom reflection. The shortest goal-directed next action is ACTION1, expected to apply the complementary left-right reflection and produce an exact target match.",
+          "revised_at_ledger_version": 30,
+          "statement": "Completion likely requires the lower-left status glyph to equal the top target 111/001/101. After the horizontal crossing, status is 111/100/101; one vertical crossing should left-right reflect it into the exact target."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639,
+            689,
+            744
+          ],
+          "reason": "The latest bound ACTION1 experiment moved upward and changed the status by the predicted left-right reflection, producing an exact match with the top target. This confirms the axis-dependent transform mechanism and makes immediate return to the socket the highest-value plan.",
+          "revised_at_ledger_version": 31,
+          "statement": "The lower-left status glyph now exactly equals the top target pattern 111/001/101 after the predicted vertical reflection. The leading completion plan is to return to the top socket and test entry into the formerly solid target glyph."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534,
+            639,
+            689,
+            744
+          ],
+          "reason": "The latest ACTION4 did not move normally; it restored the entry player position, initial status, and full timer. This explains the previous prediction mismatch and gives enough time for the known transform-and-return route.",
+          "revised_at_ledger_version": 34,
+          "statement": "After timeout the status is 111/100/101, one left-right reflection from target 111/001/101. A single vertical passage beside the tiny glyph should recreate the match, after which returning to the top socket should permit completion."
+        }
+      ],
+      "status": "active"
+    },
+    "H_key_unlock": {
+      "evidence_seq": [
+        168,
+        486,
+        510,
+        534
+      ],
+      "id": "H_key_unlock",
+      "last_reason": "Experiment exp-9386cb1b7b6ab0a9 observed no change on ACTION1 after the corridor interaction, decisively rejecting direct unlock. The rendered frame shows the status pattern 101/001/111 while the target is 111/001/101, suggesting a reusable reflection/matching mechanism.",
+      "statement": "The tiny corridor glyph changes the lower-left status glyph, but it does not directly unlock the top target: post-interaction ACTION1 from y=15 remained blocked exactly as before. Further interactions may transform the status glyph rather than open a door.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            168
+          ],
+          "reason": "Experiment exp-32e1f05f8240b4de observed no visual change on ACTION1 at y=15, falsifying direct deeper traversal and motivating the distinct small-object interaction.",
+          "revised_at_ledger_version": 12,
+          "statement": "The small black/blue object in the left corridor is a collectible or switch that changes the player or unlocks the top glyph; it should be visited before returning to the socket."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486
+          ],
+          "reason": "The bound ACTION1 experiment produced a real upward translation rather than being blocked. This rejects strict footprint collision and shows permissive edge-overlap movement without horizontal snapping.",
+          "revised_at_ledger_version": 15,
+          "statement": "The small black/blue corridor glyph changes the lower-left status indicator when approached; after this activation, returning upward toward the top socket remains the leading completion strategy."
+        },
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510
+          ],
+          "reason": "The observed post-switch ACTION1 moved from y=20 to y=15, exactly as it did before switch activation. Thus it does not yet demonstrate unlocking or completion; the decisive test is another upward attempt from y=15.",
+          "revised_at_ledger_version": 18,
+          "statement": "Approaching the tiny corridor glyph changes the lower-left status indicator, but the observed return move only re-entered the already-enterable socket at y=15. Whether activation unlocks the solid top glyph requires one further ACTION1 attempt."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_level2_navigation": {
+      "evidence_seq": [
+        108,
+        2028,
+        2068,
+        2141,
+        2342,
+        2592,
+        2718
+      ],
+      "id": "H_level2_navigation",
+      "last_reason": "The timeout restoration is confirmed, and the subsequent ACTION3 changed only the countdown, grounding west of the entry player as blocked. The next decision is to reuse the confirmed north route toward the upper corridor and seek the far-right descent.",
+      "statement": "After timeout restoration the player is at the level-2 entry position near (29,40). ACTION3 is blocked by the yellow wall immediately west and only consumes countdown. The established useful route begins north through the central corridor, then follows the upper passage east toward the far-right side.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            108
+          ],
+          "reason": "The new level preserves the player, socket, status-panel, and tiny-glyph visual vocabulary but rearranges them into a larger maze. Movement must be re-grounded before planning.",
+          "revised_at_ledger_version": 38,
+          "statement": "In level 2 the same directional action mapping persists; the entry player near x=29,y=40 should move upward through the green corridor on ACTION1."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028
+          ],
+          "reason": "Reviewed the observed ACTION4 experiment: it produced the predicted rightward player translation and consumed timer, supporting level-2 navigation and rejecting the proposed blocked-branch alternative.",
+          "revised_at_ledger_version": 41,
+          "statement": "Level 2 preserves the action mapping. From the entry, ACTION1 moved the player upward from about (29,40) to (29,35), and ACTION4 then moved right to about (34,35), confirming the upper/right branch is passable despite partial footprint overlap with yellow cells."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068
+          ],
+          "reason": "Reviewed exp-8875ee530a7f1b70: ACTION3 translated the player left exactly as the navigation hypothesis predicted. The resulting frame shows the patterned chamber is not directly entered from this position and leaves a visible downward branch as the highest-value next move.",
+          "revised_at_ledger_version": 44,
+          "statement": "Level 2 preserves the action mapping. From the entry, ACTION1 moved up, ACTION4 moved right, ACTION2 moved down, and ACTION3 moved left. The player is now near x=29,y=40 at a leftward dead-end beside the patterned chamber; the visible vertical green corridor continues downward, making ACTION2 the next useful probe."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068
+          ],
+          "reason": "The latest ACTION2 outcome changed only two timer cells and left the player stationary, rejecting the prior prediction that the vertical corridor continued downward from the current position.",
+          "revised_at_ledger_version": 45,
+          "statement": "Level 2 preserves action mapping (1 up, 2 down, 3 left, 4 right). At x\u224829,y\u224840, ACTION2 is blocked and only consumes timer; ACTION3 from x\u224834 reaches this position, so the useful exits are back upward or rightward rather than downward into the apparent branch."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068
+          ],
+          "reason": "The latest ACTION2 was blocked and consumed timer, while ACTION4 reversed the prior left move and restored the player to x\u224834,y\u224840. This rules out the apparent lower branch and makes the visible eastern corridor the next useful route.",
+          "revised_at_ledger_version": 48,
+          "statement": "Level 2 preserves action mapping (1 up, 2 down, 3 left, 4 right). At x\u224829,y\u224840 ACTION2 is blocked, while ACTION4 returns to x\u224834,y\u224840. The visible green corridor continues right from the current position toward the sparse glyph near x\u224851,y\u224847."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "Reviewed exp-cb80249b511af48d: ACTION4 changed only the countdown, so the player was blocked rather than moving east. The visible frame confirms yellow wall directly to the player's right; north is the remaining passable exit.",
+          "revised_at_ledger_version": 49,
+          "statement": "Level 2 preserves action mapping (1 up, 2 down, 3 left, 4 right). From x\u224834,y\u224840, ACTION4 is blocked by the yellow wall immediately east and only consumes timer. The useful exit is ACTION1, returning north into the x\u224834 vertical corridor."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest ACTION1 translated the player north exactly as predicted, with only a two-cell countdown discrepancy in the model. This confirms the central upward route and makes another north move the highest-value navigation action.",
+          "revised_at_ledger_version": 50,
+          "statement": "Level 2 preserves action mapping (1 up, 2 down, 3 left, 4 right). From x\u224834,y\u224840, ACTION4 was blocked, while the subsequent ACTION1 moved the player north to x\u224834,y\u224835. The central vertical corridor is therefore the useful route toward the broad upper passage."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest observed ACTION1 produced another exact five-cell northward translation, confirming the central corridor continues upward and making ACTION1 the next goal-directed move.",
+          "revised_at_ledger_version": 51,
+          "statement": "Level 2 preserves action mapping (1 up, 2 down, 3 left, 4 right). Two successive ACTION1 moves advanced the player north from x\u224834,y\u224840 through y\u224835 to y\u224830. The central vertical corridor remains open northward toward the broad upper passage."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest sequence of north inputs repeatedly translated the player by exactly five cells and brought it to the visible upper corridor. This confirms continued navigation and identifies the western tiny glyph as the nearest reusable-mechanism test.",
+          "revised_at_ledger_version": 52,
+          "statement": "Level 2 preserves action mapping (1 up, 2 down, 3 left, 4 right). Five successive ACTION1 moves carried the player north from the lower junction to x\u224834,y\u224815. The visible green route continues north into the broad upper corridor, from which westward travel can approach the tiny glyph near x\u224812,y\u224817."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest six upward and two leftward transitions establish the upper-corridor route. Visual/RLE grounding now reveals that the current status and lower gray target differ by exactly a left-right reflection, making vertical passage at the nearby upper glyph the most informative and goal-directed test.",
+          "revised_at_ledger_version": 55,
+          "statement": "Level 2 preserves action mapping. The player is now near (24,10) in the broad upper corridor after six north moves and two west moves. Continuing west to x\u224814 and then moving down reaches the tiny upper glyph by the shortest route."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342
+          ],
+          "reason": "Experiment exp-82ad95a708df5b80 falsified the transferred-reflection prediction for the upper glyph: status rows did not change, while the timer recharged completely. Subsequent transitions map the current dead end.",
+          "revised_at_ledger_version": 56,
+          "statement": "After crossing downward through the upper recharge glyph and then moving to approximately x=19,y=20, attempted ACTION2 and ACTION4 inputs were blocked. The current player remains near x=19,y=20; the useful exits are back left or upward, while the timer remains ample."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342
+          ],
+          "reason": "Current-frame grounding reveals that the nearby left gray chamber has the same 3x3 pattern as the status panel. This gives a concrete goal-directed interpretation of the previously explored vertical branch.",
+          "revised_at_ledger_version": 59,
+          "statement": "The player is currently near x\u224814,y\u224825 on the vertical corridor above the left gray chamber. ACTION2 is known to move downward successively through y\u224830 and y\u224835; the chamber boundary at the next step remains untested."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592
+          ],
+          "reason": "Experiment exp-e1b653168fd278e9 produced no visual change and no completion. Direct frame decoding also corrects the status/target comparison, changing the next decision from repeated target contact to seeking another transformation.",
+          "revised_at_ledger_version": 60,
+          "statement": "At x\u224814,y\u224835 the downward chamber boundary is solid and left/right are walls; ACTION1 upward is the only useful exit. The next goal-directed route is back through the upper maze toward an untested small glyph, especially the right-side cyan/black marker near x\u224850,y\u224847."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592
+          ],
+          "reason": "The latest frame and transition show ACTION2 moved down through the upper glyph but consumed countdown instead of restoring it, changing the route strategy: probe the east corridor now, then exploit the imminent timeout reset for a fresh exploration cycle.",
+          "revised_at_ledger_version": 63,
+          "statement": "The player is near (14,15) after returning through the upper corridor glyph. The visible corridor extends east from this height; ACTION4 is the shortest probe toward the central/right maze, although only one countdown action remains before timeout."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592,
+            2718
+          ],
+          "reason": "Reviewed exp-d2f1323d3d301cc0: ACTION4 produced the predicted five-cell eastward translation and exhausted the countdown. This confirms the open upper corridor and makes intentional timeout restoration the immediate next step.",
+          "revised_at_ledger_version": 66,
+          "statement": "ACTION4 from approximately (14,15) successfully moved east to (19,15), confirming the upper corridor is open. The countdown is now exhausted, so the next input should restore the level-entry frame; after reset, the mapped central-to-upper route can be reused while seeking the right-side cyan/black marker."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592,
+            2718
+          ],
+          "reason": "The post-exhaustion ACTION1 restored the entry frame and full timer exactly as predicted. This resolves the timeout uncertainty and makes navigation toward the lower-right marker the highest-value plan.",
+          "revised_at_ledger_version": 67,
+          "statement": "The level-2 entry frame has been restored with a full timer. The mapped route goes north from the central start to the broad upper corridor; from there the untested eastern branch should lead down the far-right corridor toward the cyan/black marker near (51,47)."
+        }
+      ],
+      "status": "active"
+    },
+    "H_level2_target": {
+      "evidence_seq": [
+        2342,
+        2592
+      ],
+      "id": "H_level2_target",
+      "last_reason": "Experiment exp-e1b653168fd278e9 produced no visual change and no completion. Direct frame decoding also corrects the status/target comparison, changing the next decision from repeated target contact to seeking another transformation.",
+      "statement": "The chamber directly below the player is not activated merely by contact: ACTION2 from x\u224814,y\u224835 was blocked with no level progress. Re-grounding its embedded 3x3 pattern gives 111/100/101, while the current status panel is 101/001/101, so the prior exact-match claim was incorrect. Another glyph interaction is required before returning.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            2342
+          ],
+          "reason": "Current-frame grounding reveals that the nearby left gray chamber has the same 3x3 pattern as the status panel. This gives a concrete goal-directed interpretation of the previously explored vertical branch.",
+          "revised_at_ledger_version": 59,
+          "statement": "The gray chamber directly below the player, around x=13..21,y=38..46, encodes 111/100/101, exactly matching the current lower-left status panel. From player position x\u224814,y\u224825, three downward moves return to y\u224835; a further downward push into/contacting the matching chamber may complete level 2."
+        }
+      ],
+      "status": "active"
+    },
+    "H_multi_transform": {
+      "evidence_seq": [
+        108,
+        2028,
+        2068,
+        2141,
+        2342,
+        2592,
+        2718
+      ],
+      "id": "H_multi_transform",
+      "last_reason": "The timeout restoration is confirmed, and the subsequent ACTION3 changed only the countdown, grounding west of the entry player as blocked. The next decision is to reuse the confirmed north route toward the upper corridor and seek the far-right descent.",
+      "statement": "The distinct cyan/black marker near (51,47) remains the leading candidate for the missing status transformation. It is not reachable directly west from entry or east from the lower central dead end; the likely route goes north to the broad upper corridor, east across it, then down the far-right corridor.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            108
+          ],
+          "reason": "The new level preserves the player, socket, status-panel, and tiny-glyph visual vocabulary but rearranges them into a larger maze. Movement must be re-grounded before planning.",
+          "revised_at_ledger_version": 38,
+          "statement": "Level 2 contains several tiny black/blue glyphs embedded in the maze; they may each apply the same axis-dependent status reflections learned in level 1, requiring a route that transforms the lower-left panel to match a socket glyph."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028
+          ],
+          "reason": "Reviewed the observed ACTION4 experiment: it produced the predicted rightward player translation and consumed timer, supporting level-2 navigation and rejecting the proposed blocked-branch alternative.",
+          "revised_at_ledger_version": 41,
+          "statement": "Level 2 contains at least three sparse cyan/black corridor glyphs and multiple patterned gray chambers. The level-1 axis-dependent reflection mechanism remains the leading transferable theory, but the relevant status/target pairing and required glyph route are not yet established."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068
+          ],
+          "reason": "Reviewed exp-8875ee530a7f1b70: ACTION3 translated the player left exactly as the navigation hypothesis predicted. The resulting frame shows the patterned chamber is not directly entered from this position and leaves a visible downward branch as the highest-value next move.",
+          "revised_at_ledger_version": 44,
+          "statement": "Level 2 contains several sparse cyan/black corridor glyphs and multiple patterned gray chambers. The patterned chamber immediately left of the current player is separated by yellow wall, so it is not directly reachable from the current position; exploration should follow the vertical branch before assigning it a target role."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068
+          ],
+          "reason": "The latest ACTION2 outcome changed only two timer cells and left the player stationary, rejecting the prior prediction that the vertical corridor continued downward from the current position.",
+          "revised_at_ledger_version": 45,
+          "statement": "The patterned chamber left of the player and the apparent lower branch are not directly enterable from x\u224829,y\u224840. Exploration should return upward and follow the larger green maze toward one of the sparse cyan/black transform glyphs."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068
+          ],
+          "reason": "The latest ACTION2 was blocked and consumed timer, while ACTION4 reversed the prior left move and restored the player to x\u224834,y\u224840. This rules out the apparent lower branch and makes the visible eastern corridor the next useful route.",
+          "revised_at_ledger_version": 48,
+          "statement": "The left patterned chamber and apparent downward branch are inaccessible from x\u224829,y\u224840. From the restored x\u224834,y\u224840 position, the useful unexplored route is east through the green corridor toward the sparse cyan/black glyph near x\u224851,y\u224847, which may reuse the axis-dependent reflection mechanism."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "Reviewed exp-cb80249b511af48d: ACTION4 changed only the countdown, so the player was blocked rather than moving east. The visible frame confirms yellow wall directly to the player's right; north is the remaining passable exit.",
+          "revised_at_ledger_version": 49,
+          "statement": "The apparent eastern route from x\u224834,y\u224840 is a wall: ACTION4 caused no player translation. Exploration should proceed north through the central corridor, then follow its upper branches toward the tiny glyph near x\u224812,y\u224817 or other reachable transform glyphs."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest ACTION1 translated the player north exactly as predicted, with only a two-cell countdown discrepancy in the model. This confirms the central upward route and makes another north move the highest-value navigation action.",
+          "revised_at_ledger_version": 50,
+          "statement": "The eastern route from x\u224834,y\u224840 is blocked. The successful north move enters a central vertical corridor that appears to connect through the broad upper passage toward the sparse cyan/black glyph near x\u224812,y\u224817; reaching that glyph is the leading transferable transform plan."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest observed ACTION1 produced another exact five-cell northward translation, confirming the central corridor continues upward and making ACTION1 the next goal-directed move.",
+          "revised_at_ledger_version": 51,
+          "statement": "The blocked east/west lower branches force travel north through the central corridor. From x\u224834,y\u224830, continuing north is the shortest route toward the upper maze and the reachable sparse cyan/black transform glyph near x\u224812,y\u224817."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest sequence of north inputs repeatedly translated the player by exactly five cells and brought it to the visible upper corridor. This confirms continued navigation and identifies the western tiny glyph as the nearest reusable-mechanism test.",
+          "revised_at_ledger_version": 52,
+          "statement": "The central north corridor reaches the broad upper passage. The shortest route to a known sparse cyan/black glyph is to move north into that passage, travel west, then descend beside the glyph near x\u224812,y\u224817; passage orientation should test whether level 1's axis-dependent reflection transfers."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest six upward and two leftward transitions establish the upper-corridor route. Visual/RLE grounding now reveals that the current status and lower gray target differ by exactly a left-right reflection, making vertical passage at the nearby upper glyph the most informative and goal-directed test.",
+          "revised_at_ledger_version": 55,
+          "statement": "The level-2 lower-left status is 111/001/101, while the reachable gray target near (8..16,38..46) is 111/100/101. They differ by left-right reflection, so a vertical passage beside the upper tiny glyph near (15..17,16..18) should make them match, transferring the confirmed level-1 mechanism."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342
+          ],
+          "reason": "Experiment exp-82ad95a708df5b80 falsified the transferred-reflection prediction for the upper glyph: status rows did not change, while the timer recharged completely. Subsequent transitions map the current dead end.",
+          "revised_at_ledger_version": 60,
+          "statement": "The upper level-2 cyan/black glyph near x\u224815,y\u224817 is a recharge station, not a status reflector: downward passage moved the player to y\u224815 and restored the countdown to all 42 dark cells while leaving the status glyph unchanged. Other glyphs may still implement reflections and must be tested separately."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592
+          ],
+          "reason": "The latest frame and transition show ACTION2 moved down through the upper glyph but consumed countdown instead of restoring it, changing the route strategy: probe the east corridor now, then exploit the imminent timeout reset for a fresh exploration cycle.",
+          "revised_at_ledger_version": 63,
+          "statement": "The upper level-2 glyph neither changed the status panel nor recharged on the latest downward crossing. Its earlier refill effect is therefore conditional rather than a reusable reflector/recharge station. Other cyan/black markers, especially the right-side marker, remain candidate transforms."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592,
+            2718
+          ],
+          "reason": "Reviewed exp-d2f1323d3d301cc0: ACTION4 produced the predicted five-cell eastward translation and exhausted the countdown. This confirms the open upper corridor and makes intentional timeout restoration the immediate next step.",
+          "revised_at_ledger_version": 66,
+          "statement": "The upper level-2 glyph is not a reliable repeatable recharge or reflector. Exploration should instead target the distinct cyan/black marker on the lower-right corridor after the imminent timeout reset."
+        },
+        {
+          "evidence_seq": [
+            108,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592,
+            2718
+          ],
+          "reason": "The post-exhaustion ACTION1 restored the entry frame and full timer exactly as predicted. This resolves the timeout uncertainty and makes navigation toward the lower-right marker the highest-value plan.",
+          "revised_at_ledger_version": 67,
+          "statement": "The distinct cyan/black marker near (51,47) is the leading candidate for the missing status transformation. It should be approached via the broad upper corridor and far-right vertical passage, since direct eastward movement from the lower central junction is blocked."
+        }
+      ],
+      "status": "active"
+    },
+    "H_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_navigation",
+      "last_reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+      "statement": "Actions move the 5x5 magenta/red player one tile: 1 up, 2 down, 3 left, 4 right, when the destination is green/passable; the bottom bar advances one unit every action.",
+      "status": "active"
+    },
+    "H_single_toggle": {
+      "evidence_seq": [
+        168,
+        486,
+        510,
+        534,
+        639
+      ],
+      "id": "H_single_toggle",
+      "last_reason": "Experiment exp-61f73f52b84c2864 showed ACTION2 moved downward and changed the status glyph from 101/001/111 to 101/100/111, exactly a horizontal reflection. This supports a reusable directional transformation and rejects a one-shot toggle.",
+      "statement": "The one-shot/two-state switch theory is rejected: revisiting the persistent tiny glyph produced a second, structured status change.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            168,
+            486,
+            510,
+            534
+          ],
+          "reason": "Direct unlocking was rejected, while the status and target glyphs differ by vertical reflection. A reusable directional transform mechanism is the simplest next theory.",
+          "revised_at_ledger_version": 22,
+          "statement": "The tiny corridor glyph may instead be a one-shot/two-state toggle, so revisiting it from another side will not produce a new status pattern."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_socket_navigation": {
+      "evidence_seq": [
+        130,
+        168,
+        486,
+        510,
+        534,
+        639,
+        689,
+        744
+      ],
+      "id": "H_socket_navigation",
+      "last_reason": "The latest bound ACTION1 experiment moved upward and changed the status by the predicted left-right reflection, producing an exact match with the top target. This confirms the axis-dependent transform mechanism and makes immediate return to the socket the highest-value plan.",
+      "statement": "The top dark-red glyph blocked entry before the status matched. Now that status exactly matches the target, returning to the socket should test whether matching makes it traversable or completes on contact.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            130
+          ],
+          "reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+          "revised_at_ledger_version": 8,
+          "statement": "Moving from y=15 to y=10 is ordinary traversal and will not complete the level, implying another interaction is needed."
+        },
+        {
+          "evidence_seq": [
+            130,
+            168
+          ],
+          "reason": "Experiment exp-32e1f05f8240b4de observed no visual change on ACTION1 at y=15, falsifying direct deeper traversal and motivating the distinct small-object interaction.",
+          "revised_at_ledger_version": 15,
+          "statement": "The player cannot traverse the dark-red glyph from the socket entrance; another world interaction is required before the target can be entered or activated."
+        },
+        {
+          "evidence_seq": [
+            130,
+            168,
+            486,
+            510
+          ],
+          "reason": "The observed post-switch ACTION1 moved from y=20 to y=15, exactly as it did before switch activation. Thus it does not yet demonstrate unlocking or completion; the decisive test is another upward attempt from y=15.",
+          "revised_at_ledger_version": 18,
+          "statement": "The socket entrance at y=15 is ordinarily enterable, while the dark-red glyph above was previously solid. A repeated ACTION1 from the current y=15 position directly tests whether the corridor interaction changed that blockage."
+        },
+        {
+          "evidence_seq": [
+            130,
+            168,
+            486,
+            510,
+            534
+          ],
+          "reason": "Experiment exp-9386cb1b7b6ab0a9 observed no change on ACTION1 after the corridor interaction, decisively rejecting direct unlock. The rendered frame shows the status pattern 101/001/111 while the target is 111/001/101, suggesting a reusable reflection/matching mechanism.",
+          "revised_at_ledger_version": 30,
+          "statement": "The dark-red top glyph remains solid after the first tiny-glyph interaction; ACTION1 from the current socket position is blocked."
+        }
+      ],
+      "status": "active"
+    },
+    "H_strict_footprint": {
+      "evidence_seq": [
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        486
+      ],
+      "id": "H_strict_footprint",
+      "last_reason": "The bound ACTION1 experiment produced a real upward translation rather than being blocked. This rejects strict footprint collision and shows permissive edge-overlap movement without horizontal snapping.",
+      "statement": "The strict full-footprint collision theory is falsified: the player moved upward from x=34,y=25 to x=34,y=20 despite most of the destination footprint overlapping yellow wall.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175
+          ],
+          "reason": "After activating the small glyph, the player approached the neck on an x-coordinate lattice offset from the known socket position. Testing upward at the current right-edge alignment is goal-directed and distinguishes corridor snapping from strict footprint collision.",
+          "revised_at_ledger_version": 12,
+          "statement": "Movement requires the entire translated 5x5 footprint to be passable; therefore upward movement from x=34,y=25 is blocked and another route or switch interaction is needed to obtain the neck's alignment."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        130
+      ],
+      "id": "H_target",
+      "last_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "statement": "The top glyph/socket is the intended interaction zone, but first entry at y=15 does not complete the level; completion may require moving one tile deeper to y=10 for full glyph alignment.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+          "revised_at_ledger_version": 2,
+          "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; contact or entry completes the level."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+          "revised_at_ledger_version": 5,
+          "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; attempting to move upward from the corridor endpoint may trigger completion by contact."
+        }
+      ],
+      "status": "active"
+    },
+    "H_timeout_reset": {
+      "evidence_seq": [
+        744,
+        1144,
+        2028,
+        2068,
+        2141,
+        2342,
+        2592,
+        2718
+      ],
+      "id": "H_timeout_reset",
+      "last_reason": "The timeout restoration is confirmed, and the subsequent ACTION3 changed only the countdown, grounding west of the entry player as blocked. The next decision is to reuse the confirmed north route toward the upper corridor and seek the far-right descent.",
+      "statement": "Countdown exhaustion causes restoration on the following input. The latest ACTION1 restored the exact level-2 entry frame and full timer; the subsequent blocked ACTION3 consumed two timer cells normally, confirming the new cycle is active.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            744
+          ],
+          "reason": "The latest ACTION4 did not move normally; it restored the entry player position, initial status, and full timer. This explains the previous prediction mismatch and gives enough time for the known transform-and-return route.",
+          "revised_at_ledger_version": 34,
+          "statement": "When the color-11 countdown is exhausted, the next action restores the exact level-entry frame without a GAME_OVER boundary, resetting player, status glyph, and timer."
+        },
+        {
+          "evidence_seq": [
+            744,
+            1144
+          ],
+          "reason": "Reviewed exp-6ab9a8cbe98733b5: ACTION1 recreated the exact predicted match after timeout. The shortest route now leaves the interaction zone upward and heads directly through the upper corridor to the socket.",
+          "revised_at_ledger_version": 52,
+          "statement": "Countdown exhaustion causes an in-level reset on the next input, but the current reset leaves 24 timer cells, enough for the approximately seven-action matched-status route to the socket."
+        },
+        {
+          "evidence_seq": [
+            744,
+            1144,
+            2028,
+            2068,
+            2141
+          ],
+          "reason": "The latest six upward and two leftward transitions establish the upper-corridor route. Visual/RLE grounding now reveals that the current status and lower gray target differ by exactly a left-right reflection, making vertical passage at the nearby upper glyph the most informative and goal-directed test.",
+          "revised_at_ledger_version": 55,
+          "statement": "Only about six countdown actions remain. A transform reached now will likely be lost to timeout before reaching the lower target, but testing the nearby upper glyph is valuable; after reset, the complete transform-and-return route should fit the full timer."
+        },
+        {
+          "evidence_seq": [
+            744,
+            1144,
+            2028,
+            2068,
+            2141,
+            2342
+          ],
+          "reason": "Experiment exp-82ad95a708df5b80 falsified the transferred-reflection prediction for the upper glyph: status rows did not change, while the timer recharged completely. Subsequent transitions map the current dead end.",
+          "revised_at_ledger_version": 60,
+          "statement": "Level 2 contains an upper recharge glyph that restores the full 42-cell countdown on contact, allowing extended maze exploration without an in-level reset."
+        },
+        {
+          "evidence_seq": [
+            744,
+            1144,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592
+          ],
+          "reason": "The latest frame and transition show ACTION2 moved down through the upper glyph but consumed countdown instead of restoring it, changing the route strategy: probe the east corridor now, then exploit the imminent timeout reset for a fresh exploration cycle.",
+          "revised_at_ledger_version": 63,
+          "statement": "The upper level-2 glyph does not reliably recharge on every crossing. On the latest downward return from y\u224810 to y\u224815, the countdown fell from four dark cells to two rather than refilling. The earlier refill may be one-use, direction/approach dependent, or associated with timeout; countdown exhaustion still appears to reset the level on the following input."
+        },
+        {
+          "evidence_seq": [
+            744,
+            1144,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592,
+            2718
+          ],
+          "reason": "Reviewed exp-d2f1323d3d301cc0: ACTION4 produced the predicted five-cell eastward translation and exhausted the countdown. This confirms the open upper corridor and makes intentional timeout restoration the immediate next step.",
+          "revised_at_ledger_version": 66,
+          "statement": "The countdown reached zero after the successful eastward move from (14,15) to (19,15). Based on the earlier observed cycle, the next action should trigger an in-level restoration to the level-2 entry frame rather than ordinary movement."
+        },
+        {
+          "evidence_seq": [
+            744,
+            1144,
+            2028,
+            2068,
+            2141,
+            2342,
+            2592,
+            2718
+          ],
+          "reason": "The post-exhaustion ACTION1 restored the entry frame and full timer exactly as predicted. This resolves the timeout uncertainty and makes navigation toward the lower-right marker the highest-value plan.",
+          "revised_at_ledger_version": 67,
+          "statement": "Countdown exhaustion causes an in-level restoration on the following input. The latest ACTION1 restored the exact level-2 entry player position and full 42-cell timer rather than moving north or causing GAME_OVER, confirming the reset cycle."
+        }
+      ],
+      "status": "active"
+    }
+  },
+  "version": 67
+}

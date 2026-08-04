@@ -1,0 +1,184 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_block_motion": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_block_motion",
+      "last_reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+      "last_updated_version": 5,
+      "statement": "The patterned 5x5 color-12/9 tile translates by one tile width through color-3 lanes under the four cardinal actions.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The patterned 5x5 color-12/9 tile is controlled and moves by one tile width through color-3 lanes; ACTION1 is upward."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+          "revised_at_ledger_version": 4,
+          "statement": "The patterned 5x5 color-12/9 tile is controlled and moves by one tile width through color-3 lanes; ACTION1 moves up and ACTION2 moves down."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "ACTION3 translated the movable tile exactly five cells left and advanced the same status bar, confirming cardinal tile motion across both axes.",
+          "revised_at_ledger_version": 5,
+          "statement": "The patterned 5x5 color-12/9 tile moves by one tile width through color-3 lanes; ACTION1 is up, ACTION2 down, and ACTION3 left."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_cardinal_controls": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_cardinal_controls",
+      "last_reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+      "last_updated_version": 5,
+      "statement": "ACTION1, ACTION2, ACTION3, and ACTION4 move the controlled tile up, down, left, and right respectively by one five-cell tile width.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The remaining action ids likely produce other tile-width translations of the 12/9 tile, subject to traversability."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+          "revised_at_ledger_version": 4,
+          "statement": "ACTION1 and ACTION2 are the opposite vertical tile translations; ACTION3 and ACTION4 are candidates for the horizontal pair."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "ACTION3 translated the movable tile exactly five cells left and advanced the same status bar, confirming cardinal tile motion across both axes.",
+          "revised_at_ledger_version": 5,
+          "statement": "ACTION1, ACTION2, and ACTION3 are up, down, and left respectively; ACTION4 is the remaining candidate for right."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_chamber_block": {
+      "evidence_seq": [
+        11
+      ],
+      "id": "H_chamber_block",
+      "last_reason": "The certified navigation reached rows 20-24 directly below the framed glyph, creating a decisive one-action contact test.",
+      "last_updated_version": 6,
+      "statement": "The color-5 frame is a solid obstacle; pressing upward from the upper neck will be a no-op, implying that another interaction such as the fixed color-0/1 glyph is required.",
+      "status": "active"
+    },
+    "H_endpoint_goal": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        11
+      ],
+      "id": "H_endpoint_goal",
+      "last_reason": "The certified navigation reached rows 20-24 directly below the framed glyph, creating a decisive one-action contact test.",
+      "last_updated_version": 6,
+      "statement": "Pressing upward from the upper neck so the movable tile contacts the framed color-9 glyph may trigger level progress or a useful transformation.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "ACTION3 translated the movable tile exactly five cells left and advanced the same status bar, confirming cardinal tile motion across both axes.",
+          "revised_at_ledger_version": 5,
+          "statement": "Progress likely requires routing the movable tile to interact with the upper framed color-9 glyph or the fixed color-0/1 glyph."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+          "revised_at_ledger_version": 6,
+          "statement": "A promising reusable objective is to route the movable tile through the right branch into the upper neck and interact with the framed color-9 glyph."
+        }
+      ],
+      "status": "active"
+    },
+    "H_marker_motion": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_marker_motion",
+      "last_reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+      "last_updated_version": 2,
+      "statement": "The compact color-0/1 motif is the controlled moving object.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+          "revised_at_ledger_version": 2,
+          "statement": "One or more action ids transform or translate the compact color-0/1 motif through the color-3 structure toward an interaction object."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_panel_transform",
+      "last_reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+      "last_updated_version": 5,
+      "statement": "The bottom color-11 bar advances by one cell in each row after every observed successful tile move.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions may primarily alter a glyph or state panel while leaving the compact color-0/1 motif fixed."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The bottom color-11 bar is a counter that advances by one cell after a successful tile move."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 6
+}

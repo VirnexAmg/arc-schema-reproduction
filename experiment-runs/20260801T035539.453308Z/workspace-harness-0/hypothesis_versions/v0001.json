@@ -1,0 +1,22 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_directional_move": {
+      "evidence_seq": [],
+      "id": "H_directional_move",
+      "last_reason": "The entry frame contains a uniquely asymmetric glyph suitable for discriminating translation from orientation/transform control, but no transition evidence yet assigns action semantics.",
+      "last_updated_version": 1,
+      "statement": "The four available actions translate the compact asymmetric blue/black glyph through the large color-3 play region; a legal ACTION1 should change its anchor without changing its internal pattern.",
+      "status": "active"
+    },
+    "H_orientation_control": {
+      "evidence_seq": [],
+      "id": "H_orientation_control",
+      "last_reason": "The entry frame contains a uniquely asymmetric glyph suitable for discriminating translation from orientation/transform control, but no transition evidence yet assigns action semantics.",
+      "last_updated_version": 1,
+      "statement": "The available actions rotate, reorient, or select a transform for the asymmetric glyph while leaving its anchor fixed; ACTION1 should change orientation or a related panel state rather than translate it.",
+      "status": "active"
+    }
+  },
+  "version": 1
+}

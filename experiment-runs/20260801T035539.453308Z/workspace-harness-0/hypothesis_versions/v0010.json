@@ -1,0 +1,445 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_action2_displace": {
+      "evidence_seq": [
+        7,
+        8,
+        9
+      ],
+      "id": "H_action2_displace",
+      "last_reason": "A second consecutive ACTION2 moved the payload down from row 20 to row 25 exactly as predicted, reaching a corridor where ACTION3 can discriminate the horizontal mapping.",
+      "last_updated_version": 7,
+      "statement": "ACTION2 repeatedly translates the payload downward by exactly five pixels when traversable, preserves its internal pattern, restores vacated underlay, and advances the meter on success.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            7
+          ],
+          "reason": "Transition 7 was an exact no-op for ACTION1 at row 15, including no meter advance; revise the motion boundary and probe an untried control.",
+          "revised_at_ledger_version": 6,
+          "statement": "From the row-15 socket, ACTION2 causes a five-pixel payload translation and advances the meter."
+        },
+        {
+          "evidence_seq": [
+            7,
+            8
+          ],
+          "reason": "ACTION2 moved the payload down from row 15 to row 20, advanced the meter, preserved its pattern, and exactly restored the panel underlay at rows 15-19.",
+          "revised_at_ledger_version": 7,
+          "statement": "ACTION2 translates the payload downward by exactly five pixels, preserves its internal pattern, restores vacated underlay, and advances the meter on success."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_action2_reorient": {
+      "evidence_seq": [
+        7,
+        8
+      ],
+      "id": "H_action2_reorient",
+      "last_reason": "ACTION2 moved the payload down from row 15 to row 20, advanced the meter, preserved its pattern, and exactly restored the panel underlay at rows 15-19.",
+      "last_updated_version": 6,
+      "statement": "From the row-15 socket, ACTION2 changes the payload pattern or orientation in place, potentially enabling a subsequent panel interaction.",
+      "status": "rejected"
+    },
+    "H_action3_left": {
+      "evidence_seq": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "id": "H_action3_left",
+      "last_reason": "Two additional certified ACTION3 moves exactly confirmed the leftward translation model and positioned the payload directly above the blue/black glyph, making ACTION2 a goal-relevant discriminator among blocking, ordinary traversal, and transformation mechanisms.",
+      "last_updated_version": 9,
+      "statement": "At an open horizontal corridor, ACTION3 repeatedly translates the payload left by exactly five pixels, preserves its pattern, restores the vacated underlay, and advances the meter.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            9
+          ],
+          "reason": "A second consecutive ACTION2 moved the payload down from row 20 to row 25 exactly as predicted, reaching a corridor where ACTION3 can discriminate the horizontal mapping.",
+          "revised_at_ledger_version": 8,
+          "statement": "At an open horizontal corridor, ACTION3 translates the payload left by exactly five pixels and advances the meter."
+        },
+        {
+          "evidence_seq": [
+            9,
+            10
+          ],
+          "reason": "Transition 10 directly observed ACTION3 moving the payload left from column 34 to 29 with underlay restoration and one meter advance. ACTION4 remains the only untried control.",
+          "revised_at_ledger_version": 9,
+          "statement": "At an open horizontal corridor, ACTION3 translates the payload left by exactly five pixels, preserves its pattern, restores the vacated underlay, and advances the meter."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_action3_right": {
+      "evidence_seq": [
+        9,
+        10
+      ],
+      "id": "H_action3_right",
+      "last_reason": "Transition 10 directly observed ACTION3 moving the payload left from column 34 to 29 with underlay restoration and one meter advance. ACTION4 remains the only untried control.",
+      "last_updated_version": 8,
+      "statement": "At an open horizontal corridor, ACTION3 translates the payload right by exactly five pixels and advances the meter.",
+      "status": "rejected"
+    },
+    "H_action4_nonright": {
+      "evidence_seq": [
+        9,
+        10,
+        12,
+        13
+      ],
+      "id": "H_action4_nonright",
+      "last_reason": "Transition 13 moved the payload through colors 0 and 1, left its visible pattern unchanged, consumed no meter cell, and horizontally reflected the bottom status bitmap. The resulting status pattern matches the framed upper target exactly.",
+      "last_updated_version": 10,
+      "statement": "ACTION4 is a no-op or has a non-rightward special effect even on open color-3 terrain.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            9,
+            10
+          ],
+          "reason": "Transition 10 directly observed ACTION3 moving the payload left from column 34 to 29 with underlay restoration and one meter advance. ACTION4 remains the only untried control.",
+          "revised_at_ledger_version": 10,
+          "statement": "ACTION4 is a no-op or has a non-rightward special effect even in an open horizontal corridor."
+        }
+      ],
+      "status": "active"
+    },
+    "H_action4_right": {
+      "evidence_seq": [
+        9,
+        10,
+        12,
+        13
+      ],
+      "id": "H_action4_right",
+      "last_reason": "Transition 13 moved the payload through colors 0 and 1, left its visible pattern unchanged, consumed no meter cell, and horizontally reflected the bottom status bitmap. The resulting status pattern matches the framed upper target exactly.",
+      "last_updated_version": 10,
+      "statement": "ACTION4 translates the payload right by exactly five pixels on open terrain, preserves its pattern, restores underlay, and advances the meter once.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            9,
+            10
+          ],
+          "reason": "Transition 10 directly observed ACTION3 moving the payload left from column 34 to 29 with underlay restoration and one meter advance. ACTION4 remains the only untried control.",
+          "revised_at_ledger_version": 10,
+          "statement": "ACTION4 translates the payload right by exactly five pixels when traversable, completing a four-direction control mapping."
+        }
+      ],
+      "status": "active"
+    },
+    "H_destructive_overlay": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8
+      ],
+      "id": "H_destructive_overlay",
+      "last_reason": "ACTION2 moved the payload down from row 15 to row 20, advanced the meter, preserved its pattern, and exactly restored the panel underlay at rows 15-19.",
+      "last_updated_version": 6,
+      "statement": "Payload motion destructively clears its vacated footprint to color 3 even when the footprint previously covered color-5 panel terrain.",
+      "status": "rejected"
+    },
+    "H_directional_move": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_directional_move",
+      "last_reason": "ACTION2 moved the payload down from row 15 to row 20, advanced the meter, preserved its pattern, and exactly restored the panel underlay at rows 15-19.",
+      "last_updated_version": 6,
+      "statement": "ACTION1 moves the payload upward five pixels and ACTION2 moves it downward five pixels when the destination terrain is traversable; successful translations preserve the payload pattern and advance the meter once.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The entry frame contains a uniquely asymmetric glyph suitable for discriminating translation from orientation/transform control, but no transition evidence yet assigns action semantics.",
+          "revised_at_ledger_version": 2,
+          "statement": "The four available actions translate the compact asymmetric blue/black glyph through the large color-3 play region; a legal ACTION1 should change its anchor without changing its internal pattern."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly identifies a five-pixel upward payload translation and one-cell meter advance, while leaving the blue/black glyph and payload orientation unchanged.",
+          "revised_at_ledger_version": 3,
+          "statement": "ACTION1 translates the 5x5 color-12/9 payload upward by exactly five pixels, preserving its pattern and replacing its old footprint with color 3, provided the destination is color 3; every action also advances the bottom two-row meter by one cell."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "reason": "Five exact upward transitions establish the movement and meter rules and place the payload at the first informative collision point.",
+          "revised_at_ledger_version": 4,
+          "statement": "ACTION1 translates the 5x5 color-12/9 payload upward by exactly five pixels when every destination pixel is color 3, preserving its pattern and clearing its old footprint; each action advances the bottom meter once."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "reason": "Transition 6 shows the payload entering the mixed-color framed panel, falsifying the solid/all-color-3 collision rule and exposing an underlay-restoration ambiguity.",
+          "revised_at_ledger_version": 5,
+          "statement": "ACTION1 moves the 5x5 color-12/9 payload upward by exactly five pixels across traversable underlay colors 3, 5, and 9 while preserving the payload pattern; color 4 is the leading blocking candidate."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "reason": "Transition 7 was an exact no-op for ACTION1 at row 15, including no meter advance; revise the motion boundary and probe an untried control.",
+          "revised_at_ledger_version": 6,
+          "statement": "ACTION1 translates the 5x5 payload upward by five pixels while its top row is below 15; at the upper panel socket with top row 15 it is blocked and changes neither frame nor meter."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_dock_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_dock_target",
+      "last_reason": "ACTION2 moved the payload down from row 15 to row 20, advanced the meter, preserved its pattern, and exactly restored the panel underlay at rows 15-19.",
+      "last_updated_version": 6,
+      "statement": "The upper panel socket at payload top row 15 blocks further ACTION1 motion but permits ACTION2 to undock the payload downward; another route or control is needed before returning to solve the panel.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Transition 1 exactly identifies a five-pixel upward payload translation and one-cell meter advance, while leaving the blue/black glyph and payload orientation unchanged.",
+          "revised_at_ledger_version": 3,
+          "statement": "The open color-3 vertical shaft above the payload's right-hand room leads to a useful interaction with the framed top glyph; moving the payload to top row 20 should place it immediately below that panel."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "reason": "Five exact upward transitions establish the movement and meter rules and place the payload at the first informative collision point.",
+          "revised_at_ledger_version": 4,
+          "statement": "From payload top row 20, another ACTION1 against the framed top glyph causes a docking, transform, displacement, or level boundary rather than an ordinary blocked move."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "reason": "Transition 6 shows the payload entering the mixed-color framed panel, falsifying the solid/all-color-3 collision rule and exposing an underlay-restoration ambiguity.",
+          "revised_at_ledger_version": 5,
+          "statement": "The framed top glyph accepts the payload as an overlay; moving from top row 15 to row 10 will center the payload on its patterned interior and may trigger a transformation or level boundary."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "reason": "Transition 7 was an exact no-op for ACTION1 at row 15, including no meter advance; revise the motion boundary and probe an untried control.",
+          "revised_at_ledger_version": 6,
+          "statement": "The framed panel's lower socket at payload top row 15 is a decision position: ACTION1 cannot enter the patterned center, so another control must displace, align, or transform the payload."
+        }
+      ],
+      "status": "active"
+    },
+    "H_glyph_block": {
+      "evidence_seq": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "id": "H_glyph_block",
+      "last_reason": "Transition 13 moved the payload through colors 0 and 1, left its visible pattern unchanged, consumed no meter cell, and horizontally reflected the bottom status bitmap. The resulting status pattern matches the framed upper target exactly.",
+      "last_updated_version": 10,
+      "statement": "Colors 0 and 1 in the left-room glyph are nontraversable, so ACTION2 from payload position (25,19) is an exact blocked no-op with no meter change.",
+      "status": "rejected"
+    },
+    "H_glyph_transform": {
+      "evidence_seq": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "id": "H_glyph_transform",
+      "last_reason": "Transition 13 moved the payload through colors 0 and 1, left its visible pattern unchanged, consumed no meter cell, and horizontally reflected the bottom status bitmap. The resulting status pattern matches the framed upper target exactly.",
+      "last_updated_version": 10,
+      "statement": "Entering the blue/black station translates the visible payload normally, horizontally reflects the bottom-left status glyph within its bounding box, and does not advance the color-11 movement meter.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            10,
+            11,
+            12
+          ],
+          "reason": "Two additional certified ACTION3 moves exactly confirmed the leftward translation model and positioned the payload directly above the blue/black glyph, making ACTION2 a goal-relevant discriminator among blocking, ordinary traversal, and transformation mechanisms.",
+          "revised_at_ledger_version": 10,
+          "statement": "Entering the left-room glyph with ACTION2 moves the payload to row 30 and triggers a persistent transformation of the payload, glyph, or interaction state."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_glyph_traverse": {
+      "evidence_seq": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "id": "H_glyph_traverse",
+      "last_reason": "Transition 13 moved the payload through colors 0 and 1, left its visible pattern unchanged, consumed no meter cell, and horizontally reflected the bottom status bitmap. The resulting status pattern matches the framed upper target exactly.",
+      "last_updated_version": 10,
+      "statement": "The left-room glyph behaves as ordinary traversable underlay: entering it moves the unchanged payload and advances the movement meter once without other changes.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            10,
+            11,
+            12
+          ],
+          "reason": "Two additional certified ACTION3 moves exactly confirmed the leftward translation model and positioned the payload directly above the blue/black glyph, making ACTION2 a goal-relevant discriminator among blocking, ordinary traversal, and transformation mechanisms.",
+          "revised_at_ledger_version": 10,
+          "statement": "The left-room glyph is traversable underlay; ACTION2 from (25,19) moves the unchanged payload to (30,19), overlays the glyph, and advances the meter once."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_orientation_control": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_orientation_control",
+      "last_reason": "Transition 1 exactly identifies a five-pixel upward payload translation and one-cell meter advance, while leaving the blue/black glyph and payload orientation unchanged.",
+      "last_updated_version": 2,
+      "statement": "ACTION1 rotates or reorients the asymmetric glyph or payload without translation.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The entry frame contains a uniquely asymmetric glyph suitable for discriminating translation from orientation/transform control, but no transition evidence yet assigns action semantics.",
+          "revised_at_ledger_version": 2,
+          "statement": "The available actions rotate, reorient, or select a transform for the asymmetric glyph while leaving its anchor fixed; ACTION1 should change orientation or a related panel state rather than translate it."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_solid_panel": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "id": "H_solid_panel",
+      "last_reason": "Transition 6 shows the payload entering the mixed-color framed panel, falsifying the solid/all-color-3 collision rule and exposing an underlay-restoration ambiguity.",
+      "last_updated_version": 4,
+      "statement": "The framed top glyph blocks upward payload motion at top row 20.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "reason": "Five exact upward transitions establish the movement and meter rules and place the payload at the first informative collision point.",
+          "revised_at_ledger_version": 4,
+          "statement": "The framed top glyph is a solid non-color-3 boundary; ACTION1 from payload top row 20 leaves the payload unchanged and only advances the action meter."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_status_target_match": {
+      "evidence_seq": [
+        12,
+        13
+      ],
+      "id": "H_status_target_match",
+      "last_reason": "Transition 13 moved the payload through colors 0 and 1, left its visible pattern unchanged, consumed no meter cell, and horizontally reflected the bottom status bitmap. The resulting status pattern matches the framed upper target exactly.",
+      "last_updated_version": 10,
+      "statement": "The bottom-left 3x3 status glyph encodes the payload configuration; after the station reflects it to match the framed upper 3x3 pattern, returning the payload to the upper socket completes the level.",
+      "status": "active"
+    },
+    "H_underlay_restore": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8
+      ],
+      "id": "H_underlay_restore",
+      "last_reason": "ACTION2 moved the payload down from row 15 to row 20, advanced the meter, preserved its pattern, and exactly restored the panel underlay at rows 15-19.",
+      "last_updated_version": 6,
+      "statement": "The payload overlays static terrain, and every successful move restores the exact entry-frame terrain beneath its vacated 5x5 footprint.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "reason": "Transition 6 shows the payload entering the mixed-color framed panel, falsifying the solid/all-color-3 collision rule and exposing an underlay-restoration ambiguity.",
+          "revised_at_ledger_version": 6,
+          "statement": "The payload overlays static terrain, so when it moves from rows 15-19 to 10-14, the vacated cells restore the entry-frame panel and shaft colors."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 10
+}

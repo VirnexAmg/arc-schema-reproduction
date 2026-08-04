@@ -145,7 +145,9 @@ def _resolve_state_snapshot(
         if ref not in catalog:
             raise WorldModelValidationError(f"unknown snapshot_ref {ref}")
         if any(key in state for key in ("snapshot", "snapshot_patch", "base_ref")):
-            raise WorldModelValidationError("snapshot_ref cannot combine with other snapshot fields")
+            raise WorldModelValidationError(
+                "snapshot_ref cannot combine with other snapshot fields"
+            )
         return catalog[ref]
 
     if "snapshot_patch" in state or "base_ref" in state:

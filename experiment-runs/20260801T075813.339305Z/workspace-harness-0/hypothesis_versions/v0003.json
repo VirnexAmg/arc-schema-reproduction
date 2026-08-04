@@ -1,0 +1,108 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_action_timer": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_action_timer",
+      "last_reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+      "last_updated_version": 3,
+      "statement": "Every submitted action consumes the leftmost cyan column of the two-row status bar, including inverse movement actions.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "Each submitted action consumes the leftmost cyan column of the two-row bottom status bar, recoloring it green."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_actor_motion": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_actor_motion",
+      "last_reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+      "last_updated_version": 3,
+      "statement": "Actions control the 5x5 purple/red tile; action 1 moves it up five pixels and action 2 moves it down five pixels while preserving its pattern.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions 1-4 move or reorient the black/blue motif; the action mapping is not yet grounded."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "Actions control the 5x5 purple/red tile rather than the black/blue motif; action 1 translates the tile upward by one five-pixel object cell without changing its pattern."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_glyph_gate": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_glyph_gate",
+      "last_reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+      "last_updated_version": 3,
+      "statement": "The lattice-aligned black/blue motif is an intermediate interaction target, while the upper glyph panel may be an exit or transformation target.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "The red glyph panels specify an object-level transformation or target condition, with the purple/red block acting as an interaction point."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "The upper glyph panel or black/blue motif is a destination or transformation target for the moving purple/red tile."
+        }
+      ],
+      "status": "uncertain"
+    },
+    "H_room_navigation": {
+      "evidence_seq": [
+        1,
+        2
+      ],
+      "id": "H_room_navigation",
+      "last_reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+      "last_updated_version": 3,
+      "statement": "The tile moves on a five-pixel lattice over green terrain, restores green beneath itself, and actions 1 and 2 are inverse vertical translations.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "The connected green component is the legal movement region while yellow and gray cells are non-traversable."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "The purple/red tile translates between five-pixel-aligned green locations, restores green beneath itself, and is blocked by non-green destinations."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 3
+}

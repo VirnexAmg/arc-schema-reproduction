@@ -1,0 +1,56 @@
+{"type":"thread.started","thread_id":"019fb878-53cd-7000-8ab0-d3a7f26dec28"}
+{"type":"turn.started"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Falling back from WebSockets to HTTPS transport. request timed out"}}
+{"type":"error","message":"Reconnecting... 1/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"error","message":"request timed out"}
+{"type":"turn.failed","error":{"message":"request timed out"}}
+{"type":"thread.started","thread_id":"019fb878-53cd-7000-8ab0-d3a7f26dec28"}
+{"type":"turn.started"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Falling back from WebSockets to HTTPS transport. request timed out"}}
+{"type":"error","message":"Reconnecting... 1/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"error","message":"request timed out"}
+{"type":"turn.failed","error":{"message":"request timed out"}}
+{"type":"thread.started","thread_id":"019fb878-53cd-7000-8ab0-d3a7f26dec28"}
+{"type":"turn.started"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Falling back from WebSockets to HTTPS transport. request timed out"}}
+{"type":"error","message":"Reconnecting... 1/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"error","message":"request timed out"}
+{"type":"turn.failed","error":{"message":"request timed out"}}
+{"type":"thread.started","thread_id":"019fb878-53cd-7000-8ab0-d3a7f26dec28"}
+{"type":"turn.started"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Falling back from WebSockets to HTTPS transport. request timed out"}}
+{"type":"error","message":"Reconnecting... 1/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 2/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 3/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 4/5 (request timed out)"}
+{"type":"error","message":"Reconnecting... 5/5 (request timed out)"}
+{"type":"error","message":"request timed out"}
+{"type":"turn.failed","error":{"message":"request timed out"}}

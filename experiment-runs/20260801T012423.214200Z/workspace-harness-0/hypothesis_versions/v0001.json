@@ -1,0 +1,22 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_avatar_motion": {
+      "evidence_seq": [],
+      "id": "H_avatar_motion",
+      "last_reason": "The initial frame admits both object groundings, but there are no recorded transitions from which action semantics can be inferred.",
+      "last_updated_version": 1,
+      "statement": "The unique asymmetric color-0/1 glyph in the left central chamber is controllable; action IDs cause movement or orientation changes, with the mapping to be learned from transitions.",
+      "status": "active"
+    },
+    "H_panel_action": {
+      "evidence_seq": [],
+      "id": "H_panel_action",
+      "last_reason": "The initial frame admits both object groundings, but there are no recorded transitions from which action semantics can be inferred.",
+      "last_updated_version": 1,
+      "statement": "The four actions manipulate or select the separate upper panel or HUD state while the central color-0/1 glyph remains stationary.",
+      "status": "active"
+    }
+  },
+  "version": 1
+}

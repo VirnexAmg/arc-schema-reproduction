@@ -1,0 +1,67 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_blocked_target": {
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_blocked_target",
+      "last_reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+      "statement": "The gray target chamber is physically blocked; an upward attempt from y=20 will leave the player stationary, implying another interaction or route is required.",
+      "status": "active"
+    },
+    "H_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_navigation",
+      "last_reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+      "statement": "Actions move the 5x5 magenta/red player one tile: 1 up, 2 down, 3 left, 4 right, when the destination is green/passable; the bottom bar advances one unit every action.",
+      "status": "active"
+    },
+    "H_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_target",
+      "last_reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+      "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; attempting to move upward from the corridor endpoint may trigger completion by contact.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+          "revised_at_ledger_version": 2,
+          "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; contact or entry completes the level."
+        }
+      ],
+      "status": "active"
+    }
+  },
+  "version": 2
+}

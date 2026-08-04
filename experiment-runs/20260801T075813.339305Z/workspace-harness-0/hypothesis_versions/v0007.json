@@ -1,0 +1,291 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_action4_right": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_action4_right",
+      "last_reason": "Evidence 4 exactly reversed action 3, confirming all four cardinal controls. The safe route can now go around the central yellow wall toward the still-untested motif.",
+      "last_updated_version": 5,
+      "statement": "Action 4 is the rightward inverse of action 3, completing two opposite cardinal movement pairs.",
+      "status": "supported"
+    },
+    "H_action_timer": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        12
+      ],
+      "id": "H_action_timer",
+      "last_reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+      "last_updated_version": 7,
+      "statement": "Ordinary movement and blocked attempts consume one cyan timer column, while successful motif collection does not.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "Each submitted action consumes the leftmost cyan column of the two-row bottom status bar, recoloring it green."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "Every submitted action consumes the leftmost cyan column of the two-row status bar, including inverse movement actions."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "Action 3 translated the patterned tile left by exactly five pixels and advanced the status bar, grounding a third cardinal direction. The sole remaining action is predicted to be right by the compact inverse-pair model.",
+          "revised_at_ledger_version": 7,
+          "statement": "Every submitted action advances the two-row bottom status bar by one column."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_actor_motion": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_actor_motion",
+      "last_reason": "Evidence 4 exactly reversed action 3, confirming all four cardinal controls. The safe route can now go around the central yellow wall toward the still-untested motif.",
+      "last_updated_version": 5,
+      "statement": "Actions 1, 2, 3, and 4 translate the patterned 5x5 tile one lattice cell up, down, left, and right respectively while preserving its pattern.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions 1-4 move or reorient the black/blue motif; the action mapping is not yet grounded."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "Actions control the 5x5 purple/red tile rather than the black/blue motif; action 1 translates the tile upward by one five-pixel object cell without changing its pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "Actions control the 5x5 purple/red tile; action 1 moves it up five pixels and action 2 moves it down five pixels while preserving its pattern."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "Action 3 translated the patterned tile left by exactly five pixels and advanced the status bar, grounding a third cardinal direction. The sole remaining action is predicted to be right by the compact inverse-pair model.",
+          "revised_at_ledger_version": 5,
+          "statement": "Actions 1, 2, and 3 translate the 5x5 purple/red tile one lattice cell up, down, and left respectively while preserving its pattern."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_exit_panel": {
+      "evidence_seq": [
+        12
+      ],
+      "id": "H_exit_panel",
+      "last_reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+      "last_updated_version": 7,
+      "statement": "Once the displayed glyph matches the upper target, contacting the upper gray panel completes the level.",
+      "status": "active"
+    },
+    "H_glyph_gate": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "id": "H_glyph_gate",
+      "last_reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+      "last_updated_version": 7,
+      "statement": "The black/blue motif is a collectible switch: entering its cell consumes it and synchronizes the large lower-left glyph with the small upper target glyph.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "The red glyph panels specify an object-level transformation or target condition, with the purple/red block acting as an interaction point."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "The upper glyph panel or black/blue motif is a destination or transformation target for the moving purple/red tile."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "The lattice-aligned black/blue motif is an intermediate interaction target, while the upper glyph panel may be an exit or transformation target."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Evidence 4 exactly reversed action 3, confirming all four cardinal controls. The safe route can now go around the central yellow wall toward the still-untested motif.",
+          "revised_at_ledger_version": 6,
+          "statement": "The black/blue motif is an intermediate interaction target, after which the upper glyph panel may serve as an exit or pattern goal."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "reason": "The monitored route reached the cell directly above the motif without mismatch. A single down action now distinguishes an interaction from ordinary collision.",
+          "revised_at_ledger_version": 7,
+          "statement": "Entering the black/blue motif may collect or transform it, enabling progress toward the upper glyph panel."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_motif_block": {
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "id": "H_motif_block",
+      "last_reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+      "last_updated_version": 7,
+      "statement": "The black/blue motif is a solid non-green obstacle that blocks entry.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "reason": "The monitored route reached the cell directly above the motif without mismatch. A single down action now distinguishes an interaction from ordinary collision.",
+          "revised_at_ledger_version": 7,
+          "statement": "The black/blue motif is a solid non-green obstacle, so attempting to enter its cell leaves the tile stationary while still advancing the timer."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_panel_match": {
+      "evidence_seq": [
+        12
+      ],
+      "id": "H_panel_match",
+      "last_reason": "Action 2 consumed the motif, moved the tile into its cell, changed the large glyph to exactly match the upper target, and left the timer unchanged.",
+      "last_updated_version": 7,
+      "statement": "Motif collection rewrites the large lower-left glyph to equal the small upper target, using the target's object-level pattern at doubled scale.",
+      "status": "supported"
+    },
+    "H_room_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "id": "H_room_navigation",
+      "last_reason": "The monitored route reached the cell directly above the motif without mismatch. A single down action now distinguishes an interaction from ordinary collision.",
+      "last_updated_version": 6,
+      "statement": "The tile moves on a five-pixel lattice over green terrain, preserves its pattern, and restores green beneath itself; the seven-step route around the central wall matched exactly.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "Initial visual grounding supplies three reusable competing mechanism hypotheses, but no transition yet distinguishes direct movement from remote state change.",
+          "revised_at_ledger_version": 2,
+          "statement": "The connected green component is the legal movement region while yellow and gray cells are non-traversable."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "Action 1 moved only the patterned 5x5 tile upward by five pixels, restored its old footprint to green, and advanced the bottom bar by one column; the black/blue motif remained fixed.",
+          "revised_at_ledger_version": 3,
+          "statement": "The purple/red tile translates between five-pixel-aligned green locations, restores green beneath itself, and is blocked by non-green destinations."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "Action 2 exactly reversed action 1 by moving the tile down five pixels, while a second cyan status column changed to green.",
+          "revised_at_ledger_version": 4,
+          "statement": "The tile moves on a five-pixel lattice over green terrain, restores green beneath itself, and actions 1 and 2 are inverse vertical translations."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "Action 3 translated the patterned tile left by exactly five pixels and advanced the status bar, grounding a third cardinal direction. The sole remaining action is predicted to be right by the compact inverse-pair model.",
+          "revised_at_ledger_version": 6,
+          "statement": "The tile moves on a five-pixel lattice over green terrain and restores green beneath itself after successful movement."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 7
+}

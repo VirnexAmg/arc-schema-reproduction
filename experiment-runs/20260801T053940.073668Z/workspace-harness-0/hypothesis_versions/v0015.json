@@ -1,0 +1,588 @@
+{
+  "experiments": {},
+  "hypotheses": {
+    "H_block_motion": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        12,
+        13,
+        19
+      ],
+      "id": "H_block_motion",
+      "last_reason": "ACTION2 entered and erased the 0/1 motif, preserved the movable tile, left the bar unchanged, and horizontally reflected only the lower glyph into an exact 2x match with the upper glyph.",
+      "last_updated_version": 10,
+      "statement": "The tile translates ordinarily through colors 3 and 5; color 4 and unmatched color-9 glyphs block, while colors 0/1 invoke a special enter-and-transform interaction.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The patterned 5x5 color-12/9 tile is controlled and moves by one tile width through color-3 lanes; ACTION1 is upward."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+          "revised_at_ledger_version": 4,
+          "statement": "The patterned 5x5 color-12/9 tile is controlled and moves by one tile width through color-3 lanes; ACTION1 moves up and ACTION2 moves down."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "ACTION3 translated the movable tile exactly five cells left and advanced the same status bar, confirming cardinal tile motion across both axes.",
+          "revised_at_ledger_version": 5,
+          "statement": "The patterned 5x5 color-12/9 tile moves by one tile width through color-3 lanes; ACTION1 is up, ACTION2 down, and ACTION3 left."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+          "revised_at_ledger_version": 7,
+          "statement": "The patterned 5x5 color-12/9 tile translates by one tile width through color-3 lanes under the four cardinal actions."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12
+          ],
+          "reason": "ACTION1 moved through the color-5 threshold, preserved the tile, restored its prior cells to color 3, and advanced the bar; this falsifies the solid-chamber model and supports overwrite motion.",
+          "revised_at_ledger_version": 8,
+          "statement": "The patterned 5x5 tile moves by one tile width, overwriting traversable color 3 and permeable/target colors 5 and 9; color 4 is the supported structural wall."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12,
+            13
+          ],
+          "reason": "ACTION1 was a clean no-op against destination color 9, rejecting direct glyph overlap. Visual comparison shows the lower panel is the horizontal reflection of the upper glyph, making the central 0/1 motif a plausible transform switch.",
+          "revised_at_ledger_version": 9,
+          "statement": "The patterned 5x5 tile translates through color 3 and permeable color 5; observed color 9 and structural color 4 block ordinary entry."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12,
+            13
+          ],
+          "reason": "The tile is now aligned directly above the 0/1 motif. Prior evidence certifies ordinary motion and blocking, making one downward contact probe maximally discriminating.",
+          "revised_at_ledger_version": 10,
+          "statement": "The patterned 5x5 tile translates through color 3 and permeable color 5; observed color 9 and structural color 4 block ordinary entry, while color 0/1 contact remains untested as a possible special interaction."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_cardinal_controls": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "id": "H_cardinal_controls",
+      "last_reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+      "last_updated_version": 5,
+      "statement": "ACTION1, ACTION2, ACTION3, and ACTION4 move the controlled tile up, down, left, and right respectively by one five-cell tile width.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The remaining action ids likely produce other tile-width translations of the 12/9 tile, subject to traversability."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2
+          ],
+          "reason": "ACTION2 exactly reversed ACTION1's five-cell vertical translation and advanced the same status counter.",
+          "revised_at_ledger_version": 4,
+          "statement": "ACTION1 and ACTION2 are the opposite vertical tile translations; ACTION3 and ACTION4 are candidates for the horizontal pair."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "ACTION3 translated the movable tile exactly five cells left and advanced the same status bar, confirming cardinal tile motion across both axes.",
+          "revised_at_ledger_version": 5,
+          "statement": "ACTION1, ACTION2, and ACTION3 are up, down, and left respectively; ACTION4 is the remaining candidate for right."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_chamber_block": {
+      "evidence_seq": [
+        11,
+        12
+      ],
+      "id": "H_chamber_block",
+      "last_reason": "ACTION1 moved through the color-5 threshold, preserved the tile, restored its prior cells to color 3, and advanced the bar; this falsifies the solid-chamber model and supports overwrite motion.",
+      "last_updated_version": 7,
+      "statement": "The color-5 chamber frame is a solid obstacle that prevents the movable tile from entering.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            11
+          ],
+          "reason": "The certified navigation reached rows 20-24 directly below the framed glyph, creating a decisive one-action contact test.",
+          "revised_at_ledger_version": 7,
+          "statement": "The color-5 frame is a solid obstacle; pressing upward from the upper neck will be a no-op, implying that another interaction such as the fixed color-0/1 glyph is required."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_endpoint_goal": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        11,
+        12,
+        13
+      ],
+      "id": "H_endpoint_goal",
+      "last_reason": "ACTION1 was a clean no-op against destination color 9, rejecting direct glyph overlap. Visual comparison shows the lower panel is the horizontal reflection of the upper glyph, making the central 0/1 motif a plausible transform switch.",
+      "last_updated_version": 8,
+      "statement": "Directly overlaying the framed color-9 glyph completes the level.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3
+          ],
+          "reason": "ACTION3 translated the movable tile exactly five cells left and advanced the same status bar, confirming cardinal tile motion across both axes.",
+          "revised_at_ledger_version": 5,
+          "statement": "Progress likely requires routing the movable tile to interact with the upper framed color-9 glyph or the fixed color-0/1 glyph."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+          "revised_at_ledger_version": 6,
+          "statement": "A promising reusable objective is to route the movable tile through the right branch into the upper neck and interact with the framed color-9 glyph."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            11
+          ],
+          "reason": "The certified navigation reached rows 20-24 directly below the framed glyph, creating a decisive one-action contact test.",
+          "revised_at_ledger_version": 7,
+          "statement": "Pressing upward from the upper neck so the movable tile contacts the framed color-9 glyph may trigger level progress or a useful transformation."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            11,
+            12
+          ],
+          "reason": "ACTION1 moved through the color-5 threshold, preserved the tile, restored its prior cells to color 3, and advanced the bar; this falsifies the solid-chamber model and supports overwrite motion.",
+          "revised_at_ledger_version": 8,
+          "statement": "The framed color-9 glyph is likely a landing target; moving upward once more from rows 15-19 will fully overlay it at rows 10-14 and may complete the level."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_glyph_match_unlock": {
+      "evidence_seq": [
+        19,
+        20,
+        26
+      ],
+      "id": "H_glyph_match_unlock",
+      "last_reason": "The level boundary supports glyph-match unlocking. The new entry frame introduces compact color-11 glyphs distinct from the bottom status bar, requiring role-based bar handling and a new level-specific glyph-role hypothesis.",
+      "last_updated_version": 12,
+      "statement": "Once a mutable panel matches its reference glyph, entering the corresponding formerly blocked glyph endpoint completes the level.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            19,
+            20
+          ],
+          "reason": "The switch contact transformed the lower display, and the next upward move revealed the original 0/1 motif again while advancing the bar normally. This distinguishes persistent hidden terrain from a consumed switch.",
+          "revised_at_ledger_version": 12,
+          "statement": "When the lower 2x glyph matches the upper 3x3 glyph, the upper glyph becomes an enterable completion endpoint."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_level2_bar_rate": {
+      "evidence_seq": [
+        19,
+        20,
+        26,
+        27
+      ],
+      "id": "H_level2_bar_rate",
+      "last_reason": "Transition 27 confirms ordinary movement but shows a two-cell-per-row level-2 bar cost. Object-scale comparison corrects the level-2 roles: the small and doubled color-9 glyphs form the reflection pair, while compact color-11 rings are preserved maze objects.",
+      "last_updated_version": 13,
+      "statement": "The level-2 layout, identifiable by compact non-UI color-11 glyphs, consumes two bottom status-bar cells per row for every ordinary successful translation.",
+      "status": "supported"
+    },
+    "H_level2_glyph_roles": {
+      "evidence_seq": [
+        19,
+        20,
+        26,
+        27,
+        43,
+        44,
+        45,
+        46
+      ],
+      "id": "H_level2_glyph_roles",
+      "last_reason": "The final ACTION3 moved through the lower color-11 ring and refilled both status rows from four cells to 42. Vacating the covered ring is the minimal next observation needed to distinguish a reusable station from a consumed pickup.",
+      "last_updated_version": 15,
+      "statement": "The framed 3x3 color-9 glyph is the reference, the doubled bottom color-9 panel is mutable, and the repeated color-11 rings are recharge objects placed along the resource-constrained route.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            19,
+            20,
+            26
+          ],
+          "reason": "The level boundary supports glyph-match unlocking. The new entry frame introduces compact color-11 glyphs distinct from the bottom status bar, requiring role-based bar handling and a new level-specific glyph-role hypothesis.",
+          "revised_at_ledger_version": 13,
+          "statement": "In level 2 the framed color-9 glyph is the mutable panel, the upper color-11 ring is its reference, and the lower-right color-11 ring is a likely completion endpoint after the required transform."
+        },
+        {
+          "evidence_seq": [
+            19,
+            20,
+            26,
+            27
+          ],
+          "reason": "Transition 27 confirms ordinary movement but shows a two-cell-per-row level-2 bar cost. Object-scale comparison corrects the level-2 roles: the small and doubled color-9 glyphs form the reflection pair, while compact color-11 rings are preserved maze objects.",
+          "revised_at_ledger_version": 14,
+          "statement": "In level 2 the framed 3x3 color-9 glyph is the reference, the doubled bottom color-9 panel is mutable, and the repeated color-11 rings are separate persistent objects with an unresolved later role."
+        },
+        {
+          "evidence_seq": [
+            19,
+            20,
+            26,
+            27,
+            43
+          ],
+          "reason": "The level-2 switch delta is a decisive 90-degree clockwise rotation and also includes the normal two-cell bar cost. With only eight bar cells remaining, the nearby repeated color-11 ring is the highest-value resource probe.",
+          "revised_at_ledger_version": 15,
+          "statement": "The framed 3x3 color-9 glyph is the reference, the doubled bottom color-9 panel is mutable, and the repeated color-11 rings are likely resource objects needed to manage the two-cell movement cost."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_marker_motion": {
+      "evidence_seq": [
+        1
+      ],
+      "id": "H_marker_motion",
+      "last_reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+      "last_updated_version": 2,
+      "statement": "The compact color-0/1 motif is the controlled moving object.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+          "revised_at_ledger_version": 2,
+          "statement": "One or more action ids transform or translate the compact color-0/1 motif through the color-3 structure toward an interaction object."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_marker_target": {
+      "evidence_seq": [
+        12,
+        13,
+        19,
+        20,
+        27,
+        43
+      ],
+      "id": "H_marker_target",
+      "last_reason": "The level-2 switch delta is a decisive 90-degree clockwise rotation and also includes the normal two-cell bar cost. With only eight bar cells remaining, the nearby repeated color-11 ring is the highest-value resource probe.",
+      "last_updated_version": 14,
+      "statement": "The stationary 0/1 motif is persistent terrain hidden beneath the tile; each entry rotates the doubled bottom glyph 90 degrees clockwise, and the motif reappears when vacated.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            12,
+            13
+          ],
+          "reason": "The tile is now aligned directly above the 0/1 motif. Prior evidence certifies ordinary motion and blocking, making one downward contact probe maximally discriminating.",
+          "revised_at_ledger_version": 10,
+          "statement": "The stationary color-0/1 motif is an interaction switch that may transform the upper glyph when contacted by the movable tile."
+        },
+        {
+          "evidence_seq": [
+            12,
+            13,
+            19
+          ],
+          "reason": "ACTION2 entered and erased the 0/1 motif, preserved the movable tile, left the bar unchanged, and horizontally reflected only the lower glyph into an exact 2x match with the upper glyph.",
+          "revised_at_ledger_version": 11,
+          "statement": "Contact with the stationary color-0/1 motif lets the tile enter without advancing the bar, consumes the motif, and horizontally reflects the lower 2x glyph display."
+        },
+        {
+          "evidence_seq": [
+            12,
+            13,
+            19,
+            20
+          ],
+          "reason": "The switch contact transformed the lower display, and the next upward move revealed the original 0/1 motif again while advancing the bar normally. This distinguishes persistent hidden terrain from a consumed switch.",
+          "revised_at_ledger_version": 14,
+          "statement": "The stationary color-0/1 motif is persistent terrain: contact hides it beneath the tile without advancing the bar and horizontally reflects the lower 2x glyph; the motif reappears when vacated."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_panel_transform": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        12,
+        19,
+        20,
+        26,
+        27,
+        43
+      ],
+      "id": "H_panel_transform",
+      "last_reason": "The level-2 switch delta is a decisive 90-degree clockwise rotation and also includes the normal two-cell bar cost. With only eight bar cells remaining, the nearby repeated color-11 ring is the highest-value resource probe.",
+      "last_updated_version": 14,
+      "statement": "Every successful level-2 translation, including switch entry, consumes two leading cells from each bottom status-bar row; level-1 switch entry uniquely consumed none.",
+      "statement_history": [
+        {
+          "evidence_seq": [],
+          "reason": "The initial frame grounds competing marker-motion and panel-transform interpretations, but no action semantics are yet evidenced.",
+          "revised_at_ledger_version": 2,
+          "statement": "Actions may primarily alter a glyph or state panel while leaving the compact color-0/1 motif fixed."
+        },
+        {
+          "evidence_seq": [
+            1
+          ],
+          "reason": "ACTION1 translated only the 12/9 tile upward by five cells and advanced the bottom bar by one cell in each row.",
+          "revised_at_ledger_version": 3,
+          "statement": "The bottom color-11 bar is a counter that advances by one cell after a successful tile move."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "reason": "Transition 4 observed the missing five-cell right translation and another one-cell status-bar advance; the model mismatch was caused by ACTION4 being unimplemented.",
+          "revised_at_ledger_version": 7,
+          "statement": "The bottom color-11 bar advances by one cell in each row after every observed successful tile move."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12
+          ],
+          "reason": "ACTION1 moved through the color-5 threshold, preserved the tile, restored its prior cells to color 3, and advanced the bar; this falsifies the solid-chamber model and supports overwrite motion.",
+          "revised_at_ledger_version": 10,
+          "statement": "The bottom color-11 bar advances by one cell in each row after every successful tile translation, including entry through the color-5 threshold."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12,
+            19,
+            20
+          ],
+          "reason": "The switch contact transformed the lower display, and the next upward move revealed the original 0/1 motif again while advancing the bar normally. This distinguishes persistent hidden terrain from a consumed switch.",
+          "revised_at_ledger_version": 12,
+          "statement": "The bottom color-11 bar advances after every ordinary successful tile translation, but the special 0/1 switch-contact move does not advance it."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12,
+            19,
+            20,
+            26
+          ],
+          "reason": "The level boundary supports glyph-match unlocking. The new entry frame introduces compact color-11 glyphs distinct from the bottom status bar, requiring role-based bar handling and a new level-specific glyph-role hypothesis.",
+          "revised_at_ledger_version": 13,
+          "statement": "Ordinary successful tile translations consume one leading cell from each row of the bottom color-11 status bar; compact color-11 maze glyphs are persistent terrain, and special switch contact does not advance the bar."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            12,
+            19,
+            20,
+            26,
+            27
+          ],
+          "reason": "Transition 27 confirms ordinary movement but shows a two-cell-per-row level-2 bar cost. Object-scale comparison corrects the level-2 roles: the small and doubled color-9 glyphs form the reflection pair, while compact color-11 rings are preserved maze objects.",
+          "revised_at_ledger_version": 14,
+          "statement": "Ordinary successful translations consume one leading status-bar cell per row in level 1 and two in the current level-2 layout; compact color-11 glyphs are preserved, and switch contact consumes no bar cells."
+        }
+      ],
+      "status": "supported"
+    },
+    "H_quarter_turn": {
+      "evidence_seq": [
+        19,
+        20,
+        27,
+        43
+      ],
+      "id": "H_quarter_turn",
+      "last_reason": "The level-2 switch delta is a decisive 90-degree clockwise rotation and also includes the normal two-cell bar cost. With only eight bar cells remaining, the nearby repeated color-11 ring is the highest-value resource probe.",
+      "last_updated_version": 14,
+      "statement": "Contact with the persistent 0/1 marker rotates the doubled bottom glyph 90 degrees clockwise; level 1 only appeared reflective because its glyph was operation-ambiguous.",
+      "status": "supported"
+    },
+    "H_reflection_goal": {
+      "evidence_seq": [
+        12,
+        13,
+        19,
+        20,
+        26,
+        27,
+        43
+      ],
+      "id": "H_reflection_goal",
+      "last_reason": "The level-2 switch delta is a decisive 90-degree clockwise rotation and also includes the normal two-cell bar cost. With only eight bar cells remaining, the nearby repeated color-11 ring is the highest-value resource probe.",
+      "last_updated_version": 14,
+      "statement": "The persistent 0/1 marker applies a literal horizontal reflection to the doubled glyph in every level.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            12,
+            13
+          ],
+          "reason": "The tile is now aligned directly above the 0/1 motif. Prior evidence certifies ordinary motion and blocking, making one downward contact probe maximally discriminating.",
+          "revised_at_ledger_version": 10,
+          "statement": "The lower panel encodes a horizontally reflected, 2x-scaled version of the upper 3x3 color-9 glyph; level progress likely requires applying that reflection."
+        },
+        {
+          "evidence_seq": [
+            12,
+            13,
+            19
+          ],
+          "reason": "ACTION2 entered and erased the 0/1 motif, preserved the movable tile, left the bar unchanged, and horizontally reflected only the lower glyph into an exact 2x match with the upper glyph.",
+          "revised_at_ledger_version": 13,
+          "statement": "The marker interaction horizontally reflects the lower 6x6 display so its downscaled 3x3 pattern matches the upper glyph."
+        },
+        {
+          "evidence_seq": [
+            12,
+            13,
+            19,
+            20,
+            26,
+            27
+          ],
+          "reason": "Transition 27 confirms ordinary movement but shows a two-cell-per-row level-2 bar cost. Object-scale comparison corrects the level-2 roles: the small and doubled color-9 glyphs form the reflection pair, while compact color-11 rings are preserved maze objects.",
+          "revised_at_ledger_version": 14,
+          "statement": "Contact with the persistent 0/1 marker horizontally reflects the doubled bottom color-9 panel; in level 2 this should change 111/001/101 into the framed reference 111/100/101."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_ring_persistence": {
+      "evidence_seq": [
+        43,
+        44,
+        45,
+        46
+      ],
+      "id": "H_ring_persistence",
+      "last_reason": "The final ACTION3 moved through the lower color-11 ring and refilled both status rows from four cells to 42. Vacating the covered ring is the minimal next observation needed to distinguish a reusable station from a consumed pickup.",
+      "last_updated_version": 15,
+      "statement": "Recharge rings are persistent terrain that reappear after the controlled tile vacates their footprint, analogous to the 0/1 rotation switch.",
+      "status": "active"
+    },
+    "H_ring_recharge": {
+      "evidence_seq": [
+        19,
+        20,
+        27,
+        43,
+        44,
+        45,
+        46
+      ],
+      "id": "H_ring_recharge",
+      "last_reason": "The final ACTION3 moved through the lower color-11 ring and refilled both status rows from four cells to 42. Vacating the covered ring is the minimal next observation needed to distinguish a reusable station from a consumed pickup.",
+      "last_updated_version": 15,
+      "statement": "Entering a compact non-UI color-11 ring is allowed and immediately restores each bottom status-bar row to its full 42-cell span.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            19,
+            20,
+            27,
+            43
+          ],
+          "reason": "The level-2 switch delta is a decisive 90-degree clockwise rotation and also includes the normal two-cell bar cost. With only eight bar cells remaining, the nearby repeated color-11 ring is the highest-value resource probe.",
+          "revised_at_ledger_version": 15,
+          "statement": "The repeated compact color-11 ring glyphs are recharge or checkpoint objects that can restore enough status bar to complete multiple required switch rotations and return to the matched endpoint."
+        }
+      ],
+      "status": "supported"
+    }
+  },
+  "version": 15
+}

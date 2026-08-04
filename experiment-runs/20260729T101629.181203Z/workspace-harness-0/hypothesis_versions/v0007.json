@@ -1,0 +1,256 @@
+{
+  "experiments": {
+    "exp-32e1f05f8240b4de": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+      "evidence_seq": [
+        130
+      ],
+      "experiment_id": "exp-32e1f05f8240b4de",
+      "hypotheses": [
+        {
+          "id": "H_deep_target",
+          "prediction": "The player advances from y=15 to y=10, fully aligns with the glyph, and triggers LEVEL_COMPLETE."
+        },
+        {
+          "id": "H_socket_navigation",
+          "prediction": "The player advances to y=10 but the level remains NOT_FINISHED, showing that alignment alone is insufficient."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+        "before_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+        "delta": {
+          "metadata": {},
+          "rows": []
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 168,
+      "rationale": "The glyph is one tile above the current player position, so upward movement is the most direct goal action and discriminates completion by full alignment from ordinary traversal.",
+      "status": "observed"
+    },
+    "exp-f150d871c9b0e9ae": {
+      "action": {
+        "data": {},
+        "id": 1
+      },
+      "current_fingerprint": "f6e7958176df13ce6caae9d85c959131e1b7887555ff270bdc285ba8e7e3a1b0",
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "experiment_id": "exp-f150d871c9b0e9ae",
+      "hypotheses": [
+        {
+          "id": "H_target",
+          "prediction": "Moving upward from y=20 into/contacting the aligned target chamber triggers LEVEL_COMPLETE and loads the next level."
+        },
+        {
+          "id": "H_blocked_target",
+          "prediction": "The upward move is blocked by the gray/yellow boundary; the player remains at y=20 and only the bottom timer advances."
+        }
+      ],
+      "outcome": {
+        "action": {
+          "data": {},
+          "id": 1
+        },
+        "after_fingerprint": "1ac3de08b9d3d295cd2ef968961af196fdb2c4ab398d834d82e4b826a1b0fb29",
+        "before_fingerprint": "f6e7958176df13ce6caae9d85c959131e1b7887555ff270bdc285ba8e7e3a1b0",
+        "delta": {
+          "bbox": {
+            "x0": 26,
+            "x1": 38,
+            "y0": 15,
+            "y1": 62
+          },
+          "metadata": {},
+          "rows": [
+            {
+              "rle": "5:4,4:28,3:1,5:1,12:5,5:1,3:1,4:23",
+              "y": 15
+            },
+            {
+              "rle": "5:4,4:28,3:2,12:5,3:2,4:23",
+              "y": 16
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 17
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 18
+            },
+            {
+              "rle": "5:4,4:30,9:5,4:25",
+              "y": 19
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 20
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 21
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 22
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 23
+            },
+            {
+              "rle": "5:4,4:30,3:5,4:25",
+              "y": 24
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:14,11:28,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 61
+            },
+            {
+              "rle": "4:1,5:10,4:1,5:1,3:14,11:28,5:1,8:2,5:1,8:2,5:1,8:2",
+              "y": 62
+            }
+          ]
+        },
+        "levels_after": 0,
+        "levels_before": 0,
+        "state_after": "NOT_FINISHED"
+      },
+      "outcome_evidence_seq": 130,
+      "rationale": "The player is directly aligned beneath the target at the endpoint of the known corridor, so one upward action is both goal-directed and maximally discriminating.",
+      "resolution_evidence_seq": [
+        130
+      ],
+      "resolution_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "status": "reviewed"
+    }
+  },
+  "hypotheses": {
+    "H_blocked_target": {
+      "evidence_seq": [
+        5,
+        6,
+        7,
+        8,
+        130
+      ],
+      "id": "H_blocked_target",
+      "last_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "statement": "The top socket is enterable despite color 5; the observed upward move from y=20 to y=15 rejects the blocked-boundary theory.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+          "revised_at_ledger_version": 5,
+          "statement": "The gray target chamber is physically blocked; an upward attempt from y=20 will leave the player stationary, implying another interaction or route is required."
+        }
+      ],
+      "status": "rejected"
+    },
+    "H_deep_target": {
+      "evidence_seq": [
+        130
+      ],
+      "id": "H_deep_target",
+      "last_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "statement": "Completion occurs when the player advances from the socket entrance at y=15 to y=10 and fully aligns with the top glyph.",
+      "status": "active"
+    },
+    "H_navigation": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "id": "H_navigation",
+      "last_reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+      "statement": "Actions move the 5x5 magenta/red player one tile: 1 up, 2 down, 3 left, 4 right, when the destination is green/passable; the bottom bar advances one unit every action.",
+      "status": "active"
+    },
+    "H_socket_navigation": {
+      "evidence_seq": [
+        130
+      ],
+      "id": "H_socket_navigation",
+      "last_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "statement": "Moving from y=15 to y=10 is ordinary traversal and will not complete the level, implying another interaction is needed.",
+      "status": "active"
+    },
+    "H_target": {
+      "evidence_seq": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        130
+      ],
+      "id": "H_target",
+      "last_reason": "The observed move entered the socket without completing, so deeper alignment is now the most direct goal hypothesis.",
+      "statement": "The top glyph/socket is the intended interaction zone, but first entry at y=15 does not complete the level; completion may require moving one tile deeper to y=10 for full glyph alignment.",
+      "statement_history": [
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "Eight transitions establish action-direction mapping through reversible player translations; visual layout provides a corridor from the current player to the top glyph.",
+          "revised_at_ledger_version": 2,
+          "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; contact or entry completes the level."
+        },
+        {
+          "evidence_seq": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "reason": "The player has reached the corridor endpoint directly below the target. ACTION1 now cleanly distinguishes target-contact completion from ordinary collision.",
+          "revised_at_ledger_version": 5,
+          "statement": "The player should navigate through the green corridor to the matching dark-red glyph in the gray chamber at the top; attempting to move upward from the corridor endpoint may trigger completion by contact."
+        }
+      ],
+      "status": "active"
+    }
+  },
+  "version": 7
+}
