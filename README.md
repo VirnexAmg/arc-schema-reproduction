@@ -1,5 +1,10 @@
 # ARC Schema Reproduction
 
+Codex-hosted runs use an explicit, auditable context policy. The main default is
+one continuing thread per game/run; see
+[`docs/codex-context-policies.md`](docs/codex-context-policies.md) for the
+`persistent`, `adaptive`, and `fixed_turns` treatments.
+
 一个面向 ARC-AGI-3 的最小 Schema-like agent harness，用统一环境适配器对比：
 
 - `baseline`：每个真实步骤直接由同一模型选择一个合法动作；

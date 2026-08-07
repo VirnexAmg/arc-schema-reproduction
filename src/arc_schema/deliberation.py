@@ -289,6 +289,28 @@ def _accumulate_codex_runtime(metrics: RunMetrics, stats: JsonDict) -> None:
     metrics.codex_post_completion_forced_exits += int(stats.get("post_completion_forced_exits", 0))
 
 
+def _record_codex_context_events(
+    client: ModelClient,
+    journal: AppendOnlyJournal,
+    metrics: RunMetrics,
+    *,
+    env_step: int,
+) -> None:
+    drain = getattr(client, "drain_context_events", None)
+    if not callable(drain):
+        return
+    for payload in drain():
+        reason = str(payload.get("reason", "unknown"))
+        metrics.codex_context_checkpoints += 1
+        metrics.codex_context_checkpoint_reasons[reason] = (
+            metrics.codex_context_checkpoint_reasons.get(reason, 0) + 1
+        )
+        journal.append(
+            "codex_context_checkpoint",
+            {"env_step": env_step, **payload},
+        )
+
+
 class DeliberationSession:
     """有界 Schema 内环：理论化 → 认证 → 规划 → 提交（不直接 step 环境）。"""
 
@@ -488,6 +510,12 @@ class DeliberationSession:
                             "method": "workspace_native_edit_after_model_error",
                         },
                     )
+                _record_codex_context_events(
+                    self.client,
+                    journal,
+                    metrics,
+                    env_step=self.env_actions_so_far,
+                )
                 journal.append(
                     "model_error",
                     {
@@ -537,6 +565,12 @@ class DeliberationSession:
                         "method": "workspace_native_edit",
                     },
                 )
+            _record_codex_context_events(
+                self.client,
+                journal,
+                metrics,
+                env_step=self.env_actions_so_far,
+            )
             reasoning = _reasoning_payload(response)
             journal.append(
                 "model_response",
@@ -550,6 +584,7 @@ class DeliberationSession:
                     "latency_seconds": response.latency_seconds,
                     "api_attempts": response.attempts,
                     "model_thread_id": getattr(self.client, "thread_id", None),
+                    "context_policy": getattr(self.client, "context_policy", None),
                     "native_trace_path": (
                         str(self.workspace.root / "codex-cli-events.jsonl")
                         if getattr(self.client, "workspace_native", False)

@@ -128,9 +128,20 @@ class TerminalMismatchClient(NavigationClient):
     def __init__(self, source: str) -> None:
         super().__init__(source)
         self.rollover_reasons: list[str] = []
+        self.context_events: list[dict] = []
 
     def request_session_rollover(self, reason: str) -> None:
         self.rollover_reasons.append(reason)
+
+    def checkpoint_context(self, reason: str, metadata=None):
+        payload = {"reason": reason, "metadata": dict(metadata or {})}
+        self.context_events.append(payload)
+        return payload
+
+    def drain_context_events(self):
+        events = list(self.context_events)
+        self.context_events.clear()
+        return events
 
 
 def test_make_harness_defaults_to_schema() -> None:
@@ -447,6 +458,8 @@ def is_goal(state):
     assert metrics.prequential_mismatches == 1
     events = [record["event"] for record in AppendOnlyJournal.read_records(path)]
     assert events.index("prediction_mismatch") < events.index("level_boundary")
-    assert client.rollover_reasons == ["level_boundary"]
+    assert client.rollover_reasons == []
+    assert metrics.codex_context_checkpoints == 1
+    assert metrics.codex_context_checkpoint_reasons == {"level_boundary": 1}
     assert agent.workspace.mismatch_blocks_planning
     assert agent.workspace.planning_block_reason == "level_boundary"

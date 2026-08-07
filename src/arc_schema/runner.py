@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
+from typing import Any
 
 from arc_schema.agents import (
     BaselineAgent,
@@ -272,6 +273,33 @@ def _apply_action(
     return transition
 
 
+def _checkpoint_codex_context(
+    client: Any,
+    journal: AppendOnlyJournal,
+    metrics: RunMetrics,
+    *,
+    reason: str,
+    env_step: int,
+    metadata: dict[str, Any] | None = None,
+) -> None:
+    checkpoint = getattr(client, "checkpoint_context", None)
+    if callable(checkpoint):
+        checkpoint(reason, metadata)
+    drain = getattr(client, "drain_context_events", None)
+    if not callable(drain):
+        return
+    for payload in drain():
+        event_reason = str(payload.get("reason", "unknown"))
+        metrics.codex_context_checkpoints += 1
+        metrics.codex_context_checkpoint_reasons[event_reason] = (
+            metrics.codex_context_checkpoint_reasons.get(event_reason, 0) + 1
+        )
+        journal.append(
+            "codex_context_checkpoint",
+            {"env_step": env_step, **payload},
+        )
+
+
 def _run_baseline(
     agent: BaselineAgent,
     environment: Environment,
@@ -390,9 +418,21 @@ def _run_baseline(
             executed += 1
             if transition.after.levels_completed > transition.before.levels_completed:
                 stop_reason = "level_boundary"
-                request_rollover = getattr(agent.client, "request_session_rollover", None)
-                if callable(request_rollover):
-                    request_rollover("level_boundary")
+                _checkpoint_codex_context(
+                    agent.client,
+                    journal,
+                    metrics,
+                    reason="level_boundary",
+                    env_step=metrics.environment_actions,
+                    metadata={
+                        "levels_before": transition.before.levels_completed,
+                        "levels_after": transition.after.levels_completed,
+                    },
+                )
+                if config.codex_rollover_on_level_boundary:
+                    request_rollover = getattr(agent.client, "request_session_rollover", None)
+                    if callable(request_rollover):
+                        request_rollover("level_boundary")
                 break
             if transition.after.terminal:
                 stop_reason = transition.after.state.lower()
@@ -1165,9 +1205,24 @@ def _run_schema_harness(
                 }
                 workspace.record_boundary(boundary, reason="level_boundary")
                 journal.append("level_boundary", boundary)
-                request_rollover = getattr(agent.client, "request_session_rollover", None)
-                if callable(request_rollover):
-                    request_rollover("level_boundary")
+                _checkpoint_codex_context(
+                    agent.client,
+                    journal,
+                    metrics,
+                    reason="level_boundary",
+                    env_step=metrics.environment_actions,
+                    metadata={
+                        "levels_before": before.levels_completed,
+                        "levels_after": transition.after.levels_completed,
+                        "wm_version": workspace.version,
+                        "notes_version": workspace.notes_version,
+                        "hypothesis_version": workspace.hypothesis_version,
+                    },
+                )
+                if config.codex_rollover_on_level_boundary:
+                    request_rollover = getattr(agent.client, "request_session_rollover", None)
+                    if callable(request_rollover):
+                        request_rollover("level_boundary")
                 break
             if not prediction_matched:
                 idle_theory_rounds += 1
@@ -1237,6 +1292,14 @@ def _write_trace_index(
                 f"actions={payload.get('environment_actions')} "
                 f"model_calls={payload.get('model_calls')} "
                 f"total_tokens={payload.get('total_tokens')}"
+            )
+        elif event == "codex_context_checkpoint":
+            categories["Level progress and boundaries"].append(
+                f"- seq={seq} codex_context_checkpoint "
+                f"reason={payload.get('reason')} "
+                f"thread={payload.get('thread_prefix')} "
+                f"prompt_tokens={payload.get('last_prompt_tokens')} "
+                f"manifest={payload.get('manifest_path')}"
             )
         elif event == "prediction_mismatch":
             categories["Resets, mismatches, and spend stops"].append(
@@ -1362,6 +1425,10 @@ def _write_trace_index(
         f"- wm_revision events: {wm_writes}",
         f"- reasoning_status present/tokens_only: {present}/{tokens_only}",
         f"- level_resource_checkpoints: {canonical_json(metrics.level_checkpoints)}",
+        f"- Codex context checkpoints: {metrics.codex_context_checkpoints}",
+        f"- Codex context checkpoint reasons: "
+        f"{canonical_json(metrics.codex_context_checkpoint_reasons)}",
+        f"- Codex session rollovers: {metrics.codex_session_rollovers}",
         f"- BFS plans / BFS-derived planned actions: "
         f"{metrics.bfs_plans_generated}/{metrics.bfs_derived_planned_actions}",
         f"- navigation actions: {metrics.navigation_actions}",

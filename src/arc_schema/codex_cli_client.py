@@ -25,6 +25,7 @@ import tempfile
 import threading
 import time
 from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -101,6 +102,15 @@ with this schema and no other keys or prose:
 
 
 RunProcess = Callable[..., subprocess.CompletedProcess[str]]
+CODEX_CONTEXT_POLICIES = frozenset({"persistent", "adaptive", "fixed_turns"})
+CONTEXT_FAILURE_MARKERS = (
+    "context_length_exceeded",
+    "context window exceeded",
+    "maximum context length",
+    "max context length",
+    "prompt is too long",
+    "too many tokens",
+)
 
 
 class CodexCliClient:
@@ -121,7 +131,24 @@ class CodexCliClient:
             raise ValueError("ARC_CODEX_EXECUTABLE must not be empty")
         if runtime_role not in {"schema", "direct_action_baseline"}:
             raise ValueError("runtime_role must be schema or direct_action_baseline")
+        if config.codex_context_policy not in CODEX_CONTEXT_POLICIES:
+            raise ValueError(
+                "ARC_CODEX_CONTEXT_POLICY must be persistent, adaptive, or fixed_turns"
+            )
+        if config.codex_context_policy == "fixed_turns" and config.codex_max_turns_per_thread <= 0:
+            raise ValueError("ARC_CODEX_MAX_TURNS_PER_THREAD must be positive for fixed_turns")
+        if config.codex_soft_context_prompt_tokens < 0:
+            raise ValueError("ARC_CODEX_SOFT_CONTEXT_PROMPT_TOKENS must be non-negative")
+        if config.codex_hard_context_prompt_tokens < 0:
+            raise ValueError("ARC_CODEX_HARD_CONTEXT_PROMPT_TOKENS must be non-negative")
+        if config.codex_context_policy == "adaptive" and not (
+            0 < config.codex_soft_context_prompt_tokens < config.codex_hard_context_prompt_tokens
+        ):
+            raise ValueError(
+                "adaptive context policy requires 0 < soft prompt tokens < hard prompt tokens"
+            )
         self.config = config
+        self.context_policy = config.codex_context_policy
         self.runtime_role = runtime_role
         self.workspace_native = runtime_role == "schema"
         self._run_process = run_process
@@ -132,7 +159,13 @@ class CodexCliClient:
         self.rollover_pending = False
         self.session_generation = 0
         self.last_rollover: dict[str, Any] | None = None
-        self.rollover_reason = "turn_or_prompt_budget"
+        self.rollover_reason: str | None = None
+        self.rollover_trigger: dict[str, Any] = {}
+        self.last_prompt_tokens = 0
+        self.last_cached_prompt_tokens = 0
+        self._soft_checkpoint_generation: int | None = None
+        self._context_events: list[dict[str, Any]] = []
+        self._checkpoint_sequence = 0
         self.last_event_stats: dict[str, int] = {}
         self.last_failure_kind: str | None = None
 
@@ -150,6 +183,7 @@ class CodexCliClient:
         if not self.rollover_pending or self.thread_id is None:
             return None
         previous_prefix = self.thread_id[:8]
+        previous_turns = self.turns_in_thread
         self.thread_id = None
         self.turns_in_thread = 0
         self.rollover_pending = False
@@ -157,15 +191,141 @@ class CodexCliClient:
         self.last_rollover = {
             "previous_thread_prefix": previous_prefix,
             "session_generation": self.session_generation,
-            "reason": self.rollover_reason,
+            "reason": self.rollover_reason or "explicit_recovery",
+            "context_policy": self.context_policy,
+            "turns_in_previous_thread": previous_turns,
+            "last_prompt_tokens": self.last_prompt_tokens,
+            "last_cached_prompt_tokens": self.last_cached_prompt_tokens,
+            **self.rollover_trigger,
         }
-        self.rollover_reason = "turn_or_prompt_budget"
+        self.rollover_reason = None
+        self.rollover_trigger = {}
+        self._soft_checkpoint_generation = None
         return dict(self.last_rollover)
 
     def request_session_rollover(self, reason: str) -> None:
-        if self.thread_id is not None:
-            self.rollover_pending = True
-            self.rollover_reason = str(reason)[:200] or "external_request"
+        normalized = str(reason)[:200] or "external_request"
+        if normalized == "level_boundary" and not self.config.codex_rollover_on_level_boundary:
+            self.checkpoint_context("level_boundary")
+            return
+        self._schedule_rollover(normalized)
+
+    def checkpoint_context(
+        self,
+        reason: str,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any] | None:
+        """Queue a recovery snapshot to be materialized after workspace validation."""
+        if self._workspace is None:
+            return None
+        payload: dict[str, Any] = {
+            "reason": str(reason)[:200] or "manual_checkpoint",
+            "context_policy": self.context_policy,
+            "thread_prefix": self.thread_id[:8] if self.thread_id else None,
+            "session_generation": self.session_generation,
+            "turns_in_thread": self.turns_in_thread,
+            "last_prompt_tokens": self.last_prompt_tokens,
+            "last_cached_prompt_tokens": self.last_cached_prompt_tokens,
+            "requested_at": datetime.now(UTC).isoformat(),
+        }
+        if metadata:
+            payload["metadata"] = dict(metadata)
+        self._context_events.append(dict(payload))
+        return dict(payload)
+
+    def _materialize_context_checkpoint(self, payload: dict[str, Any]) -> dict[str, Any]:
+        root = self._require_workspace()
+        checkpoint_root = root / "context_checkpoints"
+        checkpoint_root.mkdir(parents=True, exist_ok=True)
+        while True:
+            self._checkpoint_sequence += 1
+            checkpoint_dir = checkpoint_root / f"checkpoint-{self._checkpoint_sequence:04d}"
+            if not checkpoint_dir.exists():
+                checkpoint_dir.mkdir()
+                break
+
+        snapshots: list[dict[str, Any]] = []
+        for name in ("world_model.py", "notes.md", "hypotheses.json"):
+            source = root / name
+            if not source.is_file():
+                continue
+            content = source.read_bytes()
+            target = checkpoint_dir / name
+            target.write_bytes(content)
+            snapshots.append(
+                {
+                    "name": name,
+                    "bytes": len(content),
+                    "sha256": hashlib.sha256(content).hexdigest(),
+                }
+            )
+
+        payload = {
+            **payload,
+            "materialized_at": datetime.now(UTC).isoformat(),
+            "snapshot_files": snapshots,
+        }
+        manifest_path = checkpoint_dir / "manifest.json"
+        manifest_path.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        payload["manifest_path"] = str(manifest_path)
+        return dict(payload)
+
+    def drain_context_events(self) -> list[dict[str, Any]]:
+        events = [self._materialize_context_checkpoint(dict(item)) for item in self._context_events]
+        self._context_events.clear()
+        return events
+
+    def _schedule_rollover(self, reason: str, **trigger: Any) -> None:
+        if self.thread_id is None:
+            return
+        self.rollover_pending = True
+        self.rollover_reason = str(reason)[:200] or "explicit_recovery"
+        self.rollover_trigger = dict(trigger)
+
+    @staticmethod
+    def _is_context_failure(value: str) -> bool:
+        lowered = value.lower()
+        return any(marker in lowered for marker in CONTEXT_FAILURE_MARKERS)
+
+    def _apply_context_policy(self, usage: Usage) -> None:
+        self.turns_in_thread += 1
+        self.last_prompt_tokens = int(usage.prompt_tokens)
+        self.last_cached_prompt_tokens = int(usage.cached_prompt_tokens)
+
+        if self.context_policy == "fixed_turns":
+            if self.turns_in_thread >= self.config.codex_max_turns_per_thread:
+                self._schedule_rollover(
+                    "fixed_turn_limit",
+                    configured_turn_limit=self.config.codex_max_turns_per_thread,
+                )
+            return
+
+        if self.context_policy != "adaptive":
+            return
+        hard = self.config.codex_hard_context_prompt_tokens
+        soft = self.config.codex_soft_context_prompt_tokens
+        metadata = {
+            "prompt_tokens": self.last_prompt_tokens,
+            "cached_prompt_tokens": self.last_cached_prompt_tokens,
+            "soft_prompt_tokens": soft,
+            "hard_prompt_tokens": hard,
+        }
+        if self.last_prompt_tokens >= hard:
+            if not (self.rollover_pending and self.rollover_reason == "prompt_hard_watermark"):
+                self.checkpoint_context("prompt_hard_watermark", metadata)
+                self._schedule_rollover(
+                    "prompt_hard_watermark",
+                    configured_prompt_limit=hard,
+                )
+        elif (
+            self.last_prompt_tokens >= soft
+            and self._soft_checkpoint_generation != self.session_generation
+        ):
+            self.checkpoint_context("prompt_soft_watermark", metadata)
+            self._soft_checkpoint_generation = self.session_generation
 
     def command(
         self,
@@ -275,6 +435,8 @@ class CodexCliClient:
                 and self.last_event_stats.get("command_executions", 0) > 0
             ):
                 self.last_failure_kind = "protocol_error"
+                self.checkpoint_context("protocol_error")
+                self._schedule_rollover("protocol_error")
                 raise ModelRequestError(
                     "direct-action baseline protocol violation: local command used",
                     attempts=1,
@@ -285,12 +447,18 @@ class CodexCliClient:
             )
             usage = self._usage_from_events(events)
             if completed.returncode != 0:
-                if (
+                detail = (stderr or stdout)[-2000:]
+                if self._is_context_failure(detail):
+                    self.last_failure_kind = "context_error"
+                    self.checkpoint_context("context_length_error")
+                    self._schedule_rollover("context_length_error")
+                elif (
                     self.last_event_stats.get("turn_failures", 0) > 0
                     or self.last_event_stats.get("transport_timeouts", 0) > 0
                 ):
                     self.last_failure_kind = "infrastructure_error"
-                detail = (stderr or stdout)[-2000:]
+                    self.checkpoint_context("codex_turn_error")
+                    self._schedule_rollover("codex_turn_error")
                 raise ModelRequestError(
                     f"codex exec exited {completed.returncode}: {detail}",
                     attempts=1,
@@ -322,19 +490,13 @@ class CodexCliClient:
                     else ("tokens_only" if usage.reasoning_tokens else "absent")
                 ),
             )
-            self.turns_in_thread += 1
-            max_turns = max(1, self.config.codex_max_turns_per_thread)
-            prompt_limit = max(0, self.config.codex_rollover_prompt_tokens)
-            if self.turns_in_thread >= max_turns or (
-                prompt_limit > 0 and usage.prompt_tokens >= prompt_limit
-            ):
-                self.rollover_pending = True
+            self._apply_context_policy(usage)
             if self.last_event_stats.get("command_executions", 0) > 0:
                 # Shell output is persistent Codex-thread context and was the main
                 # source of 500k+ token turns in the C1 trace.  The prompt forbids
                 # shell use, but roll over defensively if a turn still used it.
-                self.rollover_pending = True
-                self.rollover_reason = "shell_tool_context"
+                self.checkpoint_context("shell_tool_context")
+                self._schedule_rollover("shell_tool_context")
             return response
         except subprocess.TimeoutExpired as exc:
             partial_stdout = exc.output if isinstance(exc.output, str) else ""
@@ -342,6 +504,8 @@ class CodexCliClient:
             self._capture_thread_id(partial_events)
             self.last_event_stats = self._event_stats(partial_events)
             self.last_failure_kind = "infrastructure_error"
+            self.checkpoint_context("codex_timeout")
+            self._schedule_rollover("codex_timeout")
             raise ModelRequestError(
                 f"codex exec timed out after {self.config.codex_cli_timeout_seconds}s",
                 attempts=1,

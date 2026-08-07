@@ -407,7 +407,11 @@ def test_shell_tool_use_forces_context_rollover(tmp_path: Path) -> None:
 
 
 def test_codex_session_rollover_happens_between_deliberations(tmp_path: Path) -> None:
-    config = replace(_config(), codex_max_turns_per_thread=1)
+    config = replace(
+        _config(),
+        codex_context_policy="fixed_turns",
+        codex_max_turns_per_thread=1,
+    )
 
     def fake_run(argv, **kwargs):
         output = Path(argv[argv.index("--output-last-message") + 1])
@@ -425,7 +429,93 @@ def test_codex_session_rollover_happens_between_deliberations(tmp_path: Path) ->
     rollover = client.begin_deliberation()
     assert rollover is not None
     assert rollover["previous_thread_prefix"] == "thread-r"
+    assert rollover["reason"] == "fixed_turn_limit"
+    assert rollover["turns_in_previous_thread"] == 1
     assert client.thread_id is None
+
+
+def test_persistent_context_policy_ignores_turn_and_prompt_watermarks(tmp_path: Path) -> None:
+    config = replace(
+        _config(),
+        codex_context_policy="persistent",
+        codex_max_turns_per_thread=1,
+        codex_soft_context_prompt_tokens=1,
+        codex_hard_context_prompt_tokens=2,
+    )
+
+    def fake_run(argv, **kwargs):
+        output = Path(argv[argv.index("--output-last-message") + 1])
+        output.write_text('{"tool":"done","args":{"reason":"ok"}}', encoding="utf-8")
+        stdout = (
+            '{"type":"thread.started","thread_id":"thread-persistent"}\n'
+            '{"type":"turn.completed","usage":{"input_tokens":500000,"output_tokens":1}}'
+        )
+        return subprocess.CompletedProcess(argv, 0, stdout=stdout, stderr="")
+
+    client = CodexCliClient(config, run_process=fake_run)
+    client.bind_workspace(Workspace(tmp_path / "workspace"))
+    client.complete_json([{"role": "user", "content": "done"}], "deliberation")
+
+    assert not client.rollover_pending
+    assert client.drain_context_events() == []
+
+
+def test_adaptive_policy_checkpoints_soft_then_rolls_at_hard_watermark(
+    tmp_path: Path,
+) -> None:
+    config = replace(
+        _config(),
+        codex_context_policy="adaptive",
+        codex_soft_context_prompt_tokens=100,
+        codex_hard_context_prompt_tokens=200,
+    )
+    calls = 0
+
+    def fake_run(argv, **kwargs):
+        nonlocal calls
+        calls += 1
+        output = Path(argv[argv.index("--output-last-message") + 1])
+        output.write_text('{"tool":"done","args":{"reason":"ok"}}', encoding="utf-8")
+        input_tokens = 150 if calls == 1 else 250
+        stdout = (
+            '{"type":"thread.started","thread_id":"thread-adaptive"}\n'
+            f'{{"type":"turn.completed","usage":{{"input_tokens":{input_tokens},'
+            '"cached_input_tokens":50,"output_tokens":1}}'
+        )
+        return subprocess.CompletedProcess(argv, 0, stdout=stdout, stderr="")
+
+    workspace = Workspace(tmp_path / "workspace")
+    client = CodexCliClient(config, run_process=fake_run)
+    client.bind_workspace(workspace)
+    messages = [{"role": "user", "content": "done"}]
+
+    client.complete_json(messages, "deliberation")
+    assert not (workspace.root / "context_checkpoints").exists()
+    accepted_source = workspace.read_code()
+    workspace.world_model_path.write_text("def broken(:\n", encoding="utf-8")
+    rejected = workspace.sync_external_changes()
+    assert rejected["code_error"]
+    soft_events = client.drain_context_events()
+    assert [event["reason"] for event in soft_events] == ["prompt_soft_watermark"]
+    assert not client.rollover_pending
+    soft_manifest = Path(soft_events[0]["manifest_path"])
+    assert soft_manifest.exists()
+    manifest = json.loads(soft_manifest.read_text(encoding="utf-8"))
+    assert {item["name"] for item in manifest["snapshot_files"]} == {
+        "world_model.py",
+        "notes.md",
+        "hypotheses.json",
+    }
+    assert (soft_manifest.parent / "world_model.py").read_text(encoding="utf-8") == accepted_source
+
+    client.complete_json(messages, "deliberation")
+    hard_events = client.drain_context_events()
+    assert [event["reason"] for event in hard_events] == ["prompt_hard_watermark"]
+    assert client.rollover_pending
+    assert client.rollover_reason == "prompt_hard_watermark"
+    rollover = client.begin_deliberation()
+    assert rollover is not None
+    assert rollover["configured_prompt_limit"] == 200
 
 
 def test_codex_event_stats_classify_transport_failure() -> None:

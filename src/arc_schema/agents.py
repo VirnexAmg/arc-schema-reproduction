@@ -44,6 +44,23 @@ def _accumulate_client_runtime(metrics: RunMetrics, client: ModelClient) -> None
     metrics.codex_post_completion_forced_exits += int(stats.get("post_completion_forced_exits", 0))
 
 
+def _record_context_events(
+    client: ModelClient,
+    journal: AppendOnlyJournal,
+    metrics: RunMetrics,
+) -> None:
+    drain = getattr(client, "drain_context_events", None)
+    if not callable(drain):
+        return
+    for payload in drain():
+        reason = str(payload.get("reason", "unknown"))
+        metrics.codex_context_checkpoints += 1
+        metrics.codex_context_checkpoint_reasons[reason] = (
+            metrics.codex_context_checkpoint_reasons.get(reason, 0) + 1
+        )
+        journal.append("codex_context_checkpoint", payload)
+
+
 def _message_content(
     payload: dict[str, Any],
     vision_parts: list[dict[str, Any]] | None,
@@ -90,6 +107,7 @@ def _record_call(
         response = client.complete_json(messages, purpose)
     except Exception as exc:
         _accumulate_client_runtime(metrics, client)
+        _record_context_events(client, journal, metrics)
         metrics.model_failures += 1
         metrics.model_api_attempts += int(getattr(exc, "attempts", 0))
         error_usage = getattr(exc, "usage", None)
@@ -111,6 +129,11 @@ def _record_call(
     _accumulate_client_runtime(metrics, client)
     metrics.model_api_attempts += response.attempts
     metrics.usage.add(response.usage)
+    metrics.max_codex_prompt_tokens_per_turn = max(
+        metrics.max_codex_prompt_tokens_per_turn,
+        int(response.usage.prompt_tokens),
+    )
+    _record_context_events(client, journal, metrics)
     journal.append(
         "model_response",
         {
@@ -123,6 +146,8 @@ def _record_call(
             "reasoning_text": getattr(response, "reasoning_text", None),
             "reasoning_status": getattr(response, "reasoning_status", "absent"),
             "reasoning_tokens": int(getattr(response.usage, "reasoning_tokens", 0) or 0),
+            "model_thread_id": getattr(client, "thread_id", None),
+            "context_policy": getattr(client, "context_policy", None),
         },
     )
     return response

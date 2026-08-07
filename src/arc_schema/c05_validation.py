@@ -53,7 +53,9 @@ def c05_config(base: ExperimentConfig, root: Path) -> ExperimentConfig:
         max_notional_cost_usd=(
             min(base.max_notional_cost_usd, 5.0) if base.max_notional_cost_usd > 0 else 5.0
         ),
+        codex_context_policy="persistent",
         codex_max_turns_per_thread=4,
+        codex_rollover_on_level_boundary=False,
         codex_compound_cycle=True,
         max_spend_usd=0.0,
         experiment_max_spend_usd=0.0,

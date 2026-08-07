@@ -136,8 +136,14 @@ class ExperimentConfig:
     codex_executable: str = "codex"
     codex_cli_timeout_seconds: float = 900.0
     codex_post_turn_exit_grace_seconds: float = 10.0
-    codex_max_turns_per_thread: int = 6
-    codex_rollover_prompt_tokens: int = 450_000
+    # Context policy is an experimental treatment, not an implicit Codex default:
+    # persistent=one thread per game/run; adaptive=checkpoint/roll at token watermarks;
+    # fixed_turns=legacy fixed-call rollover ablation.
+    codex_context_policy: str = "persistent"
+    codex_max_turns_per_thread: int = 4
+    codex_soft_context_prompt_tokens: int = 220_000
+    codex_hard_context_prompt_tokens: int = 350_000
+    codex_rollover_on_level_boundary: bool = False
     codex_compound_cycle: bool = True  # 允许 schema_cycle 一回合闭环
     model: ModelConfig = field(default_factory=ModelConfig)
 
@@ -250,9 +256,22 @@ class ExperimentConfig:
             codex_post_turn_exit_grace_seconds=float(
                 os.getenv("ARC_CODEX_POST_TURN_EXIT_GRACE_SECONDS", "10")
             ),
-            codex_max_turns_per_thread=int(os.getenv("ARC_CODEX_MAX_TURNS_PER_THREAD", "6")),
-            codex_rollover_prompt_tokens=int(
-                os.getenv("ARC_CODEX_ROLLOVER_PROMPT_TOKENS", "450000")
+            codex_context_policy=os.getenv("ARC_CODEX_CONTEXT_POLICY", "persistent")
+            .strip()
+            .lower(),
+            codex_max_turns_per_thread=int(os.getenv("ARC_CODEX_MAX_TURNS_PER_THREAD", "4")),
+            codex_soft_context_prompt_tokens=int(
+                os.getenv("ARC_CODEX_SOFT_CONTEXT_PROMPT_TOKENS", "220000")
+            ),
+            codex_hard_context_prompt_tokens=int(
+                os.getenv(
+                    "ARC_CODEX_HARD_CONTEXT_PROMPT_TOKENS",
+                    # Backward-compatible read of the old, ambiguously named setting.
+                    os.getenv("ARC_CODEX_ROLLOVER_PROMPT_TOKENS", "350000"),
+                )
+            ),
+            codex_rollover_on_level_boundary=_optional_bool(
+                "ARC_CODEX_ROLLOVER_ON_LEVEL_BOUNDARY", False
             ),
             codex_compound_cycle=_optional_bool("ARC_CODEX_COMPOUND_CYCLE", True),
             model=model,

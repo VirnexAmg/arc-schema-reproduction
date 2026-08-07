@@ -287,8 +287,31 @@ def _real_ab(args: argparse.Namespace) -> int:
                 or config.model.output_cost_per_million is None
             ):
                 violations.append("input/output price rates are required for the notional cap")
-            if config.codex_max_turns_per_thread <= 0:
-                violations.append("ARC_CODEX_MAX_TURNS_PER_THREAD must be positive")
+            if config.codex_context_policy not in {
+                "persistent",
+                "adaptive",
+                "fixed_turns",
+            }:
+                violations.append(
+                    "ARC_CODEX_CONTEXT_POLICY must be persistent, adaptive, or fixed_turns"
+                )
+            if (
+                config.codex_context_policy == "fixed_turns"
+                and config.codex_max_turns_per_thread <= 0
+            ):
+                violations.append("ARC_CODEX_MAX_TURNS_PER_THREAD must be positive for fixed_turns")
+            if config.codex_soft_context_prompt_tokens < 0:
+                violations.append("ARC_CODEX_SOFT_CONTEXT_PROMPT_TOKENS must be non-negative")
+            if config.codex_hard_context_prompt_tokens < 0:
+                violations.append("ARC_CODEX_HARD_CONTEXT_PROMPT_TOKENS must be non-negative")
+            if config.codex_context_policy == "adaptive" and not (
+                0
+                < config.codex_soft_context_prompt_tokens
+                < config.codex_hard_context_prompt_tokens
+            ):
+                violations.append(
+                    "adaptive policy requires 0 < soft prompt tokens < hard prompt tokens"
+                )
             if config.codex_post_turn_exit_grace_seconds < 0:
                 violations.append("ARC_CODEX_POST_TURN_EXIT_GRACE_SECONDS must be non-negative")
         else:

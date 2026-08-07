@@ -378,6 +378,8 @@ class RunMetrics:
     codex_tool_failures: int = 0
     codex_post_completion_forced_exits: int = 0
     codex_session_rollovers: int = 0
+    codex_context_checkpoints: int = 0
+    codex_context_checkpoint_reasons: dict[str, int] = field(default_factory=dict)
     model_budget_exhausted_at_action: int | None = None
     game_over_resets: int = 0
     level_checkpoints: list[JsonDict] = field(default_factory=list)
